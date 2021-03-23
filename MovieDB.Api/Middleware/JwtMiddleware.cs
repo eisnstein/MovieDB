@@ -52,7 +52,7 @@ namespace MovieDB.Api.Middleware
                 var jwtToken = (JwtSecurityToken) validatedToken;
                 var accountId = int.Parse(jwtToken.Claims.First(c => c.Type == "id").Value);
 
-                context.Items["account"] = await db.Accounts.FindAsync(accountId);
+                context.Items["Account"] = await db.Accounts.FindAsync(accountId);
             }
             catch
             {

@@ -7,10 +7,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MovieDB.Api.Entities;
 using MovieDB.Api.Helpers;
@@ -21,8 +19,15 @@ namespace MovieDB.Api.Services
     public interface IAccountService
     {
         public Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest model, string ipAddress);
+        public Task<AuthenticateResponse> RefreshTokenAsync(string refreshToken, string ipAddress);
+        public Task RevokeTokenAsync(string token, string ipAddress);
         public Task RegisterAsync(RegisterRequest model, string? origin);
         public Task VerifyEmailAsync(string token);
+        public Task ForgotPasswordAsync(string email, string? origin);
+        public Task ValidateResetTokenAsync(string token);
+        public Task ResetPasswordAsync(ResetPasswordRequest model);
+        public Task<AccountResponse> GetByIdAsync(int id);
+        public Task<AccountResponse> UpdateAsync(int id, UpdateRequest model);
     }
 
     public class AccountService : IAccountService
@@ -50,7 +55,6 @@ namespace MovieDB.Api.Services
         public async Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest model, string ipAddress)
         {
             var account = await _db.Accounts.SingleOrDefaultAsync(a => a.Email == model.Email);
-
             if (account is null || !account.IsVerified || !BCrypt.Net.BCrypt.Verify(model.Password, account.PasswordHash))
             {
                 throw new AppException("Email or password incorrect");
@@ -70,12 +74,44 @@ namespace MovieDB.Api.Services
             return response;
         }
 
+        public async Task<AuthenticateResponse> RefreshTokenAsync(string token, string ipAddress)
+        {
+            var (refreshToken, account) = await GetRefreshTokenAsync(token);
+
+            var newRefreshToken = GenerateRefreshToken(ipAddress);
+            refreshToken.RevokedAt = DateTime.UtcNow;
+            refreshToken.RevokedByIp = ipAddress;
+            refreshToken.ReplacedByToken = newRefreshToken.Token;
+
+            account.RefreshTokens?.Add(newRefreshToken);
+            RemoveOldRefreshTokens(account);
+
+            await _db.SaveChangesAsync();
+
+            var jwtToken = GenerateJwtToken(account);
+
+            var response = _mapper.Map<AuthenticateResponse>(account);
+            response.JwtToken = jwtToken;
+            response.RefreshToken = newRefreshToken.Token;
+            return response;
+        }
+
+        public async Task RevokeTokenAsync(string token, string ipAddress)
+        {
+            var (refreshToken, _) = await GetRefreshTokenAsync(token);
+
+            refreshToken.RevokedAt = DateTime.UtcNow;
+            refreshToken.RevokedByIp = ipAddress;
+
+            await _db.SaveChangesAsync();
+        }
+
         public async Task RegisterAsync(RegisterRequest model, string? origin)
         {
             var emailExists = await _db.Accounts.AnyAsync(a => a.Email == model.Email);
             if (emailExists)
             {
-                await SendAlreadyRegisteredEmailAsync(model.Email, origin);
+                SendAlreadyRegisteredEmail(model.Email, origin);
                 return;
             }
 
@@ -88,7 +124,7 @@ namespace MovieDB.Api.Services
             _db.Accounts.Add(account);
             await _db.SaveChangesAsync();
 
-            await SendVerificationEmail(account, origin);
+            SendVerificationEmail(account, origin);
         }
 
         public async Task VerifyEmailAsync(string token)
@@ -100,14 +136,85 @@ namespace MovieDB.Api.Services
             }
 
             account.VerificationToken = null;
-            account.Verified = DateTime.UtcNow;
+            account.VerifiedAt = DateTime.UtcNow;
 
             await _db.SaveChangesAsync();
         }
 
+        public async Task ForgotPasswordAsync(string email, string? origin)
+        {
+            var account = await _db.Accounts.SingleOrDefaultAsync(a => a.Email == email);
+            if (account is null)
+            {
+                return;
+            }
+
+            account.ResetToken = RandomTokenString();
+            account.ResetTokenExpiresAt = DateTime.UtcNow.AddDays(1);
+
+            await _db.SaveChangesAsync();
+            SendPasswordResetEmail(account, origin);
+        }
+
+        public async Task ValidateResetTokenAsync(string token)
+        {
+            var account = await _db.Accounts.SingleOrDefaultAsync(a =>
+                a.ResetToken == token &&
+                a.ResetTokenExpiresAt > DateTime.UtcNow);
+            if (account is null)
+            {
+                throw new AppException("Token invalid");
+            }
+        }
+
+        public async Task ResetPasswordAsync(ResetPasswordRequest model)
+        {
+            var account = await _db.Accounts.SingleOrDefaultAsync(a =>
+                a.ResetToken == model.Token &&
+                a.ResetTokenExpiresAt > DateTime.UtcNow);
+            if (account is null)
+            {
+                throw new AppException("Token invalid");
+            }
+
+            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            account.ResetToken = null;
+            account.ResetTokenExpiresAt = null;
+
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task<AccountResponse> GetByIdAsync(int id)
+        {
+            var account = await GetAccountAsync(id);
+            return _mapper.Map<AccountResponse>(account);
+        }
+
+        public async Task<AccountResponse> UpdateAsync(int id, UpdateRequest model)
+        {
+            var account = await GetAccountAsync(id);
+
+            if (model.Email != account.Email && await _db.Accounts.AnyAsync(a => a.Email == model.Email))
+            {
+                throw new AppException($"Email '{model.Email}' is already taken");
+            }
+
+            if (!string.IsNullOrEmpty(model.Password))
+            {
+                account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            }
+
+            _mapper.Map(model, account);
+            account.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync();
+
+            return _mapper.Map<AccountResponse>(account);
+        }
+
         // Helpers
 
-        private async Task<Account> GetAccount(int id)
+        private async Task<Account> GetAccountAsync(int id)
         {
             var account = await _db.Accounts.FindAsync(id);
             if (account is null)
@@ -118,7 +225,7 @@ namespace MovieDB.Api.Services
             return account;
         }
 
-        private async Task<(RefreshToken, Account)> GetRefreshToken(string token)
+        private async Task<(RefreshToken, Account)> GetRefreshTokenAsync(string token)
         {
             var account = await _db.Accounts.SingleOrDefaultAsync(a => a.RefreshTokens != null && a.RefreshTokens.Any(r => r.Token == token));
             if (account is null)
@@ -126,7 +233,7 @@ namespace MovieDB.Api.Services
                 throw new AppException("Invalid token");
             }
 
-            var refreshToken = account.RefreshTokens?.Single(t => t.Token == token);
+            var refreshToken = account.RefreshTokens!.Single(t => t.Token == token);
             if (refreshToken is null || !refreshToken.IsActive)
             {
                 throw new AppException("Invalid token");
@@ -178,7 +285,7 @@ namespace MovieDB.Api.Services
 
         // Emails
 
-        private async Task SendVerificationEmail(Account account, string? origin)
+        private void SendVerificationEmail(Account account, string? origin)
         {
             string message;
             if (string.IsNullOrEmpty(origin))
@@ -193,7 +300,7 @@ namespace MovieDB.Api.Services
                              <p><a href=""{verifyUrl}"">{verifyUrl}</a></p>";
             }
 
-            await _emailService.SendAsync(
+            _emailService.SendAsync(
                 to: account.Email,
                 subject: "Sign-up Verification API - Verify Email",
                 html: $@"<h4>Verify Email</h4>
@@ -202,18 +309,41 @@ namespace MovieDB.Api.Services
             );
         }
 
-        private async Task SendAlreadyRegisteredEmailAsync(string email, string? origin)
+        private void SendAlreadyRegisteredEmail(string email, string? origin)
         {
             string message = string.IsNullOrEmpty(origin)
                 ? "<p>If you don't know your password you can reset it via the <code>/accounts/forgot-password</code> api route.</p>"
                 : $@"<p>If you don't know your password please visit the <a href=""{origin}/accounts/forgot-password"">forgot password</a> page.</p>";
 
-            await _emailService.SendAsync(
+            _emailService.SendAsync(
                 to: email,
                 subject: "Sign-Up Verification API - Email Already Registered",
                 html: $@"<h4>Email Already Registered</h4>
                         <p>Your email <strong>{email}</strong> is already registered.</p>
                         {message}"
+            );
+        }
+
+        private void SendPasswordResetEmail(Account account, string? origin)
+        {
+            string message;
+            if (string.IsNullOrEmpty(origin))
+            {
+                message = $@"<p>Please use the below token to reset your password with the <code>/accounts/reset-password</code> api route:</p>
+                             <p><code>{account.ResetToken}</code></p>";
+            }
+            else
+            {
+                var resetUrl = $"{origin}/account/reset-password?token={account.ResetToken}";
+                message = $@"<p>Please click the below link to reset your password, the link will be valid for 1 day:</p>
+                             <p><a href=""{resetUrl}"">{resetUrl}</a></p>";
+            }
+
+            _emailService.SendAsync(
+                to: account.Email,
+                subject: "Sign-up Verification API - Reset Password",
+                html: $@"<h4>Reset Password Email</h4>
+                         {message}"
             );
         }
     }

@@ -21,7 +21,7 @@ namespace MovieDB.Api.Models.Accounts
         public string Password { get; set; }
 
         [Required]
-        [Compare("Password")]
+        [Compare(nameof(Password))]
         public string ConfirmPassword { get; set; }
 
         [Range(typeof(bool), "true", "true")]

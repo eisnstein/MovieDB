@@ -15,9 +15,9 @@ namespace MovieDB.Api.Entities
         public bool IsExpired => DateTime.UtcNow >= Expires;
         public DateTime CreatedAt { get; set; }
         public string CreatedByIp { get; set; }
-        public DateTime? Revoked { get; set; }
+        public DateTime? RevokedAt { get; set; }
         public string? RevokedByIp { get; set; }
         public string? ReplacedByToken { get; set; }
-        public bool IsActive => Revoked == null && !IsExpired;
+        public bool IsActive => RevokedAt == null && !IsExpired;
     }
 }

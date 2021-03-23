@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieDB.Api.Helpers;
 
 namespace MovieDB.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210322150417_updateAccountsColumnNames")]
+    partial class updateAccountsColumnNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,7 +99,7 @@ namespace MovieDB.Api.Migrations
                             b1.Property<string>("ReplacedByToken")
                                 .HasColumnType("TEXT");
 
-                            b1.Property<DateTime?>("RevokedAt")
+                            b1.Property<DateTime?>("Revoked")
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("RevokedByIp")
