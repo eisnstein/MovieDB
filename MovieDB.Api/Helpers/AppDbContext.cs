@@ -15,10 +15,11 @@ namespace MovieDB.Api.Helpers
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite(_configuration.GetConnectionString("WebApiDatabase"));
+            optionsBuilder.UseSqlite(_configuration.GetConnectionString("MovieDb"));
         }
 
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<Movie> Movies { get; set; }
     }
 
 }

@@ -34,6 +34,7 @@ namespace MovieDB.Api
             services.AddSingleton<IAppSettings>(sp => sp.GetRequiredService<IOptions<AppSettings>>().Value);
 
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IMovieService, MovieService>();
             services.AddScoped<IEmailService, EmailService>();
 
             services.AddControllers();

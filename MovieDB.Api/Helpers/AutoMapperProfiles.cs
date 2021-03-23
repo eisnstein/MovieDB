@@ -1,12 +1,13 @@
 using AutoMapper;
 using MovieDB.Api.Entities;
 using MovieDB.Api.Models.Accounts;
+using MovieDB.Api.Models.Movies;
 
 namespace MovieDB.Api.Helpers
 {
-    public class AutoMapperProfile : Profile
+    public class AccountProfile : Profile
     {
-        public AutoMapperProfile()
+        public AccountProfile()
         {
             CreateMap<Account, AccountResponse>();
             CreateMap<Account, AuthenticateResponse>();
@@ -23,6 +24,14 @@ namespace MovieDB.Api.Helpers
                         return true;
                     }
                 ));
+        }
+    }
+
+    public class MovieProfile : Profile
+    {
+        public MovieProfile()
+        {
+            CreateMap<CreateRequest, Movie>();
         }
     }
 }
