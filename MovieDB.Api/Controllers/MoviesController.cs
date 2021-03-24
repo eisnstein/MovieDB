@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using MovieDB.Api.Entities;
 using MovieDB.Api.Helpers;
 using MovieDB.Api.Models.Movies;
 using MovieDB.Api.Services;
@@ -12,26 +11,37 @@ namespace MovieDB.Api.Controllers
     [Route("api/[controller]")]
     public class MoviesController : BaseController
     {
+        private readonly IMapper _mapper;
         private readonly IMovieService _movieService;
 
         public MoviesController(IMapper mapper, IMovieService movieService)
         {
+            _mapper = mapper;
             _movieService = movieService;
         }
 
         [Authorize]
         [HttpGet("{id:int}", Name = "GetMovie")]
-        public ActionResult<Movie> Get(int id)
+        public async Task<ActionResult<MovieResponse>> GetById(int id)
         {
-            return new Movie();
+            var movie = await _movieService.GetByIdAsync(id);
+            return _mapper.Map<MovieResponse>(movie);
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create(CreateRequest model)
+        public async Task<ActionResult<MovieResponse>> Create(CreateRequest model)
         {
-            var movie = await _movieService.UpdateAsync(model, Account!);
-            return CreatedAtRoute("GetMovie", new { id = movie.Id }, movie);
+            var movie = await _movieService.CreateAsync(model, Account!);
+            return CreatedAtAction(nameof(GetById), new { id = movie.Id }, movie);
+        }
+
+        [Authorize]
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<MovieResponse>> Update(int id, UpdateRequest model)
+        {
+            var movie = await _movieService.UpdateAsync(id, model);
+            return CreatedAtAction(nameof(GetById), new { id = movie.Id }, movie);
         }
     }
 }

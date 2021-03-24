@@ -2,6 +2,8 @@ using AutoMapper;
 using MovieDB.Api.Entities;
 using MovieDB.Api.Models.Accounts;
 using MovieDB.Api.Models.Movies;
+using UpdateRequestAccount = MovieDB.Api.Models.Accounts.UpdateRequest;
+using UpdateRequestMovie = MovieDB.Api.Models.Movies.UpdateRequest;
 
 namespace MovieDB.Api.Helpers
 {
@@ -12,7 +14,7 @@ namespace MovieDB.Api.Helpers
             CreateMap<Account, AccountResponse>();
             CreateMap<Account, AuthenticateResponse>();
             CreateMap<RegisterRequest, Account>();
-            CreateMap<UpdateRequest, Account>()
+            CreateMap<UpdateRequestAccount, Account>()
                 .ForAllMembers(x => x.Condition(
                     (src, dest, prop) =>
                     {
@@ -32,6 +34,15 @@ namespace MovieDB.Api.Helpers
         public MovieProfile()
         {
             CreateMap<CreateRequest, Movie>();
+            CreateMap<Movie, MovieResponse>();
+            CreateMap<UpdateRequestMovie, Movie>()
+                .ForAllMembers(x => x.Condition((_, _, value) =>
+                {
+                    if (value is null) return false;
+                    if (value.GetType() == typeof(string) && string.IsNullOrEmpty((string) value)) return false;
+
+                    return true;
+                }));
         }
     }
 }

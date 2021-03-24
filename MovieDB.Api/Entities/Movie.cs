@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 
 namespace MovieDB.Api.Entities
 {
@@ -30,6 +31,7 @@ namespace MovieDB.Api.Entities
         public string ImdbIdentifier { get; set; }
         public MovieGenre Genre { get; set; }
         public MovieRating Rating { get; set; }
+        [JsonIgnore]
         public Account Account { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
