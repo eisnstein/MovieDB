@@ -1,4 +1,5 @@
 using System;
+using MovieDB.Api.Entities;
 
 namespace MovieDB.Api.Models.Accounts
 {
@@ -9,7 +10,7 @@ namespace MovieDB.Api.Models.Accounts
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public string Role { get; set; }
+        public Role Role { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public bool IsVerified { get; set; }
