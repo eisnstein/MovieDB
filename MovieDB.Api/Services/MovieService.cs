@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using MovieDB.Api.Entities;
 using MovieDB.Api.Helpers;
 using MovieDB.Api.Models.Movies;
@@ -10,9 +12,10 @@ namespace MovieDB.Api.Services
 {
     public interface IMovieService
     {
-        public Task<Movie> GetByIdAsync(int id);
+        public IQueryable<Movie> GetAllAsync(Account account);
+        public Task<Movie> GetByIdAsync(int id, Account account);
         public Task<Movie> CreateAsync(CreateRequest model, Account account);
-        public Task<Movie> UpdateAsync(int id, UpdateRequest model);
+        public Task<Movie> UpdateAsync(int id, UpdateRequest model, Account account);
     }
 
     public class MovieService : IMovieService
@@ -26,12 +29,17 @@ namespace MovieDB.Api.Services
             _mapper = mapper;
         }
 
-        public async Task<Movie> GetByIdAsync(int id)
+        public IQueryable<Movie> GetAllAsync(Account account)
         {
-            var movie = await _db.Movies.FindAsync(id);
+            return _db.Movies.Where(m => m.Account == account);
+        }
+
+        public async Task<Movie> GetByIdAsync(int id, Account account)
+        {
+            var movie = await _db.Movies.FirstOrDefaultAsync(m => m.Id == id && m.Account == account);
             if (movie is null)
             {
-                throw new KeyNotFoundException("Movie does not exist");
+                throw new KeyNotFoundException($"Cannot find movie with id '{id}' for this account");
             }
 
             return movie;
@@ -49,12 +57,12 @@ namespace MovieDB.Api.Services
             return movie;
         }
 
-        public async Task<Movie> UpdateAsync(int id, UpdateRequest model)
+        public async Task<Movie> UpdateAsync(int id, UpdateRequest model, Account account)
         {
-            var movie = await _db.Movies.FindAsync(id);
+            var movie = await _db.Movies.FirstOrDefaultAsync(m => m.Id == id && m.Account == account);
             if (movie is null)
             {
-                throw new KeyNotFoundException("Movie does not exist");
+                throw new KeyNotFoundException($"Cannot find movie with id '{id}' for this account");
             }
 
             _mapper.Map(model, movie);

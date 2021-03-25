@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -21,10 +23,18 @@ namespace MovieDB.Api.Controllers
         }
 
         [Authorize]
+        [HttpGet]
+        public ActionResult<List<MovieResponse>> GetAll()
+        {
+            var movies = _movieService.GetAllAsync(Account!);
+            return _mapper.Map<List<MovieResponse>>(movies);
+        }
+
+        [Authorize]
         [HttpGet("{id:int}", Name = "GetMovie")]
         public async Task<ActionResult<MovieResponse>> GetById(int id)
         {
-            var movie = await _movieService.GetByIdAsync(id);
+            var movie = await _movieService.GetByIdAsync(id, Account!);
             return _mapper.Map<MovieResponse>(movie);
         }
 
@@ -40,7 +50,7 @@ namespace MovieDB.Api.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<MovieResponse>> Update(int id, UpdateRequest model)
         {
-            var movie = await _movieService.UpdateAsync(id, model);
+            var movie = await _movieService.UpdateAsync(id, model, Account!);
             return CreatedAtAction(nameof(GetById), new { id = movie.Id }, movie);
         }
     }
