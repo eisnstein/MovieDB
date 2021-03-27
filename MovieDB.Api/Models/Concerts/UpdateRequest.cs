@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using MovieDB.Api.Entities;
 
-namespace MovieDB.Api.Models.Movies
+namespace MovieDB.Api.Models.Concerts
 {
     public class UpdateRequest
     {
@@ -11,9 +11,9 @@ namespace MovieDB.Api.Models.Movies
         [DataType(DataType.Date)]
         public DateTime? SeenAt { get; set; }
 
-        public string? ImdbIdentifier { get; set; }
+        public string? Location { get; set; }
 
-        [EnumDataType(typeof(MovieGenre))]
+        [EnumDataType(typeof(ConcertGenre))]
         public int? Genre { get; set; }
 
         [EnumDataType(typeof(Rating))]

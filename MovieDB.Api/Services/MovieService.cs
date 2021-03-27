@@ -16,6 +16,7 @@ namespace MovieDB.Api.Services
         public Task<Movie> GetByIdAsync(int id, Account account);
         public Task<Movie> CreateAsync(CreateRequest model, Account account);
         public Task<Movie> UpdateAsync(int id, UpdateRequest model, Account account);
+        public Task DeleteByIdAsync(int id, Account account);
     }
 
     public class MovieService : IMovieService
@@ -31,15 +32,19 @@ namespace MovieDB.Api.Services
 
         public IQueryable<Movie> GetAllAsync(Account account)
         {
-            return _db.Movies.Where(m => m.Account == account);
+            return _db.Movies.Where(m => m.Account == account && m.DeletedAt == null);
         }
 
         public async Task<Movie> GetByIdAsync(int id, Account account)
         {
-            var movie = await _db.Movies.FirstOrDefaultAsync(m => m.Id == id && m.Account == account);
+            var movie = await _db.Movies.FirstOrDefaultAsync(m =>
+                m.Id == id &&
+                m.Account == account &&
+                m.DeletedAt == null);
+
             if (movie is null)
             {
-                throw new KeyNotFoundException($"Cannot find movie with id '{id}' for this account");
+                throw new KeyNotFoundException($"Cannot find movie with id '{id}' for this account (maybe deleted)");
             }
 
             return movie;
@@ -59,11 +64,7 @@ namespace MovieDB.Api.Services
 
         public async Task<Movie> UpdateAsync(int id, UpdateRequest model, Account account)
         {
-            var movie = await _db.Movies.FirstOrDefaultAsync(m => m.Id == id && m.Account == account);
-            if (movie is null)
-            {
-                throw new KeyNotFoundException($"Cannot find movie with id '{id}' for this account");
-            }
+            var movie = await GetByIdAsync(id, account);
 
             _mapper.Map(model, movie);
             movie.UpdatedAt = DateTime.UtcNow;
@@ -71,6 +72,15 @@ namespace MovieDB.Api.Services
             await _db.SaveChangesAsync();
 
             return movie;
+        }
+
+        public async Task DeleteByIdAsync(int id, Account account)
+        {
+            var movie = await GetByIdAsync(id, account);
+
+            movie.DeletedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync();
         }
     }
 }

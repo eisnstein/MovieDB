@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using MovieDB.Api.Entities;
 
-namespace MovieDB.Api.Models.Movies
+namespace MovieDB.Api.Models.Theaters
 {
     public class UpdateRequest
     {

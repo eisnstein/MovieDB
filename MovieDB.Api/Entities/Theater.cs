@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace MovieDB.Api.Entities
 {
-    public enum MovieGenre
+    public enum TheaterGenre
     {
         Action,
         Comedy,
@@ -14,14 +14,23 @@ namespace MovieDB.Api.Entities
         Thriller
     }
 
-    public class Movie
+    public enum TheaterRating
+    {
+        VeryGood,
+        Good,
+        Ok,
+        NotGood,
+        Bad
+    }
+
+    public class Theater
     {
         public int Id { get; set; }
         public string Title { get; set; }
         public DateTime SeenAt { get; set; }
-        public string ImdbIdentifier { get; set; }
-        public MovieGenre Genre { get; set; }
-        public Rating Rating { get; set; }
+        public string Location { get; set; }
+        public TheaterGenre Genre { get; set; }
+        public TheaterRating Rating { get; set; }
         [JsonIgnore]
         public Account Account { get; set; }
         public DateTime CreatedAt { get; set; }

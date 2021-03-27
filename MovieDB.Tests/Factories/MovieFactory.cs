@@ -14,7 +14,7 @@ namespace MovieDB.Tests.Factories
                 SeenAt = DateTime.UtcNow.AddDays(-3),
                 ImdbIdentifier = "tt123123",
                 Genre = MovieGenre.SciFi,
-                Rating = MovieRating.Good,
+                Rating = Rating.Good,
                 Account = account,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = null,

@@ -21,7 +21,7 @@ namespace MovieDB.Api.Models.Movies
         public int? Genre { get; set; }
 
         [Required]
-        [EnumDataType(typeof(MovieRating))]
+        [EnumDataType(typeof(Rating))]
         public int? Rating { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +8,7 @@ using MovieDB.Api.Services;
 
 namespace MovieDB.Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class MoviesController : BaseController
@@ -22,7 +22,6 @@ namespace MovieDB.Api.Controllers
             _movieService = movieService;
         }
 
-        [Authorize]
         [HttpGet]
         public ActionResult<List<MovieResponse>> GetAll()
         {
@@ -30,7 +29,6 @@ namespace MovieDB.Api.Controllers
             return _mapper.Map<List<MovieResponse>>(movies);
         }
 
-        [Authorize]
         [HttpGet("{id:int}", Name = "GetMovie")]
         public async Task<ActionResult<MovieResponse>> GetById(int id)
         {
@@ -38,20 +36,27 @@ namespace MovieDB.Api.Controllers
             return _mapper.Map<MovieResponse>(movie);
         }
 
-        [Authorize]
         [HttpPost]
         public async Task<ActionResult<MovieResponse>> Create(CreateRequest model)
         {
             var movie = await _movieService.CreateAsync(model, Account!);
-            return CreatedAtAction(nameof(GetById), new { id = movie.Id }, movie);
+            var response = _mapper.Map<MovieResponse>(movie);
+            return CreatedAtAction(nameof(GetById), new { id = movie.Id }, response);
         }
 
-        [Authorize]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<MovieResponse>> Update(int id, UpdateRequest model)
         {
             var movie = await _movieService.UpdateAsync(id, model, Account!);
-            return CreatedAtAction(nameof(GetById), new { id = movie.Id }, movie);
+            var response = _mapper.Map<MovieResponse>(movie);
+            return CreatedAtAction(nameof(GetById), new { id = movie.Id }, response);
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _movieService.DeleteByIdAsync(id, Account!);
+            return NoContent();
         }
     }
 }

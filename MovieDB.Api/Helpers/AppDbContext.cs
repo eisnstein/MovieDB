@@ -20,6 +20,8 @@ namespace MovieDB.Api.Helpers
 
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Movie> Movies { get; set; }
+        public DbSet<Theater> Theaters { get; set; }
+        public DbSet<Concert> Concerts { get; set; }
     }
 
 }

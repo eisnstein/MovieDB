@@ -87,7 +87,7 @@ namespace MovieDB.Tests
 
             Assert.Equal("Star Wars 4", updatedMovie3.Title);
             Assert.Equal(MovieGenre.Action, updatedMovie3.Genre);
-            Assert.Equal(MovieRating.Bad, updatedMovie3.Rating);
+            Assert.Equal(Rating.Bad, updatedMovie3.Rating);
 
             // ---
 
@@ -100,9 +100,9 @@ namespace MovieDB.Tests
 
             var updatedMovie4 = _mapper.Map(model4, movie);
 
-            Assert.Equal(movie.Title, updatedMovie3.Title);
-            Assert.Equal(MovieGenre.Action, updatedMovie3.Genre);
-            Assert.Equal(movie.Rating, updatedMovie3.Rating);
+            Assert.Equal(movie.Title, updatedMovie4.Title);
+            Assert.Equal(MovieGenre.Action, updatedMovie4.Genre);
+            Assert.Equal(movie.Rating, updatedMovie4.Rating);
         }
 
     }
