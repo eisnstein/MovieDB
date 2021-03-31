@@ -10,6 +10,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using MovieDB.Api.Data;
 using MovieDB.Api.Entities;
 using MovieDB.Api.Helpers;
 using MovieDB.Api.Models.Accounts;

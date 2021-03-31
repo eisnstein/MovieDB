@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using MovieDB.Api.Data;
 using MovieDB.Api.Helpers;
 using MovieDB.Api.Middleware;
 using MovieDB.Api.Services;
@@ -25,7 +26,8 @@ namespace MovieDB.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>();
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("MovieDB")));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.Configure<AppSettings>(Configuration.GetSection(nameof(AppSettings)));

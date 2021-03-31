@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using MovieDB.Api.Data;
 using MovieDB.Api.Entities;
 using MovieDB.Api.Helpers;
 using MovieDB.Api.Models.Concerts;

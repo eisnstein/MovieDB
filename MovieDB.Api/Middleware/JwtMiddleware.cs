@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
+using MovieDB.Api.Data;
 using MovieDB.Api.Helpers;
 
 namespace MovieDB.Api.Middleware
