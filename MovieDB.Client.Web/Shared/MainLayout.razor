@@ -1,0 +1,11 @@
+@inherits LayoutComponentBase
+@inject State state
+
+<div class="main">
+  @if(state.IsAuthenticated) {
+    <NavMenu />
+  }
+  <main>
+    @Body
+  </main>
+</div>

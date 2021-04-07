@@ -1,0 +1,11 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import "FontAwesome/css/fontawesome.css";
+@import "FontAwesome/css/duotone.css";
+@import "FontAwesome/css/light.css";
+@import "FontAwesome/css/regular.css";
+
+@import "./base.css";
+@import "./Components/movie.css";
