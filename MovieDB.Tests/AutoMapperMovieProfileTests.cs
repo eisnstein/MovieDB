@@ -2,10 +2,10 @@ using System;
 using AutoMapper;
 using MovieDB.Api.Entities;
 using MovieDB.Api.Helpers;
-using MovieDB.Api.Models.Movies;
+using MovieDB.Shared.Models.Movies;
 using MovieDB.Tests.Factories;
 using Xunit;
-using UpdateRequest = MovieDB.Api.Models.Movies.UpdateRequest;
+using UpdateRequest = MovieDB.Shared.Models.Movies.UpdateRequest;
 
 namespace MovieDB.Tests
 {

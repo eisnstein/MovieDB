@@ -6,8 +6,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MovieDB.Api.Data;
 using MovieDB.Api.Entities;
-using MovieDB.Api.Helpers;
-using MovieDB.Api.Models.Theaters;
+using MovieDB.Shared.Models.Theaters;
 
 namespace MovieDB.Api.Services
 {

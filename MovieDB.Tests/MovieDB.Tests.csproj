@@ -20,6 +20,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\MovieDB.Api\MovieDB.Api.csproj" />
+        <ProjectReference Include="..\MovieDB.Shared\MovieDB.Shared.csproj" />
     </ItemGroup>
-
 </Project>

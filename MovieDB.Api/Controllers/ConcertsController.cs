@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MovieDB.Api.Helpers;
-using MovieDB.Api.Models.Concerts;
+using MovieDB.Shared.Models.Concerts;
 using MovieDB.Api.Services;
-using CreateRequest = MovieDB.Api.Models.Concerts.CreateRequest;
-using UpdateRequest = MovieDB.Api.Models.Concerts.UpdateRequest;
+using CreateRequest = MovieDB.Shared.Models.Concerts.CreateRequest;
+using UpdateRequest = MovieDB.Shared.Models.Concerts.UpdateRequest;
 
 namespace MovieDB.Api.Controllers
 {

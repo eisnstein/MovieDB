@@ -1,6 +1,6 @@
 using AutoMapper;
 using MovieDB.Api.Helpers;
-using MovieDB.Api.Models.Accounts;
+using MovieDB.Shared.Models.Accounts;
 using MovieDB.Tests.Factories;
 using Xunit;
 
@@ -35,7 +35,7 @@ namespace MovieDB.Tests
             Assert.Equal(account.FirstName, response.FirstName);
             Assert.Equal(account.LastName, response.LastName);
             Assert.Equal(account.Email, response.Email);
-            Assert.Equal(account.Role, response.Role);
+            Assert.Equal("user", response.Role);
         }
     }
 }

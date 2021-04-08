@@ -1,8 +1,11 @@
 @page "/"
 @page "/movies"
-
+@using MovieDB.Shared.Models.Movies
+@using System.Net.Http.Headers
+@attribute [Authorize]
 @inject HttpClient Http
-@inject State state
+@inject IAccountService AccountService
+@inject ILocalStorageService LocalStorageService
 
 <header class="bg-gray-100">
     <div class="container mx-auto py-6 px-2 sm:px-4 lg:px-6">
@@ -52,9 +55,9 @@
     </div>
     @if(_movies != null) {
         <ul class="py-6">
-            @foreach (var movie in _filteredMovies)
+            @foreach (var movie in _filteredMovies!)
             {
-                <li class="mb-4" @key="movie.id">
+                <li class="mb-4" @key="movie.Id">
                     <Movie movie=@movie />
                 </li>
             }
@@ -68,28 +71,30 @@
 
 @code {
     private string _searchValue = "";
-    private List<TMovie> _movies = null;
-    private List<TMovie> _filteredMovies = null;
+    private List<MovieResponse>? _movies;
+    private List<MovieResponse>? _filteredMovies;
     private int? _totalCount = null;
     private int? _yearCount = null;
     private int? _monthCount = null;
 
     protected override async Task OnInitializedAsync()
     {
-        _movies = await Http.GetFromJsonAsync<List<TMovie>>("sample-data/movies.json");
+        var token = await LocalStorageService.GetItem<string>("jwt");
+        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        _movies = await Http.GetFromJsonAsync<List<MovieResponse>>("/api/movies");
         _filteredMovies = _movies;
-        _totalCount = _movies.Count;
+        _totalCount = _movies?.Count ?? 0;
 
         var year = DateTime.Today.Year;
         var month = DateTime.Today.Month;
 
-        _yearCount = _movies.Count(movie => movie.seen_at.Year == year);
-        _monthCount = _movies.Count(movie => movie.seen_at.Year == year && movie.seen_at.Month == month);
+        _yearCount = _movies?.Count(movie => movie.SeenAt.Year == year) ?? 0;
+        _monthCount = _movies?.Count(movie => movie.SeenAt.Year == year && movie.SeenAt.Month == month) ?? 0;
     }
 
     private void FilterData(ChangeEventArgs e)
     {
-        _searchValue = e.Value.ToString().TrimStart().ToLower();
-        _filteredMovies = _movies.Where(movie => movie.title.ToLower().StartsWith(_searchValue)).ToList();
+        _searchValue = e.Value?.ToString()?.TrimStart().ToLower() ?? "";
+        _filteredMovies = _movies?.Where(movie => movie.Title.ToLower().StartsWith(_searchValue)).ToList() ?? null;
     }
 }

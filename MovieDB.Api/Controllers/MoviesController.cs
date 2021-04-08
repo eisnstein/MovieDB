@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MovieDB.Api.Helpers;
-using MovieDB.Api.Models.Movies;
+using MovieDB.Shared.Models.Movies;
 using MovieDB.Api.Services;
 
 namespace MovieDB.Api.Controllers

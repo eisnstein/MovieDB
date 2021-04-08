@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieDB.Api.Entities;
 using MovieDB.Api.Helpers;
-using MovieDB.Api.Models.Accounts;
+using MovieDB.Shared.Models.Accounts;
 using MovieDB.Api.Services;
 
 namespace MovieDB.Api.Controllers

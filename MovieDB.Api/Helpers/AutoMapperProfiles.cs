@@ -1,16 +1,16 @@
 using AutoMapper;
 using MovieDB.Api.Entities;
-using MovieDB.Api.Models.Accounts;
-using MovieDB.Api.Models.Concerts;
-using MovieDB.Api.Models.Movies;
-using MovieDB.Api.Models.Theaters;
-using UpdateRequestAccount = MovieDB.Api.Models.Accounts.UpdateRequest;
-using UpdateRequestMovie = MovieDB.Api.Models.Movies.UpdateRequest;
-using UpdateRequestConcert = MovieDB.Api.Models.Concerts.UpdateRequest;
-using UpdateRequestTheater = MovieDB.Api.Models.Theaters.UpdateRequest;
-using CreateRequestMovie = MovieDB.Api.Models.Movies.CreateRequest;
-using CreateRequestConcert = MovieDB.Api.Models.Concerts.CreateRequest;
-using CreateRequestTheater = MovieDB.Api.Models.Theaters.CreateRequest;
+using MovieDB.Shared.Models.Accounts;
+using MovieDB.Shared.Models.Concerts;
+using MovieDB.Shared.Models.Movies;
+using MovieDB.Shared.Models.Theaters;
+using UpdateRequestAccount = MovieDB.Shared.Models.Accounts.UpdateRequest;
+using UpdateRequestMovie = MovieDB.Shared.Models.Movies.UpdateRequest;
+using UpdateRequestConcert = MovieDB.Shared.Models.Concerts.UpdateRequest;
+using UpdateRequestTheater = MovieDB.Shared.Models.Theaters.UpdateRequest;
+using CreateRequestMovie = MovieDB.Shared.Models.Movies.CreateRequest;
+using CreateRequestConcert = MovieDB.Shared.Models.Concerts.CreateRequest;
+using CreateRequestTheater = MovieDB.Shared.Models.Theaters.CreateRequest;
 
 namespace MovieDB.Api.Helpers
 {

@@ -1,8 +1,8 @@
 @inherits LayoutComponentBase
-@inject State state
+@inject IAccountService AccountService
 
 <div class="main">
-  @if(state.IsAuthenticated) {
+  @if(AccountService.IsAuthenticated()) {
     <NavMenu />
   }
   <main>

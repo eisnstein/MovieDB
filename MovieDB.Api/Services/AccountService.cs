@@ -13,7 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using MovieDB.Api.Data;
 using MovieDB.Api.Entities;
 using MovieDB.Api.Helpers;
-using MovieDB.Api.Models.Accounts;
+using MovieDB.Shared.Models.Accounts;
 
 namespace MovieDB.Api.Services
 {
