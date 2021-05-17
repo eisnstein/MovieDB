@@ -37,8 +37,8 @@ namespace MovieDB.Tests
             Assert.Equal("Star Wars", response.Title);
             Assert.Equal(movie.SeenAt, response.SeenAt);
             Assert.Equal(movie.ImdbIdentifier, response.ImdbIdentifier);
-            Assert.Equal(movie.Genre, response.Genre);
-            Assert.Equal(movie.Rating, response.Rating);
+            Assert.Equal((int)movie.Genre, response.Genre);
+            Assert.Equal((int)movie.Rating, response.Rating);
         }
 
         [Fact]
