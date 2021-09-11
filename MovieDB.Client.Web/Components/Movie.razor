@@ -1,0 +1,30 @@
+@using MovieDB.Shared.Models.Movies
+@using System.Globalization
+@namespace MovieDB.Client.Web.Components
+
+<div class="flex justify-between md:rounded border border-l-0 border-r-0 md:border-l md:border-r bg-white hover:shadow-lg transition duration-200 transform hover:-translate-y-1">
+    <div class="px-4 py-6">
+        <div class="flex items-center">
+            <span class="align-middle text-sm pr-4">
+                @movie.SeenAt.ToString("D", CultureInfo.CreateSpecificCulture("de-AT"))
+            </span>
+            <span class="inline-block align-middle px-2 py-1 rounded bg-black leading-none text-white text-xs text-center mr-4">
+                @movie.Genre
+            </span>
+        </div>
+        <div class="py-2 text-xl">
+            <a href="https://imdb.com/@movie.ImdbIdentifier" title="IMDb" class="no-underline" target="_blank">
+                @movie.Title
+            </a>
+        </div>
+        <div>
+            <Rating rating=@movie.Rating />
+        </div>
+    </div>
+    <div class="movie__poster" style="background-image: url('https://m.media-amazon.com/images/M/MV5BMDljNTQ5ODItZmQwMy00M2ExLTljOTQtZTVjNGE2NTg0NGIxXkEyXkFqcGdeQXVyODkzNTgxMDg@@._V1_SX300.jpg')" />
+</div>
+
+@code {
+    [Parameter]
+    public MovieResponse movie { get; set; }
+}

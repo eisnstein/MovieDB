@@ -1,0 +1,11 @@
+@inherits LayoutComponentBase
+@inject IAccountService AccountService
+
+<div class="main">
+  @if(AccountService.IsAuthenticated()) {
+    <NavMenu />
+  }
+  <main>
+    @Body
+  </main>
+</div>

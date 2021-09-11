@@ -1,0 +1,13 @@
+services:
+  db:
+    command: --auth
+    image: mongo:5.0.2-focal
+    ports:
+      - "27017:27017"
+    restart: always
+    volumes:
+      - .:/app
+      - moviedb:/data/db
+
+volumes:
+  moviedb:
