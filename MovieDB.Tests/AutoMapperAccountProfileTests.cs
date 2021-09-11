@@ -32,7 +32,7 @@ namespace MovieDB.Tests
 
             Assert.Equal(account.Id, response.Id);
             Assert.Equal(account.Email, response.Email);
-            Assert.Equal("user", response.Role);
+            Assert.Equal("Admin", response.Role);
         }
     }
 }

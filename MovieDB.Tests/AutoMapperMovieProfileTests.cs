@@ -86,7 +86,7 @@ namespace MovieDB.Tests
 
             Assert.Equal("Star Wars 4", updatedMovie3.Title);
             Assert.Equal(MovieGenre.Action, updatedMovie3.Genre);
-            Assert.Equal(Rating.Bad, updatedMovie3.Rating);
+            Assert.Equal(Rating.Good, updatedMovie3.Rating);
 
             // ---
 
