@@ -11,7 +11,7 @@ namespace MovieDB.Client.Web.Services
         void Info(string message, bool keepAfterRouteChange = false, bool autoClose = true);
         void Warn(string message, bool keepAfterRouteChange = false, bool autoClose = true);
         void Alert(Alert alert);
-        void Clear(string id = null);
+        void Clear(string? id = null);
     }
 
     public class AlertService : IAlertService
@@ -69,7 +69,7 @@ namespace MovieDB.Client.Web.Services
             this.OnAlert?.Invoke(alert);
         }
 
-        public void Clear(string id = null)
+        public void Clear(string? id = null)
         {
             this.OnAlert?.Invoke(new Alert { Id = id });
         }
