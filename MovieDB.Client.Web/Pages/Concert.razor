@@ -1,4 +1,5 @@
 ﻿@page "/concerts"
+@using MovieDB.Shared.Models.Concerts
 @attribute [Authorize]
 @inject HttpClient Http
 
@@ -37,17 +38,17 @@
 </div>
 
 @code {
-  private string _searchValue = "";
-      private List<TMovie> _concerts;
+    private string _searchValue = "";
+    private List<ConcertResponse> _concerts;
 
-      /*protected override async Task OnInitializedAsync()
-      {
-        _concerts = await Http.GetFromJsonAsync<List<TMovie>>("sample-data/movies.json");
-      }*/
+    /*protected override async Task OnInitializedAsync()
+    {
+    _concerts = await Http.GetFromJsonAsync<List<TMovie>>("sample-data/movies.json");
+    }*/
 
-      private void FilterData(ChangeEventArgs e)
-      {
-          _searchValue = e.Value.ToString().TrimStart().ToLower();
-      }
+    private void FilterData(ChangeEventArgs e)
+    {
+      _searchValue = e.Value.ToString().TrimStart().ToLower();
+    }
 }
 

@@ -2,7 +2,7 @@ using System;
 
 namespace MovieDB.Client.Web.Models
 {
-    public class TMovie
+    public class Movie
     {
         public int id { get; set; }
         public string genre { get; set; }
@@ -16,22 +16,4 @@ namespace MovieDB.Client.Web.Models
         public DateTime updated_at { get; set; }
         public DateTime? deleted_at { get; set; }
     }
-
-    /*public class TMovieGenre
-    {
-        public string Identifier { get; set; }
-        public string Name { get; set; }
-    }
-
-    public class TMovie
-    {
-        public string Id { get; set; }
-        public string Title { get; set; }
-        public DateTime Date { get; set; }
-        public string Imdb { get; set; }
-        public TMovieGenre Genre { get; set; }
-        public string Rating { get; set; }
-        public string UserId { get; set; }
-        public DateTime CreatedAt { get; set; }
-    }*/
 }

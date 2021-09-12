@@ -1,4 +1,5 @@
 ﻿@page "/theaters"
+@using MovieDB.Shared.Models.Theaters
 @attribute [Authorize]
 @inject HttpClient Http
 
@@ -38,7 +39,7 @@
 
 @code {
     private string _searchValue = "";
-    private List<TMovie> _theaters;
+    private List<TheaterResponse> _theaters;
 
     /*protected override async Task OnInitializedAsync()
     {
