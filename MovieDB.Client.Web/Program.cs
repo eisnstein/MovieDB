@@ -15,4 +15,9 @@ builder.Services
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:4001") });
 
-await builder.Build().RunAsync();
+var host = builder.Build();
+
+var accountService = host.Services.GetRequiredService<IAccountService>();
+await accountService.Initialize();
+
+await host.RunAsync();
