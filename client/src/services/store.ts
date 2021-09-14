@@ -1,4 +1,4 @@
-import { InjectionKey } from '@vue/runtime-core'
+import { InjectionKey } from 'vue'
 import { createStore, useStore as baseUseStore, Store } from 'vuex'
 import { TAccount } from '../types/account'
 

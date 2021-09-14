@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { useStore } from './services/store';
+import { useStore } from './services/store'
 import NavMenu from './components/NavMenu.vue'
 
 const store = useStore()
+console.log(store)
 </script>
 
 <template>
