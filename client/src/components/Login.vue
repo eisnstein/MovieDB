@@ -5,6 +5,11 @@ import { useStore } from '../services/store';
 const store = useStore()
 const email = ref('')
 const password = ref('')
+
+function onSubmit() {
+  store.dispatch('setLoading', true)
+  store.dispatch('login', { email: email.value, password: password.value})
+}
 </script>
 <template>
   <div class="container mx-auto pt-6">
@@ -12,24 +17,18 @@ const password = ref('')
       <div class="p-6 text-center">
           <i class="fad fa-dice-d10 fa-2x" style="color: dodgerblue;"></i>
       </div>
-      <form class="bg-white shadow-md rounded p-6">
+      <form class="bg-white shadow-md rounded p-6" @submit.prevent="onSubmit">
         <div class="mb-4">
             <label class="block text-gray-700 text-sm mb-1" for="email">
                 Email
             </label>
-            <input v-model="email" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" placeholder="your@email.com" />
-            <p class="text-red-500 text-xs italic mt-1">
-              hoho
-            </p>
+            <input v-model="email" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="your@email.com" />
         </div>
         <div class="mb-6">
             <label class="block text-gray-700 text-sm mb-1" for="password">
                 Password
             </label>
             <input v-model="password" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="********" />
-            <p class="text-red-500 text-xs italic mt-1">
-              hihi
-            </p>
         </div>
         <div class="flex items-center justify-between">
             <button class="w-full bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit" :disabled="store.state.loading">

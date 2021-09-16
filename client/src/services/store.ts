@@ -1,6 +1,8 @@
+import { login } from '../api/api'
 import { InjectionKey } from 'vue'
 import { createStore, useStore as baseUseStore, Store } from 'vuex'
 import { TAccount } from '../types/account'
+import { LocalStorage } from './localStorage'
 
 export interface State {
   account: TAccount | null
@@ -10,12 +12,16 @@ export interface State {
 
 export const key: InjectionKey<Store<State>> = Symbol()
 
+const accountJson = LocalStorage.get('account')
+
+const initialState: State = {
+  account: accountJson ? JSON.parse(accountJson) : null,
+  isAuthenticated: accountJson !== null,
+  loading: false,
+}
+
 export const store = createStore<State>({
-  state: {
-    account: null,
-    isAuthenticated: false,
-    loading: false,
-  },
+  state: initialState,
   mutations: {
     loginSuccess(state, payload: { account: TAccount }) {
       state.account = payload.account
@@ -27,8 +33,27 @@ export const store = createStore<State>({
       state.isAuthenticated = false
       state.loading = false
     },
+    logout(state) {
+      state.account = null
+      state.isAuthenticated = false
+      state.loading = false
+    },
     setLoading(state, payload: boolean) {
       state.loading = payload
+    },
+  },
+  actions: {
+    async login({ commit }, payload: { email: string; password: string }) {
+      const account = await login(payload.email, payload.password)
+      LocalStorage.set('account', JSON.stringify(account))
+      commit('loginSuccess', { account })
+    },
+    logout({ commit }) {
+      LocalStorage.remove('account')
+      commit('logout')
+    },
+    setLoading({ commit }, value: boolean) {
+      commit('setLoading', value)
     },
   },
   strict: true,

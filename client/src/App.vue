@@ -3,7 +3,6 @@ import { useStore } from './services/store'
 import NavMenu from './components/NavMenu.vue'
 
 const store = useStore()
-console.log(store)
 </script>
 
 <template>

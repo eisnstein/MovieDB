@@ -1,7 +1,13 @@
 <script setup lang="ts">
+import { useStore } from '../services/store';
 import { ref } from 'vue'
 
+const store = useStore()
 const open = ref(false)
+
+function logout() {
+  store.dispatch('logout')
+}
 </script>
 
 <template>
@@ -30,8 +36,7 @@ const open = ref(false)
                           </div>
                           <div :class="{'hidden': !open, 'block': open}" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg">
                               <div class="py-1 rounded-md bg-white shadow-xs">
-                                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
-                                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign Out</a>
+                                <a href="#" @click="logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign Out</a>
                               </div>
                           </div>
                       </div>
@@ -71,6 +76,3 @@ const open = ref(false)
       </div>
   </nav>
 </template>
-
-<style scoped>
-</style>
