@@ -6,8 +6,14 @@ const store = useStore()
 const email = ref('')
 const password = ref('')
 
+const alertClass = ref({
+  'bg-red-600': store.state.alert?.type === 'error',
+  'bg-green-500': store.state.alert?.type === 'success',
+})
+
 function onSubmit() {
   store.dispatch('setLoading', true)
+  store.dispatch('clearAlert')
   store.dispatch('login', { email: email.value, password: password.value})
 }
 </script>
@@ -37,6 +43,9 @@ function onSubmit() {
             </button>
         </div>
       </form>
+      <div v-if="store.state.alert" class="mt-4 shadow-md rounded p-6 text-white text-center" :class="alertClass" >
+        {{ store.state.alert.message }}
+      </div>
     </div>
   </div>
 </template>
