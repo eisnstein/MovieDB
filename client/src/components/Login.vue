@@ -12,8 +12,6 @@ const alertClass = ref({
 })
 
 function onSubmit() {
-  store.dispatch('setLoading', true)
-  store.dispatch('clearAlert')
   store.dispatch('login', { email: email.value, password: password.value})
 }
 </script>

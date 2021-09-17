@@ -6,5 +6,5 @@ const { movie } = defineProps<{
 }>()
 </script>
 <template>
-  <h1>{{ movie.Id }}</h1>
+  <h1>{{ movie.id }}</h1>
 </template>

@@ -5,10 +5,11 @@ import { store } from './store'
 
 const routes = [
   { path: '/', component: Movies },
+  { path: '/concerts', component: Movies },
   { path: '/login', component: Login },
   { path: '/movies', component: Movies },
-  { path: '/concerts', component: Movies },
   { path: '/theaters', component: Movies },
+  { path: '/:pathMatch(.*)*', redirect: '/' },
 ]
 
 const router = createRouter({

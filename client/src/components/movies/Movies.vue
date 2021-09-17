@@ -1,15 +1,21 @@
 <script setup lang="ts">
 import Movie from './Movie.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { TMovie } from '../../types/movie'
+import { fetchMovies } from '../../api/movie'
 
 let totalCount = ref<number | undefined>()
 let yearCount = ref<number | undefined>()
 let monthCount = ref<number | undefined>()
 
 let searchValue = ''
-let movies: Array<TMovie> = []
 let loading = false
+
+const movies = ref<Array<TMovie>>([])
+
+onMounted(async () => {
+  movies.value = await fetchMovies()
+})
 
 </script>
 <template>
@@ -48,10 +54,9 @@ let loading = false
               placeholder="Filter by Title..."
               type="text"
               value="searchValue" />
-          <button>hiho</button>
       </div>
       <ul class="py-6">
-        <li v-for="movie in movies" :key="movie.Id" class="mb-4" >
+        <li v-for="movie in movies" :key="movie.id" class="mb-4" >
           <Movie :movie="movie" />
         </li>
       </ul>
