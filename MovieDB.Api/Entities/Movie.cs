@@ -22,6 +22,7 @@ namespace MovieDB.Api.Entities
         public string ImdbIdentifier { get; set; }
         public MovieGenre Genre { get; set; }
         public Rating Rating { get; set; }
+        public string? PosterUrl { get; set; }
         [JsonIgnore]
         public Account Account { get; set; }
         public DateTime CreatedAt { get; set; }

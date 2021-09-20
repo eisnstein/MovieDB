@@ -15,5 +15,7 @@ namespace MovieDB.Shared.Models.Movies
         public int? Genre { get; set; }
 
         public int? Rating { get; set; }
+
+        public string? PosterUrl { get; set; }
     }
 }

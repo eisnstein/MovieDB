@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Movies from '../components/movies/Movies.vue'
+import MovieForm from '../components/movies/MovieForm.vue'
 import Login from '../components/Login.vue'
 import { store } from './store'
 
@@ -8,6 +9,7 @@ const routes = [
   { path: '/concerts', component: Movies },
   { path: '/login', component: Login },
   { path: '/movies', component: Movies },
+  { path: '/movies/new', component: MovieForm },
   { path: '/theaters', component: Movies },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]

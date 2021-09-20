@@ -5,4 +5,5 @@ export type TMovie = {
   imdbIdentifier: string
   genre: string
   rating: number
+  posterUrl: string | null
 }

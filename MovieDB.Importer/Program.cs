@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using DnsClient;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MovieDB.Api.Entities;
+using Org.BouncyCastle.Security;
 
 namespace MovieDB.Importer
 {
@@ -18,6 +22,7 @@ namespace MovieDB.Importer
         public string ImdbIdentifier { get; set; }
         public MovieGenre Genre { get; set; }
         public Rating Rating { get; set; }
+        public string? PosterUrl { get; set; }
         public int AccountId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
@@ -79,9 +84,11 @@ namespace MovieDB.Importer
         static async Task Main(string[] args)
         {
             AppDbContext db = new AppDbContext();
-            await ImportMovies(db);
-            await ImportConcerts(db);
-            await ImportTheaters(db);
+            // await ImportMovies(db);
+            // await ImportConcerts(db);
+            // await ImportTheaters(db);
+
+            await GetPosterUrls(db);
         }
 
         private static async Task ImportMovies(AppDbContext db)
@@ -407,6 +414,34 @@ namespace MovieDB.Importer
             }
 
             Console.WriteLine("Finished importing movies...");
+        }
+
+        private static async Task GetPosterUrls(AppDbContext db)
+        {
+            var movies = await db.Movies.ToListAsync();
+            var endpoint = $"http://www.omdbapi.com/";
+            var client = new HttpClient();
+
+            foreach (var movie in movies)
+            {
+                var uri = $"http://www.omdbapi.com/?i={movie.ImdbIdentifier}&apiKey=";
+
+                var res = await client.GetFromJsonAsync<Result>(uri);
+
+                if (res is not null)
+                {
+                    Console.WriteLine($"{movie.ImdbIdentifier}: {res.Poster}");
+
+                    movie.PosterUrl = res.Poster;
+                    db.Movies.Update(movie);
+                    await db.SaveChangesAsync();
+                }
+            }
+        }
+
+        public class Result
+        {
+            public string Poster { get; set; }
         }
 
         private static MovieGenre ToMovieGenre(string genre) => genre switch
