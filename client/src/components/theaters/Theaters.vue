@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import Movie from './Movie.vue'
+import Theater from './Theater.vue'
 import { ref, onMounted, computed } from 'vue'
-import { TMovie } from '../../types/movie'
-import { fetchMovies } from '../../api/movie'
+import { TTheater } from '../../types/theater'
+import { fetchTheaters } from '../../api/theater'
 
 const date = new Date()
 const year = date.getFullYear()
@@ -11,29 +11,29 @@ const month = date.getMonth()
 const searchValue = ref('')
 const loading = ref(true)
 
-const movies = ref<Array<TMovie>>([])
-const filteredMovies = computed(() => {
+const theaters = ref<Array<TTheater>>([])
+const filteredTheaters = computed(() => {
     if (searchValue.value.length < 3) {
-        return movies.value
+        return theaters.value
     }
 
-    return movies.value.filter((m) => m.title.toLowerCase().startsWith(searchValue.value))
+    return theaters.value.filter((m) => m.title.toLowerCase().startsWith(searchValue.value))
 })
 
 onMounted(async () => {
-  movies.value = await fetchMovies()
+  theaters.value = await fetchTheaters()
   loading.value = false
 })
 
-const totalCount = computed(() => movies.value.length ?? 0)
+const totalCount = computed(() => theaters.value.length ?? 0)
 const yearCount = computed(() => {
-    return movies.value.filter((m) => {
+    return theaters.value.filter((m) => {
         const seenAt = new Date(Date.parse(m.seenAt))
         return seenAt.getFullYear() === year
     }).length
 })
 const monthCount = computed(() => {
-    return movies.value.filter((m) => {
+    return theaters.value.filter((m) => {
         const seenAt = new Date(Date.parse(m.seenAt))
         return seenAt.getFullYear() === year && seenAt.getMonth() === month
     }).length
@@ -80,10 +80,10 @@ const monthCount = computed(() => {
                 placeholder="Filter by Title..."
                 type="text"
                 v-model="searchValue" />
-            <router-link to="/movies/new" class="ml-2 whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-5 py-2.5 text-center inline-flex items-center">Add new movie</router-link>
+            <router-link to="/theaters/new" class="ml-2 whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-5 py-2.5 text-center inline-flex items-center">Add new theater</router-link>
         </div>
-        <div class="py-6 flex flex-wrap justify-between">
-            <Movie v-for="movie in filteredMovies" :key="movie.id" :movie="movie" />
+        <div class="py-6 grid grid-cols-4 gap-4">
+            <Theater v-for="theater in filteredTheaters" :key="theater.id" :theater="theater" />
         </div>
       </div>
   </div>

@@ -31,7 +31,7 @@ const seenAt = computed(() => {
 
 <style scoped>
 .movie {
-  @apply relative rounded-lg border bg-white hover:shadow-lg transition duration-200 transform hover:-translate-y-1;
+  @apply relative mb-3 rounded-lg border bg-white hover:shadow-lg transition duration-200 transform hover:-translate-y-1;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;

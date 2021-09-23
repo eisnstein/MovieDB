@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { useStore } from '../services/store';
 import { ref } from 'vue'
+import { useStore } from '../services/store';
+import profileImgUrl from '../assets/profile.jpg'
 
 const store = useStore()
 const open = ref(false)
@@ -21,8 +22,8 @@ function logout() {
                   <div class="hidden md:block">
                       <div class="ml-10 flex items-baseline">
                           <router-link to="/movies" active-class="text-white bg-gray-700" href="movies" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none">Movies</router-link>
-                          <router-link to="/concerts" active-class="text-white bg-gray-700" href="theaters" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none">Theaters</router-link>
-                          <router-link to="/theaters" active-class="text-white bg-gray-700" href="concerts" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none">Concerts</router-link>
+                          <router-link to="/concerts" active-class="text-white bg-gray-700" href="theaters" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none">Concerts</router-link>
+                          <router-link to="/theaters" active-class="text-white bg-gray-700" href="concerts" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none">Theaters</router-link>
                       </div>
                   </div>
               </div>
@@ -31,7 +32,7 @@ function logout() {
                       <div @click="open = !open" class="ml-3 relative">
                           <div>
                               <button class="max-w-xs flex items-center text-sm rounded-full text-white focus:outline-none focus:shadow-solid">
-                                  <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                                  <img class="h-8 w-8 rounded-full" :src="profileImgUrl" alt="" />
                               </button>
                           </div>
                           <div :class="{'hidden': !open, 'block': open}" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg">
@@ -61,7 +62,7 @@ function logout() {
           <div class="pt-4 pb-3 border-t border-gray-700">
               <div class="flex items-center px-5">
                   <div class="flex-shrink-0">
-                      <img class="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                      <img class="h-10 w-10 rounded-full" :src="profileImgUrl" alt="" />
                   </div>
                   <div class="ml-3">
                       <div class="text-base font-medium leading-none text-white">Tom Cook</div>

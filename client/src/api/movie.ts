@@ -30,7 +30,7 @@ export async function fetchMoviePoster(
   return movieData.Poster ?? undefined
 }
 
-export async function storeMovie(movie: Omit<TMovie, 'id'>): Promise<any> {
+export async function storeMovie(movie: Omit<TMovie, 'id'>): Promise<boolean> {
   const url = `${import.meta.env.VITE_API_URL}/api/movies`
   const res = await fetch(url, {
     method: 'POST',
@@ -41,5 +41,5 @@ export async function storeMovie(movie: Omit<TMovie, 'id'>): Promise<any> {
     body: JSON.stringify(movie),
   })
 
-  console.log(res)
+  return res.ok
 }

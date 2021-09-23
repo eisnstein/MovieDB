@@ -13,7 +13,7 @@ namespace MovieDB.Shared.Models.Theaters
         public DateTime? SeenAt { get; set; }
 
         [Required]
-        public string? ImdbIdentifier { get; set; }
+        public string? Location { get; set; }
 
         [Required]
         public int? Genre { get; set; }

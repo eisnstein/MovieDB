@@ -41,7 +41,7 @@ const actions: ActionTree<State, State> = {
     try {
       const account = await login(payload.email, payload.password)
       commit('loginSuccess', { account })
-      router.push('/')
+      router.push('/movies')
     } catch (error: any) {
       commit('loginFailure', error)
     }
