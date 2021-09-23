@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useStore } from '../services/store';
 
 const store = useStore()
 const email = ref('')
 const password = ref('')
 
-const alertClass = ref({
+const alertClass = computed(() => ({
   'bg-red-600': store.state.alert?.type === 'error',
   'bg-green-500': store.state.alert?.type === 'success',
-})
+}))
 
 function onSubmit() {
   store.dispatch('login', { email: email.value, password: password.value})
@@ -26,13 +26,13 @@ function onSubmit() {
             <label class="block text-gray-700 text-sm mb-1" for="email">
                 Email
             </label>
-            <input v-model="email" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="your@email.com" />
+            <input type="email" v-model="email" id="email" placeholder="your@email.com" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
         </div>
         <div class="mb-6">
             <label class="block text-gray-700 text-sm mb-1" for="password">
                 Password
             </label>
-            <input v-model="password" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="********" />
+            <input type="password" v-model="password" id="password" placeholder="*****" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
         </div>
         <div class="flex items-center justify-between">
             <button class="w-full bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit" :disabled="store.state.loading">

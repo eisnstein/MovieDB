@@ -5,7 +5,8 @@ export async function login(
   email: string,
   password: string
 ): Promise<TAccount> {
-  const res = await fetch('http://localhost:4000/api/accounts/authenticate', {
+  const url = `${import.meta.env.VITE_API_URL}/api/accounts/authenticate`
+  const res = await fetch(url, {
     method: 'POST',
     headers: {
       'content-type': 'application/json;charset=UTF-8',

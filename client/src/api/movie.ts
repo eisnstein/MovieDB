@@ -2,7 +2,8 @@ import { store } from '../services/store'
 import { TMovie } from '../types/movie'
 
 export async function fetchMovies(): Promise<Array<TMovie>> {
-  const res = await fetch('http://localhost:4000/api/movies', {
+  const url = `${import.meta.env.VITE_API_URL}/api/movies`
+  const res = await fetch(url, {
     method: 'GET',
     headers: {
       Authorization: 'Bearer ' + store.state.account?.jwtToken,
@@ -15,7 +16,9 @@ export async function fetchMovies(): Promise<Array<TMovie>> {
 export async function fetchMoviePoster(
   imdbIdentifier: string
 ): Promise<string | undefined> {
-  const url = `http://www.omdbapi.com/?i=${imdbIdentifier}&apiKey=`
+  const url = `http://www.omdbapi.com/?i=${imdbIdentifier}&apiKey=${
+    import.meta.env.VITE_OMDB_API_KEY
+  }`
   const res = await fetch(url, {
     method: 'GET',
     headers: {
@@ -28,8 +31,8 @@ export async function fetchMoviePoster(
 }
 
 export async function storeMovie(movie: Omit<TMovie, 'id'>): Promise<any> {
-  console.log(movie)
-  const res = await fetch('http://localhost:4000/api/movies', {
+  const url = `${import.meta.env.VITE_API_URL}/api/movies`
+  const res = await fetch(url, {
     method: 'POST',
     headers: {
       Authorization: 'Bearer ' + store.state.account?.jwtToken,
