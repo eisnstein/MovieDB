@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieDB.Api", "MovieDB.Api\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieDB.Tests", "MovieDB.Tests\MovieDB.Tests.csproj", "{0A9F8795-28B5-461E-B449-C1F262F5892D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieDB.Client.Web", "MovieDB.Client.Web\MovieDB.Client.Web.csproj", "{BAB9CB89-B061-4708-AE45-148F289942DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieDB.Client.Blazor", "MovieDB.Client.Blazor\MovieDB.Client.Blazor.csproj", "{BAB9CB89-B061-4708-AE45-148F289942DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieDB.Shared", "MovieDB.Shared\MovieDB.Shared.csproj", "{62712AF0-7996-429A-95CC-2E978CBDF670}"
 EndProject

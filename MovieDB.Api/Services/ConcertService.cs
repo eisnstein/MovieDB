@@ -32,7 +32,7 @@ namespace MovieDB.Api.Services
 
         public IQueryable<Concert> GetAllAsync(Account account)
         {
-            return _db.Concerts.Where(m => m.Account == account && m.DeletedAt == null);
+            return _db.Concerts.Where(c => c.Account == account && c.DeletedAt == null).OrderByDescending(c => c.SeenAt);
         }
 
         public async Task<Concert> GetByIdAsync(int id, Account account)

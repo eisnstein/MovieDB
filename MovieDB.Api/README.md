@@ -1,6 +1,8 @@
-# MovieDB
+# MovieDB API
 
 ---
+
+API for the MovieDB App. Manage movies, concerts and theaters you have seen or visited.
 
 ## Installation
 
