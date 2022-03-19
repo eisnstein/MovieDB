@@ -1,51 +1,46 @@
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using MovieDB.Api.Helpers;
 
-namespace MovieDB.Api.Middleware
+namespace MovieDB.Api.Middleware;
+
+public class ErrorHandlerMiddleware
 {
-    public class ErrorHandlerMiddleware
+    private readonly RequestDelegate _next;
+
+    public ErrorHandlerMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
+        _next = next;
+    }
 
-        public ErrorHandlerMiddleware(RequestDelegate next)
+    public async Task Invoke(HttpContext context)
+    {
+        try
         {
-            _next = next;
+            await _next(context);
         }
-
-        public async Task Invoke(HttpContext context)
+        catch (Exception error)
         {
-            try
+            var response = context.Response;
+            response.ContentType = "application/json";
+
+            switch (error)
             {
-                await _next(context);
+                case AppException e:
+                    response.StatusCode = (int) HttpStatusCode.BadRequest;
+                    break;
+
+                case KeyNotFoundException e:
+                    response.StatusCode = (int) HttpStatusCode.NotFound;
+                    break;
+
+                default:
+                    response.StatusCode = (int) HttpStatusCode.InternalServerError;
+                    break;
             }
-            catch (Exception error)
-            {
-                var response = context.Response;
-                response.ContentType = "application/json";
 
-                switch (error)
-                {
-                    case AppException e:
-                        response.StatusCode = (int) HttpStatusCode.BadRequest;
-                        break;
-
-                    case KeyNotFoundException e:
-                        response.StatusCode = (int) HttpStatusCode.NotFound;
-                        break;
-
-                    default:
-                        response.StatusCode = (int) HttpStatusCode.InternalServerError;
-                        break;
-                }
-
-                var result = JsonSerializer.Serialize(new { message = error?.Message });
-                await response.WriteAsync(result);
-            }
+            var result = JsonSerializer.Serialize(new { message = error?.Message });
+            await response.WriteAsync(result);
         }
     }
 }

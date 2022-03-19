@@ -1,11 +1,10 @@
-namespace MovieDB.Api.Entities
+namespace MovieDB.Api.Entities;
+
+public enum Rating
 {
-    public enum Rating
-    {
-        Bad = 1,
-        NotGood,
-        Ok,
-        Good,
-        VeryGood,
-    }
+    Bad = 1,
+    NotGood,
+    Ok,
+    Good,
+    VeryGood,
 }

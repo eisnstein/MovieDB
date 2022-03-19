@@ -6,20 +6,20 @@ namespace MovieDB.Shared.Models.Movies
     public class CreateRequest
     {
         [Required]
-        public string? Title { get; set; }
+        public string Title { get; set; } = default!;
 
         [Required]
         [DataType(DataType.Date)]
-        public DateTime? SeenAt { get; set; }
+        public DateTime SeenAt { get; set; } = default!;
 
         [Required]
-        public string? ImdbIdentifier { get; set; }
+        public string ImdbIdentifier { get; set; } = default!;
 
         [Required]
-        public int? Genre { get; set; }
+        public int Genre { get; set; } = default!;
 
         [Required]
-        public int? Rating { get; set; }
+        public int Rating { get; set; } = default!;
 
         public string? PosterUrl { get; set; }
     }

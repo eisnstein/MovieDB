@@ -12,78 +12,74 @@ using CreateRequestMovie = MovieDB.Shared.Models.Movies.CreateRequest;
 using CreateRequestConcert = MovieDB.Shared.Models.Concerts.CreateRequest;
 using CreateRequestTheater = MovieDB.Shared.Models.Theaters.CreateRequest;
 
-namespace MovieDB.Api.Helpers
+namespace MovieDB.Api.Helpers;
+
+public class AccountProfile : Profile
 {
-    public class AccountProfile : Profile
+    public AccountProfile()
     {
-        public AccountProfile()
-        {
-            CreateMap<Account, AccountResponse>();
-            CreateMap<Account, AuthenticateResponse>();
-            CreateMap<RegisterRequest, Account>();
-            CreateMap<UpdateRequestAccount, Account>()
-                .ForAllMembers(x => x.Condition(
-                    (src, dest, prop) =>
-                    {
-                        if (prop is null) return false;
-                        if (prop.GetType() == typeof(string) && string.IsNullOrEmpty((string) prop)) return false;
-
-                        if (x.DestinationMember.Name == "Role" && src.Role is null) return false;
-
-                        return true;
-                    }
-                ));
-        }
-    }
-
-    public class MovieProfile : Profile
-    {
-        public MovieProfile()
-        {
-            CreateMap<CreateRequestMovie, Movie>();
-            CreateMap<Movie, MovieResponse>();
-            CreateMap<UpdateRequestMovie, Movie>()
-                .ForAllMembers(x => x.Condition((_, _, value) =>
+        CreateMap<Account, AccountResponse>();
+        CreateMap<Account, AuthenticateResponse>();
+        CreateMap<RegisterRequest, Account>();
+        CreateMap<UpdateRequestAccount, Account>()
+            .ForAllMembers(x => x.Condition(
+                (src, _, prop) =>
                 {
-                    if (value is null) return false;
-                    if (value.GetType() == typeof(string) && string.IsNullOrEmpty((string) value)) return false;
+                    if (prop is null) return false;
+                    if (prop is string p && string.IsNullOrEmpty(p)) return false;
+
+                    if (x.DestinationMember.Name == "Role" && src.Role is null) return false;
 
                     return true;
-                }));
-        }
+                }
+            ));
     }
+}
 
-    public class ConcertProfile : Profile
+public class MovieProfile : Profile
+{
+    public MovieProfile()
     {
-        public ConcertProfile()
-        {
-            CreateMap<CreateRequestConcert, Concert>();
-            CreateMap<Concert, ConcertResponse>();
-            CreateMap<UpdateRequestMovie, Concert>()
-                .ForAllMembers(x => x.Condition((_, _, value) =>
-                {
-                    if (value is null) return false;
-                    if (value.GetType() == typeof(string) && string.IsNullOrEmpty((string) value)) return false;
-
-                    return true;
-                }));
-        }
+        CreateMap<CreateRequestMovie, Movie>();
+        CreateMap<Movie, MovieResponse>();
+        CreateMap<UpdateRequestMovie, Movie>()
+            .ForAllMembers(x => x.Condition((_, _, value) => value switch
+            {
+                null => false,
+                string v when string.IsNullOrEmpty(v) => false,
+                _ => true
+            }));
     }
+}
 
-    public class TheaterProfile : Profile
+public class ConcertProfile : Profile
+{
+    public ConcertProfile()
     {
-        public TheaterProfile()
-        {
-            CreateMap<CreateRequestTheater, Theater>();
-            CreateMap<Theater, TheaterResponse>();
-            CreateMap<UpdateRequestTheater, Theater>()
-                .ForAllMembers(x => x.Condition((_, _, value) =>
-                {
-                    if (value is null) return false;
-                    if (value.GetType() == typeof(string) && string.IsNullOrEmpty((string) value)) return false;
+        CreateMap<CreateRequestConcert, Concert>();
+        CreateMap<Concert, ConcertResponse>();
+        CreateMap<UpdateRequestMovie, Concert>()
+            .ForAllMembers(x => x.Condition((_, _, value) => value switch
+            {
+                null => false,
+                string v when string.IsNullOrEmpty(v) => false,
+                _ => true
+            }));
+    }
+}
 
-                    return true;
-                }));
-        }
+public class TheaterProfile : Profile
+{
+    public TheaterProfile()
+    {
+        CreateMap<CreateRequestTheater, Theater>();
+        CreateMap<Theater, TheaterResponse>();
+        CreateMap<UpdateRequestTheater, Theater>()
+            .ForAllMembers(x => x.Condition((_, _, value) => value switch
+            {
+                null => false,
+                string v when string.IsNullOrEmpty(v) => false,
+                _ => true
+            }));
     }
 }

@@ -1,86 +1,81 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MovieDB.Api.Helpers;
 using MovieDB.Api.Entities;
 using MovieDB.Shared.Models.Concerts;
 
-namespace MovieDB.Api.Services
+namespace MovieDB.Api.Services;
+
+public interface IConcertService
 {
-    public interface IConcertService
+    public IQueryable<Concert> GetAllAsync(Account account);
+    public Task<Concert> GetByIdAsync(int id, Account account);
+    public Task<Concert> CreateAsync(CreateRequest model, Account account);
+    public Task<Concert> UpdateAsync(int id, UpdateRequest model, Account account);
+    public Task DeleteByIdAsync(int id, Account account);
+}
+
+public class ConcertService : IConcertService
+{
+    private readonly AppDbContext _db;
+    private readonly IMapper _mapper;
+
+    public ConcertService(AppDbContext db, IMapper mapper)
     {
-        public IQueryable<Concert> GetAllAsync(Account account);
-        public Task<Concert> GetByIdAsync(int id, Account account);
-        public Task<Concert> CreateAsync(CreateRequest model, Account account);
-        public Task<Concert> UpdateAsync(int id, UpdateRequest model, Account account);
-        public Task DeleteByIdAsync(int id, Account account);
+        _db = db;
+        _mapper = mapper;
     }
 
-    public class ConcertService : IConcertService
+    public IQueryable<Concert> GetAllAsync(Account account)
     {
-        private readonly AppDbContext _db;
-        private readonly IMapper _mapper;
+        return _db.Concerts.Where(c => c.Account == account && c.DeletedAt == null).OrderByDescending(c => c.SeenAt);
+    }
 
-        public ConcertService(AppDbContext db, IMapper mapper)
+    public async Task<Concert> GetByIdAsync(int id, Account account)
+    {
+        var concert = await _db.Concerts.FirstOrDefaultAsync(m =>
+            m.Id == id &&
+            m.Account == account &&
+            m.DeletedAt == null);
+
+        if (concert is null)
         {
-            _db = db;
-            _mapper = mapper;
+            throw new KeyNotFoundException($"Cannot find concert with id '{id}' for this account (maybe deleted)");
         }
 
-        public IQueryable<Concert> GetAllAsync(Account account)
-        {
-            return _db.Concerts.Where(c => c.Account == account && c.DeletedAt == null).OrderByDescending(c => c.SeenAt);
-        }
+        return concert;
+    }
 
-        public async Task<Concert> GetByIdAsync(int id, Account account)
-        {
-            var concert = await _db.Concerts.FirstOrDefaultAsync(m =>
-                m.Id == id &&
-                m.Account == account &&
-                m.DeletedAt == null);
+    public async Task<Concert> CreateAsync(CreateRequest model, Account account)
+    {
+        var concert = _mapper.Map<Concert>(model);
+        concert.CreatedAt = DateTime.UtcNow;
+        concert.Account = account;
 
-            if (concert is null)
-            {
-                throw new KeyNotFoundException($"Cannot find concert with id '{id}' for this account (maybe deleted)");
-            }
+        _db.Concerts.Add(concert);
+        await _db.SaveChangesAsync();
 
-            return concert;
-        }
+        return concert;
+    }
 
-        public async Task<Concert> CreateAsync(CreateRequest model, Account account)
-        {
-            var concert = _mapper.Map<Concert>(model);
-            concert.CreatedAt = DateTime.UtcNow;
-            concert.Account = account;
+    public async Task<Concert> UpdateAsync(int id, UpdateRequest model, Account account)
+    {
+        var concert = await GetByIdAsync(id, account);
 
-            _db.Concerts.Add(concert);
-            await _db.SaveChangesAsync();
+        _mapper.Map(model, concert);
+        concert.UpdatedAt = DateTime.UtcNow;
 
-            return concert;
-        }
+        await _db.SaveChangesAsync();
 
-        public async Task<Concert> UpdateAsync(int id, UpdateRequest model, Account account)
-        {
-            var concert = await GetByIdAsync(id, account);
+        return concert;
+    }
 
-            _mapper.Map(model, concert);
-            concert.UpdatedAt = DateTime.UtcNow;
+    public async Task DeleteByIdAsync(int id, Account account)
+    {
+        var concert = await GetByIdAsync(id, account);
 
-            await _db.SaveChangesAsync();
+        concert.DeletedAt = DateTime.UtcNow;
 
-            return concert;
-        }
-
-        public async Task DeleteByIdAsync(int id, Account account)
-        {
-            var concert = await GetByIdAsync(id, account);
-
-            concert.DeletedAt = DateTime.UtcNow;
-
-            await _db.SaveChangesAsync();
-        }
+        await _db.SaveChangesAsync();
     }
 }

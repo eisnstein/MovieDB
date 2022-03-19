@@ -5,6 +5,6 @@ namespace MovieDB.Shared.Models.Accounts
     public class VerifyEmailRequest
     {
         [Required]
-        public string Token { get; set; }
+        public string Token { get; set; } = default!;
     }
 }

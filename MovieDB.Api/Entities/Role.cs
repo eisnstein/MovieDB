@@ -1,8 +1,7 @@
-namespace MovieDB.Api.Entities
+namespace MovieDB.Api.Entities;
+
+public enum Role
 {
-    public enum Role
-    {
-        Admin,
-        User
-    }
+    Admin,
+    User
 }

@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieDB.Api.Entities;
 
-namespace MovieDB.Api.Controllers
+namespace MovieDB.Api.Controllers;
+
+[Controller]
+public class BaseController : ControllerBase
 {
-    [Controller]
-    public class BaseController : ControllerBase
-    {
-        public Account? Account => HttpContext.Items[nameof(Account)] as Account;
-    }
+    public Account? Account => HttpContext.Items[nameof(Account)] as Account;
 }

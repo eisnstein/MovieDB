@@ -6,9 +6,9 @@ namespace MovieDB.Shared.Models.Accounts
     {
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; } = default!;
 
         [Required]
-        public string Password { get; set; }
+        public string Password { get; set; } = default!;
     }
 }
