@@ -8,7 +8,6 @@ using ConcertUpdateRequest = MovieDB.Shared.Models.Concerts.UpdateRequest;
 
 namespace MovieDB.Api.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ConcertsController : BaseController

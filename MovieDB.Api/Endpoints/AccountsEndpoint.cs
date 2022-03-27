@@ -1,10 +1,11 @@
 using MovieDB.Api.Entities;
+using MovieDB.Api.Helpers;
 using MovieDB.Shared.Models.Accounts;
 using MovieDB.Api.Services;
 
-namespace MovieDB.Api.Controllers;
+namespace MovieDB.Api.Endpoints;
 
-public static class AccountsController
+public static class AccountsEndpoint
 {
     public static async Task<IResult> Authenticate(
         HttpContext context,

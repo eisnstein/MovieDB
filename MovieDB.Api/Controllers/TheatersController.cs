@@ -6,7 +6,6 @@ using MovieDB.Shared.Models.Theaters;
 
 namespace MovieDB.Api.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class TheatersController : BaseController

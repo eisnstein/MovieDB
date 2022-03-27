@@ -6,7 +6,6 @@ using MovieDB.Api.Services;
 
 namespace MovieDB.Api.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class MoviesController : BaseController

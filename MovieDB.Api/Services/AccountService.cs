@@ -238,17 +238,7 @@ public class AccountService : IAccountService
 
     private string GenerateJwtToken(Account account)
     {
-        var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new[] { new Claim("id", account.Id.ToString()) }),
-            Expires = DateTime.UtcNow.AddDays(_appSettings.RefreshTokenTtl),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        };
-
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
+        return JWT.BuildToken(account, _appSettings.Secret);
     }
 
     private RefreshToken GenerateRefreshToken(string ipAddress)

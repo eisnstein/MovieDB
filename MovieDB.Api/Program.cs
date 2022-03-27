@@ -1,12 +1,29 @@
+using System.Text;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MovieDB.Api.Helpers;
 using MovieDB.Api.Middleware;
+using MovieDB.Api.Routes;
 using MovieDB.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>();
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ClockSkew = TimeSpan.Zero,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ETb9GALyuyhqcDCZBxz48vmEUKQEuqGd")),
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ValidateIssuerSigningKey = true
+        };
+    });
 builder.Services.AddCors();
 builder.Services.AddControllers().AddJsonOptions(options
     => options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
@@ -48,9 +65,13 @@ app.UseCors(x => x
     .AllowAnyHeader()
     .AllowAnyMethod());
 
-app.UseMiddleware<ErrorHandlerMiddleware>();
-app.UseMiddleware<JwtMiddleware>();
+app.UseAuthentication();
+app.UseAuthorization();
 
-app.UseEndpoints(endpoints => endpoints.MapControllers());
+app.UseMiddleware<ErrorHandlerMiddleware>();
+app.UseMiddleware<UserMiddleware>();
+
+//app.UseEndpoints(endpoints => endpoints.MapControllers());
+Routes.Configure(app);
 
 app.Run();
