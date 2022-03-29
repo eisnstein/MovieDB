@@ -95,9 +95,8 @@ public static class AccountsEndpoint
 
     public static async Task<IResult> GetById(HttpContext context, IAccountService accountService, int id)
     {
-        // We can be sure that the Account is set here because we already checked that in the Authorization
-        var account = (Account) context.Items[nameof(Account)]!;
-        if (id != account.Id && Role.Admin != account.Role)
+        var account = context.Items[nameof(Account)] as Account;
+        if (account.Id != id && account.Role != Role.Admin)
         {
             return Results.Unauthorized();
         }

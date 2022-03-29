@@ -1,12 +1,8 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using AutoMapper;
 using BC = BCrypt.Net.BCrypt;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using MovieDB.Api.Entities;
 using MovieDB.Api.Helpers;
 using MovieDB.Shared.Models.Accounts;
@@ -238,7 +234,7 @@ public class AccountService : IAccountService
 
     private string GenerateJwtToken(Account account)
     {
-        return JWT.BuildToken(account, _appSettings.Secret);
+        return Jwt.BuildToken(account, _appSettings.Secret);
     }
 
     private RefreshToken GenerateRefreshToken(string ipAddress)

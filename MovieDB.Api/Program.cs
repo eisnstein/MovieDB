@@ -10,7 +10,10 @@ using MovieDB.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var appSettings = builder.Configuration.GetSection(nameof(AppSettings));
+
 builder.Services.AddDbContext<AppDbContext>();
+builder.Services.Configure<AppSettings>(appSettings);
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -18,7 +21,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new TokenValidationParameters()
         {
             ClockSkew = TimeSpan.Zero,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ETb9GALyuyhqcDCZBxz48vmEUKQEuqGd")),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings["Secret"])),
             ValidateAudience = false,
             ValidateIssuer = false,
             ValidateIssuerSigningKey = true
@@ -31,7 +34,6 @@ builder.Services.AddControllers().AddJsonOptions(options
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSwaggerGen();
 
-builder.Services.Configure<AppSettings>(builder.Configuration.GetSection(nameof(AppSettings)));
 
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IMovieService, MovieService>();
@@ -60,7 +62,7 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 
 app.UseCors(x => x
-    .SetIsOriginAllowed(origin => true)
+    .SetIsOriginAllowed(_ => true)
     .AllowAnyOrigin()
     .AllowAnyHeader()
     .AllowAnyMethod());
@@ -69,9 +71,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseMiddleware<ErrorHandlerMiddleware>();
-app.UseMiddleware<UserMiddleware>();
+app.UseMiddleware<AttachUserMiddleware>();
 
-//app.UseEndpoints(endpoints => endpoints.MapControllers());
 Routes.Configure(app);
 
 app.Run();
