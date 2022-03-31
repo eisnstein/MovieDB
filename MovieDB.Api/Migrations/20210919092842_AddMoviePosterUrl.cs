@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace MovieDB.Api.Migrations
+namespace MovieDB.Api.App.Migrations
 {
     public partial class AddMoviePosterUrl : Migration
     {

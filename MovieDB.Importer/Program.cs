@@ -5,12 +5,10 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
-using DnsClient;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
-using MovieDB.Api.Entities;
-using Org.BouncyCastle.Security;
+using MovieDB.Api.App.Entities;
 
 namespace MovieDB.Importer
 {

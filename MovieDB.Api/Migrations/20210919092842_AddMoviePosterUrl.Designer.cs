@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MovieDB.Api.Helpers;
+using MovieDB.Api.App.Helpers;
 
 #nullable disable
 
-namespace MovieDB.Api.Migrations
+namespace MovieDB.Api.App.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20210919092842_AddMoviePosterUrl")]

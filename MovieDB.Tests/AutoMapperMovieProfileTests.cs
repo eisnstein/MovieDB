@@ -1,7 +1,7 @@
 using System;
 using AutoMapper;
-using MovieDB.Api.Entities;
-using MovieDB.Api.Helpers;
+using MovieDB.Api.App.Entities;
+using MovieDB.Api.App.Helpers;
 using MovieDB.Shared.Models.Movies;
 using MovieDB.Tests.Factories;
 using Xunit;

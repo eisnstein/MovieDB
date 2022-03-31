@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace MovieDB.Api.Migrations
+namespace MovieDB.Api.App.Migrations
 {
     public partial class InitialCreate : Migration
     {

@@ -1,5 +1,5 @@
 using AutoMapper;
-using MovieDB.Api.Helpers;
+using MovieDB.Api.App.Helpers;
 using MovieDB.Shared.Models.Accounts;
 using MovieDB.Tests.Factories;
 using Xunit;
