@@ -2,7 +2,7 @@
 
 ---
 
-API for the MovieDB App. Manage movies, concerts and theaters you have seen or visited.
+API for the MovieDB App. Manage movies, concerts and theaters you have seen or visited. API is based on Blog Posts from [Jason Watmore](https://jasonwatmore.com).
 
 ## Installation
 

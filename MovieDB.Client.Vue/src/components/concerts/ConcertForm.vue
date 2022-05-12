@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useStore } from '../../services/store'
-import { storeTheater } from '../../api/theater'
-import { theaterGenres } from '../../types/theater'
+import { storeConcert } from '../../api/concert'
 import router from '../../services/router'
 
 const store = useStore()
@@ -13,11 +12,21 @@ const genre = ref(0)
 const rating = ref(1)
 const isSubmitting = ref(false)
 
+const concertGenres = [
+  { text: 'Rock', value: 0 },
+  { text: 'Classic', value: 1 },
+  { text: 'Reggae', value: 2 },
+  { text: 'Pop', value: 3 },
+  { text: 'Latin', value: 4 },
+  { text: 'Electro', value: 5 },
+  { text: 'DrumnBass', value: 6 },
+]
+
 
 async function onSubmit() {
   isSubmitting.value = true
 
-  await storeTheater({
+  await storeConcert({
     title: title.value,
     seenAt: date.value,
     location: location.value,
@@ -27,7 +36,8 @@ async function onSubmit() {
 
   isSubmitting.value = false
 
-  router.push('/theaters')
+  // Redirect to concerts overview site
+  router.push('/concerts')
 }
 
 function setRating(value: number) {
@@ -48,7 +58,7 @@ function setRating(value: number) {
       </div>
       <div class="mt-4">
         <select v-model="genre" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-          <option v-for="option in theaterGenres" :value="option.value">{{ option.text }}</option>
+          <option v-for="option in concertGenres" :value="option.value">{{ option.text }}</option>
         </select>
       </div>
       <div class="mt-4 flex items-center justify-between">

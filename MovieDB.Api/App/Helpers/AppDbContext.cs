@@ -19,6 +19,7 @@ public sealed class AppDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        options.UseSqlite(_configuration.GetConnectionString("moviedb"));
+        var connectionString = _configuration.GetConnectionString("moviedb") ?? throw new ArgumentNullException();
+        options.UseSqlite(connectionString);
     }
 }

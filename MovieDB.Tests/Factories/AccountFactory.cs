@@ -1,5 +1,5 @@
 using System;
-using MovieDB.Api.Entities;
+using MovieDB.Api.App.Entities;
 
 namespace MovieDB.Tests.Factories
 {

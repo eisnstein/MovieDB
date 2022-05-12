@@ -80,7 +80,7 @@ const monthCount = computed(() => {
                 placeholder="Filter by Title..."
                 type="text"
                 v-model="searchValue" />
-            <router-link to="/theaters/new" class="ml-2 whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-5 py-2.5 text-center inline-flex items-center">Add Concert</router-link>
+            <router-link to="/concerts/new" class="ml-2 whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-5 py-2.5 text-center inline-flex items-center">Add Concert</router-link>
         </div>
         <div class="py-6 grid grid-cols-4 gap-4">
             <Concert v-for="concert in filteredConcerts" :key="concert.id" :concert="concert" />

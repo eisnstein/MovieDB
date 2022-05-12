@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using MovieDB.Api.App.Entities;
 using MovieDB.Shared.Models.Accounts;
 using MovieDB.Api.App.Services;
@@ -6,7 +7,7 @@ namespace MovieDB.Api.App.Endpoints;
 
 public static class AccountsEndpoint
 {
-    public static async Task<IResult> Authenticate(
+    public static async Task<Ok<AuthenticateResponse>> Authenticate(
         HttpContext context,
         IAccountService accountService,
         AuthenticateRequest model)
@@ -15,27 +16,27 @@ public static class AccountsEndpoint
         var responseData = await accountService.AuthenticateAsync(model, ipAddress);
         SetRefreshTokenCookie(context.Response, responseData.RefreshToken);
 
-        return Results.Ok(responseData);
+        return TypedResults.Ok(responseData);
     }
 
-    public static async Task<IResult> RefreshToken(
+    public static async Task<Results<Ok<AuthenticateResponse>, BadRequest<object>>> RefreshToken(
         HttpContext context,
         IAccountService accountService)
     {
         var refreshToken = context.Request.Cookies["refreshToken"];
         if (string.IsNullOrEmpty(refreshToken))
         {
-            return Results.BadRequest(new { message = "Invalid refresh token" });
+            return TypedResults.BadRequest<object>(new { message = "Invalid refresh token" });
         }
 
         var ipAddress = GetIpAddress(context);
         var responseData = await accountService.RefreshTokenAsync(refreshToken, ipAddress);
         SetRefreshTokenCookie(context.Response, responseData.RefreshToken);
 
-        return Results.Ok(responseData);
+        return TypedResults.Ok(responseData);
     }
 
-    public static async Task<IResult> RevokeToken(
+    public static async Task<Results<Ok<object>, UnauthorizedHttpResult, BadRequest<object>>> RevokeToken(
         HttpContext context,
         IAccountService accountService,
         RevokeTokenRequest model)
@@ -43,63 +44,63 @@ public static class AccountsEndpoint
         var token = model.Token ?? context.Request.Cookies["refreshToken"];
         if (string.IsNullOrEmpty(token))
         {
-            return Results.BadRequest(new { message = "Token is required " });
+            return TypedResults.BadRequest<object>(new { message = "RefreshToken is required" });
         }
 
         if (context.Items["Account"] is Account account && !account.OwnsToken(token) && account.Role != Role.Admin)
         {
-            return Results.Unauthorized();
+            return TypedResults.Unauthorized();
         }
 
         var ipAddress = GetIpAddress(context);
         await accountService.RevokeTokenAsync(token, ipAddress);
 
-        return Results.Ok(new { message = "Token revoked" });
+        return TypedResults.Ok<object>(new { message = "Token successfully revoked" });
     }
 
-    public static async Task<IResult> Register(
+    public static async Task<Ok<object>> Register(
         HttpRequest request,
         IAccountService accountService,
         RegisterRequest model)
     {
         await accountService.RegisterAsync(model, request.Headers["origin"]);
-        return Results.Ok(new { message = "Registration successful, please check your email for verification instructions" });
+        return TypedResults.Ok<object>(new { message = "Registration successful, we sent you an email with verification instructions" });
     }
 
-    public static async Task<IResult> VerifyEmail(
+    public static async Task<Ok<object>> VerifyEmail(
         IAccountService accountService,
         VerifyEmailRequest model)
     {
         await accountService.VerifyEmailAsync(model.Token);
-        return Results.Ok(new { message = "Verification successful, you can now login" });
+        return TypedResults.Ok<object>(new { message = "Verification successful, you can now login" });
     }
 
-    public static async Task<IResult> ForgotPassword(
+    public static async Task<Ok<object>> ForgotPassword(
         HttpRequest request,
         IAccountService accountService,
         ForgotPasswordRequest model)
     {
         await accountService.ForgotPasswordAsync(model.Email, request.Headers["origin"]);
-        return Results.Ok(new { message = "Please check your email for password reset instructions" });
+        return TypedResults.Ok<object>(new { message = "Please check your email for password reset instructions" });
     }
 
-    public static async Task<IResult> ValidateResetToken(
+    public static async Task<Ok<object>> ValidateResetToken(
         IAccountService accountService,
         ValidateResetTokenRequest model)
     {
         await accountService.ValidateResetTokenAsync(model.Token);
-        return Results.Ok(new { message = "Token is valid"});
+        return TypedResults.Ok<object>(new { message = "Token is valid"});
     }
 
-    public static async Task<IResult> ResetPassword(
+    public static async Task<Ok<object>> ResetPassword(
         IAccountService accountService,
         ResetPasswordRequest model)
     {
         await accountService.ResetPasswordAsync(model);
-        return Results.Ok(new { message = "Password reset successful, you can now login in" });
+        return TypedResults.Ok<object>(new { message = "Password reset successful, you can now login in" });
     }
 
-    public static async Task<IResult> GetById(
+    public static async Task<Results<UnauthorizedHttpResult, Ok<AccountResponse>>> GetById(
         HttpContext context,
         IAccountService accountService,
         int id)
@@ -107,25 +108,24 @@ public static class AccountsEndpoint
         var account = context.Items[nameof(Account)] as Account;
         if (account.Id != id && account.Role != Role.Admin)
         {
-            return Results.Unauthorized();
+            return TypedResults.Unauthorized();
         }
 
         var responseData = await accountService.GetByIdAsync(id);
 
-        return Results.Ok(responseData);
+        return TypedResults.Ok(responseData);
     }
 
-    public static async Task<IResult> Update(
+    public static async Task<Results<UnauthorizedHttpResult, Ok<AccountResponse>>> Update(
         HttpContext context,
         IAccountService accountService,
         int id,
         UpdateRequest model)
     {
-        // We can be sure that the Account is set here because we already checked that in the Authorization
         var account = (Account) context.Items[nameof(Account)]!;
         if (id != account.Id && Role.Admin != account.Role)
         {
-            return Results.Unauthorized();
+            return TypedResults.Unauthorized();
         }
 
         if (account.Role != Role.Admin)
@@ -135,7 +135,7 @@ public static class AccountsEndpoint
 
         var responseData = await accountService.UpdateAsync(id, model);
 
-        return Results.Ok(responseData);
+        return TypedResults.Ok(responseData);
     }
 
     // Helpers

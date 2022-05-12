@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using MovieDB.Api.App.Entities;
 using MovieDB.Api.App.Services;
 using MovieDB.Shared.Models.Theaters;
@@ -9,7 +10,7 @@ namespace MovieDB.Api.App.Endpoints;
 
 public static class TheatersEndpoints
 {
-    public static IResult GetAll(
+    public static Ok<List<TheaterResponse>> GetAll(
         HttpContext context,
         IMapper mapper,
         ITheaterService theaterService)
@@ -18,10 +19,10 @@ public static class TheatersEndpoints
         var theaters = theaterService.GetAllAsync(account);
         var mapped = mapper.Map<List<TheaterResponse>>(theaters);
 
-        return Results.Ok(mapped);
+        return TypedResults.Ok(mapped);
     }
 
-    public static async Task<IResult> GetById(
+    public static async Task<Ok<TheaterResponse>> GetById(
         HttpContext context,
         IMapper mapper,
         ITheaterService theaterService,
@@ -29,11 +30,12 @@ public static class TheatersEndpoints
     {
         var account = (Account) context.Items[nameof(Account)]!;
         var theater = await theaterService.GetByIdAsync(id, account);
+        var response = mapper.Map<TheaterResponse>(theater);
 
-        return Results.Ok(mapper.Map<TheaterResponse>(theater));
+        return TypedResults.Ok(response);
     }
 
-    public static async Task<IResult> Create(
+    public static async Task<CreatedAtRoute<TheaterResponse>> Create(
         HttpContext context,
         IMapper mapper,
         ITheaterService theaterService,
@@ -43,10 +45,10 @@ public static class TheatersEndpoints
         var theater = await theaterService.CreateAsync(model, account);
         var response = mapper.Map<TheaterResponse>(theater);
 
-        return Results.CreatedAtRoute(nameof(GetById), new { id = theater.Id }, response);
+        return TypedResults.CreatedAtRoute(response, nameof(GetById));
     }
 
-    public static async Task<IResult> Update(
+    public static async Task<CreatedAtRoute<TheaterResponse>> Update(
         HttpContext context,
         IMapper mapper,
         ITheaterService theaterService,
@@ -57,10 +59,10 @@ public static class TheatersEndpoints
         var theater = await theaterService.UpdateAsync(id, model, account);
         var response = mapper.Map<TheaterResponse>(theater);
 
-        return Results.CreatedAtRoute(nameof(GetById), new { id = theater.Id }, response);
+        return TypedResults.CreatedAtRoute(response, nameof(GetById));
     }
 
-    public static async Task<IResult> Delete(
+    public static async Task<NoContent> Delete(
         HttpContext context,
         ITheaterService theaterService,
         int id)
@@ -68,6 +70,6 @@ public static class TheatersEndpoints
         var account = (Account) context.Items[nameof(Account)]!;
         await theaterService.DeleteByIdAsync(id, account);
 
-        return Results.NoContent();
+        return TypedResults.NoContent();
     }
 }

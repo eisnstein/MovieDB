@@ -366,7 +366,3 @@ FodyWeavers.xsd
 
 # App settings wich should be loaded by dotnet user-secrets set
 appsettings.secret.json
-
-# Import Data
-Data/*.bson
-Data/*.json

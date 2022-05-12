@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using MovieDB.Api.App.Entities;
 using MovieDB.Api.App.Services;
 using MovieDB.Shared.Models.Concerts;
@@ -9,7 +10,7 @@ namespace MovieDB.Api.App.Endpoints;
 
 public static class ConcertsEndpoints
 {
-    public static IResult GetAll(
+    public static Ok<List<ConcertResponse>> GetAll(
         HttpContext context,
         IMapper mapper,
         IConcertService concertService)
@@ -18,10 +19,10 @@ public static class ConcertsEndpoints
         var concerts = concertService.GetAllAsync(account);
         var mapped = mapper.Map<List<ConcertResponse>>(concerts);
 
-        return Results.Ok(mapped);
+        return TypedResults.Ok(mapped);
     }
 
-    public static async Task<IResult> GetById(
+    public static async Task<Ok<ConcertResponse>> GetById(
         HttpContext context,
         IMapper mapper,
         IConcertService concertService,
@@ -29,11 +30,12 @@ public static class ConcertsEndpoints
     {
         var account = (Account) context.Items[nameof(Account)]!;
         var concert = await concertService.GetByIdAsync(id, account);
+        var response = mapper.Map<ConcertResponse>(concert);
 
-        return Results.Ok(mapper.Map<ConcertResponse>(concert));
+        return TypedResults.Ok(response);
     }
 
-    public static async Task<IResult> Create(
+    public static async Task<CreatedAtRoute<ConcertResponse>> Create(
         HttpContext context,
         IMapper mapper,
         IConcertService concertService,
@@ -43,10 +45,10 @@ public static class ConcertsEndpoints
         var concert = await concertService.CreateAsync(model, account);
         var response = mapper.Map<ConcertResponse>(concert);
 
-        return Results.CreatedAtRoute(nameof(GetById), new { id = concert.Id }, response);
+        return TypedResults.CreatedAtRoute(response, nameof(GetById));
     }
 
-    public static async Task<IResult> Update(
+    public static async Task<CreatedAtRoute<ConcertResponse>> Update(
         HttpContext context,
         IMapper mapper,
         IConcertService concertService,
@@ -57,10 +59,10 @@ public static class ConcertsEndpoints
         var concert = await concertService.UpdateAsync(id, model, account);
         var response = mapper.Map<ConcertResponse>(concert);
 
-        return Results.CreatedAtRoute(nameof(GetById), new { id = concert.Id }, response);
+        return TypedResults.CreatedAtRoute(response, nameof(GetById));
     }
 
-    public static async Task<IResult> Delete(
+    public static async Task<NoContent> Delete(
         HttpContext context,
         IConcertService concertService,
         int id)
@@ -68,6 +70,6 @@ public static class ConcertsEndpoints
         var account = (Account) context.Items[nameof(Account)]!;
         await concertService.DeleteByIdAsync(id, account);
 
-        return Results.NoContent();
+        return TypedResults.NoContent();
     }
 }
