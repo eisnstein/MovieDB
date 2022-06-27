@@ -1,14 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace MovieDB.Shared.Models.Accounts
-{
-    public class AuthenticateRequest
-    {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } = default!;
+namespace MovieDB.Shared.Models.Accounts;
 
-        [Required]
-        public string Password { get; set; } = default!;
-    }
+public class AuthenticateRequest
+{
+    [Required, DataType(DataType.EmailAddress)]
+    public string Email { get; set; } = default!;
+
+    [Required]
+    public string Password { get; set; } = default!;
 }

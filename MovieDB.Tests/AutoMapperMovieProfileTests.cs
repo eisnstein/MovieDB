@@ -22,6 +22,8 @@ public class AutoMapperMovieProfileTests
                 cfg.AddProfile(new MovieProfile());
             });
 
+            mappingConfig.AssertConfigurationIsValid();
+
             _mapper = mappingConfig.CreateMapper();
         }
     }

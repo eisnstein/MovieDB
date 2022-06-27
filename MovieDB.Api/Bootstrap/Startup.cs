@@ -33,7 +33,6 @@ public static class Startup
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         //builder.Services.AddSwaggerGen();
 
-
         builder.Services.AddScoped<IAccountService, AccountService>();
         builder.Services.AddScoped<IMovieService, MovieService>();
         builder.Services.AddScoped<ITheaterService, TheaterService>();

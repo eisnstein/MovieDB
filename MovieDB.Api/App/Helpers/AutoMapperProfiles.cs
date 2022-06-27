@@ -1,4 +1,5 @@
 using AutoMapper;
+using AutoMapper.Internal;
 using MovieDB.Api.App.Entities;
 using MovieDB.Shared.Models.Accounts;
 using MovieDB.Shared.Models.Concerts;
@@ -18,6 +19,7 @@ public class AccountProfile : Profile
 {
     public AccountProfile()
     {
+        this.Internal().MethodMappingEnabled = false;
         CreateMap<Account, AccountResponse>();
         CreateMap<Account, AuthenticateResponse>();
         CreateMap<RegisterRequest, Account>();

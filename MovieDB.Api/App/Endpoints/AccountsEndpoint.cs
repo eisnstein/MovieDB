@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using MiniValidation;
 using MovieDB.Api.App.Entities;
 using MovieDB.Shared.Models.Accounts;
 using MovieDB.Api.App.Services;
@@ -7,11 +8,16 @@ namespace MovieDB.Api.App.Endpoints;
 
 public static class AccountsEndpoint
 {
-    public static async Task<Ok<AuthenticateResponse>> Authenticate(
+    public static async Task<Results<ValidationProblem, Ok<AuthenticateResponse>>> Authenticate(
         HttpContext context,
         IAccountService accountService,
         AuthenticateRequest model)
     {
+        if (!MiniValidator.TryValidate(model, out var errors))
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+
         var ipAddress = GetIpAddress(context);
         var responseData = await accountService.AuthenticateAsync(model, ipAddress);
         SetRefreshTokenCookie(context.Response, responseData.RefreshToken);

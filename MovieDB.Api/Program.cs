@@ -11,10 +11,21 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.Migrate();
+
+    if (app.Environment.IsEnvironment("Test"))
+    {
+        context.Database.EnsureDeleted();
+        context.Database.EnsureCreated();
+    }
+    else
+    {
+        context.Database.Migrate();
+    }
 }
 
 Startup.ConfigureMiddlewares(app);
 Startup.ConfigureRoutes(app);
 
 app.Run();
+
+public partial class Program {}
