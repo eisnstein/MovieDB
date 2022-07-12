@@ -1,8 +1,8 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MovieDB.Api.App.Helpers;
-using MovieDB.Api.App.Entities;
-using MovieDB.Shared.Models.Theaters;
+using MovieDB.Api.App.Http.Requests;
+using MovieDB.Api.App.Models;
 
 namespace MovieDB.Api.App.Services;
 
@@ -10,8 +10,8 @@ public interface ITheaterService
 {
     public IQueryable<Theater> GetAllAsync(Account account);
     public Task<Theater> GetByIdAsync(int id, Account account);
-    public Task<Theater> CreateAsync(CreateRequest model, Account account);
-    public Task<Theater> UpdateAsync(int id, UpdateRequest model, Account account);
+    public Task<Theater> CreateAsync(TheaterCreateRequest model, Account account);
+    public Task<Theater> UpdateAsync(int id, TheaterUpdateRequest model, Account account);
     public Task DeleteByIdAsync(int id, Account account);
 }
 
@@ -28,7 +28,9 @@ public class TheaterService : ITheaterService
 
     public IQueryable<Theater> GetAllAsync(Account account)
     {
-        return _db.Theaters.Where(t => t.Account == account && t.DeletedAt == null).OrderByDescending(t => t.SeenAt);
+        return _db.Theaters
+            .Where(t => t.Account == account && t.DeletedAt == null)
+            .OrderByDescending(t => t.SeenAt);
     }
 
     public async Task<Theater> GetByIdAsync(int id, Account account)
@@ -46,7 +48,7 @@ public class TheaterService : ITheaterService
         return theater;
     }
 
-    public async Task<Theater> CreateAsync(CreateRequest model, Account account)
+    public async Task<Theater> CreateAsync(TheaterCreateRequest model, Account account)
     {
         var theater = _mapper.Map<Theater>(model);
         theater.CreatedAt = DateTime.UtcNow;
@@ -58,7 +60,7 @@ public class TheaterService : ITheaterService
         return theater;
     }
 
-    public async Task<Theater> UpdateAsync(int id, UpdateRequest model, Account account)
+    public async Task<Theater> UpdateAsync(int id, TheaterUpdateRequest model, Account account)
     {
         var theater = await GetByIdAsync(id, account);
 

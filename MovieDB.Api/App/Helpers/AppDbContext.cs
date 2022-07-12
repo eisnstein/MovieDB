@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using MovieDB.Api.App.Entities;
+using MovieDB.Api.App.Models;
 
 namespace MovieDB.Api.App.Helpers;
 

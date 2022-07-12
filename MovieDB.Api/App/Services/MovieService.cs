@@ -1,8 +1,8 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MovieDB.Api.App.Helpers;
-using MovieDB.Api.App.Entities;
-using MovieDB.Shared.Models.Movies;
+using MovieDB.Api.App.Http.Requests;
+using MovieDB.Api.App.Models;
 
 namespace MovieDB.Api.App.Services;
 
@@ -10,8 +10,8 @@ public interface IMovieService
 {
     public IQueryable<Movie> GetAllAsync(Account account);
     public Task<Movie> GetByIdAsync(int id, Account account);
-    public Task<Movie> CreateAsync(CreateRequest model, Account account);
-    public Task<Movie> UpdateAsync(int id, UpdateRequest model, Account account);
+    public Task<Movie> CreateAsync(MovieCreateRequest model, Account account);
+    public Task<Movie> UpdateAsync(int id, MovieUpdateRequest model, Account account);
     public Task DeleteByIdAsync(int id, Account account);
 }
 
@@ -28,7 +28,9 @@ public class MovieService : IMovieService
 
     public IQueryable<Movie> GetAllAsync(Account account)
     {
-        return _db.Movies.Where(m => m.Account == account && m.DeletedAt == null).OrderByDescending(m => m.SeenAt);
+        return _db.Movies
+            .Where(m => m.Account == account && m.DeletedAt == null)
+            .OrderByDescending(m => m.SeenAt);
     }
 
     public async Task<Movie> GetByIdAsync(int id, Account account)
@@ -46,10 +48,11 @@ public class MovieService : IMovieService
         return movie;
     }
 
-    public async Task<Movie> CreateAsync(CreateRequest model, Account account)
+    public async Task<Movie> CreateAsync(MovieCreateRequest model, Account account)
     {
         var movie = _mapper.Map<Movie>(model);
         var now = DateTime.UtcNow;
+
         movie.CreatedAt = now;
         movie.UpdatedAt = now;
         movie.Account = account;
@@ -60,7 +63,7 @@ public class MovieService : IMovieService
         return movie;
     }
 
-    public async Task<Movie> UpdateAsync(int id, UpdateRequest model, Account account)
+    public async Task<Movie> UpdateAsync(int id, MovieUpdateRequest model, Account account)
     {
         var movie = await GetByIdAsync(id, account);
 

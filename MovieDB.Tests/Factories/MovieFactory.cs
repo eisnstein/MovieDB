@@ -1,13 +1,11 @@
-using System;
-using MovieDB.Api.App.Entities;
+using MovieDB.Api.App.Models;
 
 namespace MovieDB.Tests.Factories;
 
 public static class MovieFactory
 {
     public static Movie CreateMovie(Account account)
-    {
-        return new Movie
+        => new Movie
         {
             Id = 1,
             Title = "Star Wars",
@@ -20,5 +18,4 @@ public static class MovieFactory
             UpdatedAt = null,
             DeletedAt = null
         };
-    }
 }

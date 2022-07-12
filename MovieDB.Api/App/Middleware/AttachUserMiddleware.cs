@@ -1,6 +1,6 @@
 using System.Security.Claims;
-using MovieDB.Api.App.Entities;
 using MovieDB.Api.App.Helpers;
+using MovieDB.Api.App.Models;
 
 namespace MovieDB.Api.App.Middleware;
 

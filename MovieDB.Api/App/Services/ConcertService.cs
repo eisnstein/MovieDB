@@ -1,8 +1,8 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MovieDB.Api.App.Helpers;
-using MovieDB.Api.App.Entities;
-using MovieDB.Shared.Models.Concerts;
+using MovieDB.Api.App.Http.Requests;
+using MovieDB.Api.App.Models;
 
 namespace MovieDB.Api.App.Services;
 
@@ -10,8 +10,8 @@ public interface IConcertService
 {
     public IQueryable<Concert> GetAllAsync(Account account);
     public Task<Concert> GetByIdAsync(int id, Account account);
-    public Task<Concert> CreateAsync(CreateRequest model, Account account);
-    public Task<Concert> UpdateAsync(int id, UpdateRequest model, Account account);
+    public Task<Concert> CreateAsync(ConcertCreateRequest model, Account account);
+    public Task<Concert> UpdateAsync(int id, ConcertUpdateRequest model, Account account);
     public Task DeleteByIdAsync(int id, Account account);
 }
 
@@ -28,7 +28,9 @@ public class ConcertService : IConcertService
 
     public IQueryable<Concert> GetAllAsync(Account account)
     {
-        return _db.Concerts.Where(c => c.Account == account && c.DeletedAt == null).OrderByDescending(c => c.SeenAt);
+        return _db.Concerts
+            .Where(c => c.Account == account && c.DeletedAt == null)
+            .OrderByDescending(c => c.SeenAt);
     }
 
     public async Task<Concert> GetByIdAsync(int id, Account account)
@@ -46,7 +48,7 @@ public class ConcertService : IConcertService
         return concert;
     }
 
-    public async Task<Concert> CreateAsync(CreateRequest model, Account account)
+    public async Task<Concert> CreateAsync(ConcertCreateRequest model, Account account)
     {
         var concert = _mapper.Map<Concert>(model);
         concert.CreatedAt = DateTime.UtcNow;
@@ -58,7 +60,7 @@ public class ConcertService : IConcertService
         return concert;
     }
 
-    public async Task<Concert> UpdateAsync(int id, UpdateRequest model, Account account)
+    public async Task<Concert> UpdateAsync(int id, ConcertUpdateRequest model, Account account)
     {
         var concert = await GetByIdAsync(id, account);
 

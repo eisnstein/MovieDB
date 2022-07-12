@@ -1,10 +1,9 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
-using MovieDB.Api.App.Entities;
+using MovieDB.Api.App.Http.Requests;
+using MovieDB.Api.App.Http.Responses;
+using MovieDB.Api.App.Models;
 using MovieDB.Api.App.Services;
-using MovieDB.Shared.Models.Movies;
-using MovieCreateRequest = MovieDB.Shared.Models.Movies.CreateRequest;
-using MovieUpdateRequest = MovieDB.Shared.Models.Movies.UpdateRequest;
 
 namespace MovieDB.Api.App.Endpoints;
 

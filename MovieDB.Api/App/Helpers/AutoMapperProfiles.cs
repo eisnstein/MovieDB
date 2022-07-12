@@ -1,17 +1,8 @@
 using AutoMapper;
 using AutoMapper.Internal;
-using MovieDB.Api.App.Entities;
-using MovieDB.Shared.Models.Accounts;
-using MovieDB.Shared.Models.Concerts;
-using MovieDB.Shared.Models.Movies;
-using MovieDB.Shared.Models.Theaters;
-using UpdateRequestAccount = MovieDB.Shared.Models.Accounts.UpdateRequest;
-using UpdateRequestMovie = MovieDB.Shared.Models.Movies.UpdateRequest;
-using UpdateRequestConcert = MovieDB.Shared.Models.Concerts.UpdateRequest;
-using UpdateRequestTheater = MovieDB.Shared.Models.Theaters.UpdateRequest;
-using CreateRequestMovie = MovieDB.Shared.Models.Movies.CreateRequest;
-using CreateRequestConcert = MovieDB.Shared.Models.Concerts.CreateRequest;
-using CreateRequestTheater = MovieDB.Shared.Models.Theaters.CreateRequest;
+using MovieDB.Api.App.Http.Requests;
+using MovieDB.Api.App.Http.Responses;
+using MovieDB.Api.App.Models;
 
 namespace MovieDB.Api.App.Helpers;
 
@@ -23,7 +14,7 @@ public class AccountProfile : Profile
         CreateMap<Account, AccountResponse>();
         CreateMap<Account, AuthenticateResponse>();
         CreateMap<RegisterRequest, Account>();
-        CreateMap<UpdateRequestAccount, Account>()
+        CreateMap<AccountUpdateRequest, Account>()
             .ForAllMembers(x => x.Condition(
                 (src, _, prop) =>
                 {
@@ -42,9 +33,9 @@ public class MovieProfile : Profile
 {
     public MovieProfile()
     {
-        CreateMap<CreateRequestMovie, Movie>();
+        CreateMap<MovieCreateRequest, Movie>();
         CreateMap<Movie, MovieResponse>();
-        CreateMap<UpdateRequestMovie, Movie>()
+        CreateMap<MovieUpdateRequest, Movie>()
             .ForAllMembers(x => x.Condition((_, _, value) => value switch
             {
                 null => false,
@@ -58,9 +49,9 @@ public class ConcertProfile : Profile
 {
     public ConcertProfile()
     {
-        CreateMap<CreateRequestConcert, Concert>();
+        CreateMap<ConcertCreateRequest, Concert>();
         CreateMap<Concert, ConcertResponse>();
-        CreateMap<UpdateRequestMovie, Concert>()
+        CreateMap<ConcertUpdateRequest, Concert>()
             .ForAllMembers(x => x.Condition((_, _, value) => value switch
             {
                 null => false,
@@ -74,9 +65,9 @@ public class TheaterProfile : Profile
 {
     public TheaterProfile()
     {
-        CreateMap<CreateRequestTheater, Theater>();
+        CreateMap<TheaterCreateRequest, Theater>();
         CreateMap<Theater, TheaterResponse>();
-        CreateMap<UpdateRequestTheater, Theater>()
+        CreateMap<TheaterUpdateRequest, Theater>()
             .ForAllMembers(x => x.Condition((_, _, value) => value switch
             {
                 null => false,

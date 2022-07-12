@@ -15,7 +15,8 @@ using (var scope = app.Services.CreateScope())
     if (app.Environment.IsEnvironment("Test"))
     {
         context.Database.EnsureDeleted();
-        context.Database.EnsureCreated();
+        //context.Database.EnsureCreated();
+        context.Database.Migrate();
     }
     else
     {

@@ -1,17 +1,15 @@
-using System;
-using MovieDB.Api.App.Entities;
+using MovieDB.Api.App.Models;
 
 namespace MovieDB.Tests.Factories;
 
 public static class AccountFactory
 {
     public static Account CreateAccount()
-    {
-        return new Account
+        => new Account
         {
             Id = 1,
-            Email = "john@doe.test",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("secret"),
+            Email = "john@test.local",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("password"),
             Role = Role.Admin,
             VerificationToken = null,
             VerifiedAt = null,
@@ -22,5 +20,4 @@ public static class AccountFactory
             UpdatedAt = null,
             RefreshTokens = null
         };
-    }
 }

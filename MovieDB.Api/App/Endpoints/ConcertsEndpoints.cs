@@ -1,10 +1,9 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
-using MovieDB.Api.App.Entities;
+using MovieDB.Api.App.Http.Requests;
+using MovieDB.Api.App.Http.Responses;
+using MovieDB.Api.App.Models;
 using MovieDB.Api.App.Services;
-using MovieDB.Shared.Models.Concerts;
-using ConcertCreateRequest = MovieDB.Shared.Models.Concerts.CreateRequest;
-using ConcertUpdateRequest = MovieDB.Shared.Models.Concerts.UpdateRequest;
 
 namespace MovieDB.Api.App.Endpoints;
 

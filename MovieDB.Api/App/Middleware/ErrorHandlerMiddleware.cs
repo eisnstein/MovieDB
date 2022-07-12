@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using MovieDB.Api.App.Helpers;
+using MovieDB.Api.App.Models;
 
 namespace MovieDB.Api.App.Middleware;
 

@@ -1,10 +1,10 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using MovieDB.Api.Routes;
 using MovieDB.Api.App.Helpers;
 using MovieDB.Api.App.Middleware;
 using MovieDB.Api.App.Services;
+using MovieDB.Api.Routes;
 
 namespace MovieDB.Api.Bootstrap;
 

@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using MovieDB.Api.App.Entities;
+using MovieDB.Api.App.Models;
 
 namespace MovieDB.Api.App.Helpers;
 

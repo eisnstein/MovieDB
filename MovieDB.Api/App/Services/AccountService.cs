@@ -3,9 +3,10 @@ using AutoMapper;
 using BC = BCrypt.Net.BCrypt;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using MovieDB.Api.App.Entities;
 using MovieDB.Api.App.Helpers;
-using MovieDB.Shared.Models.Accounts;
+using MovieDB.Api.App.Http.Requests;
+using MovieDB.Api.App.Http.Responses;
+using MovieDB.Api.App.Models;
 
 namespace MovieDB.Api.App.Services;
 
@@ -20,7 +21,7 @@ public interface IAccountService
     public Task ValidateResetTokenAsync(string token);
     public Task ResetPasswordAsync(ResetPasswordRequest model);
     public Task<AccountResponse> GetByIdAsync(int id);
-    public Task<AccountResponse> UpdateAsync(int id, UpdateRequest model);
+    public Task<AccountResponse> UpdateAsync(int id, AccountUpdateRequest model);
 }
 
 public class AccountService : IAccountService
@@ -47,7 +48,7 @@ public class AccountService : IAccountService
         var account = await _db.Accounts.SingleOrDefaultAsync(a => a.Email == model.Email);
         if (account is null || !account.IsVerified || !BC.Verify(model.Password, account.PasswordHash))
         {
-            throw new AppException("Email or password incorrect");
+            throw new AppException("Email or password wrong");
         }
 
         var jwtToken = GenerateJwtToken(account);
@@ -61,6 +62,7 @@ public class AccountService : IAccountService
         var response = _mapper.Map<AuthenticateResponse>(account);
         response.JwtToken = jwtToken;
         response.RefreshToken = refreshToken.Token;
+
         return response;
     }
 
@@ -180,7 +182,7 @@ public class AccountService : IAccountService
         return _mapper.Map<AccountResponse>(account);
     }
 
-    public async Task<AccountResponse> UpdateAsync(int id, UpdateRequest model)
+    public async Task<AccountResponse> UpdateAsync(int id, AccountUpdateRequest model)
     {
         var account = await GetAccountAsync(id);
 

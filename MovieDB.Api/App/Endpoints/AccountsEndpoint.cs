@@ -1,14 +1,15 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using MiniValidation;
-using MovieDB.Api.App.Entities;
-using MovieDB.Shared.Models.Accounts;
+using MovieDB.Api.App.Http.Requests;
+using MovieDB.Api.App.Http.Responses;
+using MovieDB.Api.App.Models;
 using MovieDB.Api.App.Services;
 
 namespace MovieDB.Api.App.Endpoints;
 
 public static class AccountsEndpoint
 {
-    public static async Task<Results<ValidationProblem, Ok<AuthenticateResponse>>> Authenticate(
+    public static async Task<Results<ValidationProblem, BadRequest<ErrorMessage>, Ok<AuthenticateResponse>>> Authenticate(
         HttpContext context,
         IAccountService accountService,
         AuthenticateRequest model)
@@ -20,7 +21,8 @@ public static class AccountsEndpoint
 
         var ipAddress = GetIpAddress(context);
         var responseData = await accountService.AuthenticateAsync(model, ipAddress);
-        SetRefreshTokenCookie(context.Response, responseData.RefreshToken);
+
+        SetRefreshTokenCookie(context.Response, responseData!.RefreshToken);
 
         return TypedResults.Ok(responseData);
     }
@@ -64,12 +66,18 @@ public static class AccountsEndpoint
         return TypedResults.Ok<object>(new { message = "Token successfully revoked" });
     }
 
-    public static async Task<Ok<object>> Register(
+    public static async Task<Results<ValidationProblem, Ok<object>>> Register(
         HttpRequest request,
         IAccountService accountService,
         RegisterRequest model)
     {
+        if (!MiniValidator.TryValidate(model, out var errors))
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+
         await accountService.RegisterAsync(model, request.Headers["origin"]);
+
         return TypedResults.Ok<object>(new { message = "Registration successful, we sent you an email with verification instructions" });
     }
 
@@ -126,7 +134,7 @@ public static class AccountsEndpoint
         HttpContext context,
         IAccountService accountService,
         int id,
-        UpdateRequest model)
+        AccountUpdateRequest model)
     {
         var account = (Account) context.Items[nameof(Account)]!;
         if (id != account.Id && Role.Admin != account.Role)
