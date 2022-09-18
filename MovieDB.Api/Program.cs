@@ -14,14 +14,11 @@ using (var scope = app.Services.CreateScope())
 
     if (app.Environment.IsEnvironment("Test"))
     {
+        // Reset database
         context.Database.EnsureDeleted();
-        //context.Database.EnsureCreated();
-        context.Database.Migrate();
     }
-    else
-    {
-        context.Database.Migrate();
-    }
+
+    context.Database.Migrate();
 }
 
 Startup.ConfigureMiddlewares(app);
