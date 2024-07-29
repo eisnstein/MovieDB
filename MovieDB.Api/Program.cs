@@ -1,11 +1,15 @@
+using dotenv.net;
 using Microsoft.EntityFrameworkCore;
 using MovieDB.Api.App.Helpers;
 using MovieDB.Api.Bootstrap;
+
+DotEnv.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 Startup.ConfigureServices(builder);
 
 var app = builder.Build();
+
 
 // Migrate database changes on startup
 using (var scope = app.Services.CreateScope())

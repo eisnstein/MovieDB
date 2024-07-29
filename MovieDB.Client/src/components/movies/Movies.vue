@@ -3,6 +3,9 @@ import Movie from './Movie.vue'
 import { ref, onMounted, computed } from 'vue'
 import { TMovie } from '../../types/movie'
 import { fetchMovies } from '../../api/movie'
+import { useStore } from '../../services/store';
+
+const store = useStore()
 
 const date = new Date()
 const year = date.getFullYear()
@@ -21,8 +24,14 @@ const filteredMovies = computed(() => {
 })
 
 onMounted(async () => {
-  movies.value = await fetchMovies()
-  loading.value = false
+  try {
+    movies.value = await fetchMovies()
+  } catch (error) {
+    console.error(error)
+    store.dispatch('logout')
+  } finally {
+    loading.value = false
+  }
 })
 
 const totalCount = computed(() => movies.value.length ?? 0)

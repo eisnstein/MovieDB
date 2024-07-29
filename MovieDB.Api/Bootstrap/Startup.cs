@@ -13,6 +13,7 @@ public static class Startup
     public static void ConfigureServices(WebApplicationBuilder builder)
     {
         var appSettings = builder.Configuration.GetSection(nameof(AppSettings));
+        var secretKey = appSettings["Secret"] ?? throw new Exception("No secret key for JWT token given");
 
         builder.Services.AddDbContext<AppDbContext>();
         builder.Services.Configure<AppSettings>(appSettings);
@@ -23,7 +24,7 @@ public static class Startup
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ClockSkew = TimeSpan.Zero,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings["Secret"])),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
                     ValidateAudience = false,
                     ValidateIssuer = false,
                     ValidateIssuerSigningKey = true
@@ -31,7 +32,6 @@ public static class Startup
             });
         builder.Services.AddCors();
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-        //builder.Services.AddSwaggerGen();
 
         builder.Services.AddScoped<IAccountService, AccountService>();
         builder.Services.AddScoped<IMovieService, MovieService>();
@@ -47,8 +47,6 @@ public static class Startup
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
-            //app.UseSwagger();
-            //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MovieDB.Api v1"));
         }
 
         app.UseRouting();

@@ -7,11 +7,11 @@
   font-style: normal;
   font-weight: 300;
   font-display: block;
-  src: url("src/assets/fonts/fa-light-300.eot");
-  src: url("src/assets/fonts/fa-light-300.eot?#iefix") format("embedded-opentype"),
-    url("src/assets/fonts/fa-light-300.woff2") format("woff2"), url("src/assets/fonts/fa-light-300.woff") format("woff"),
-    url("src/assets/fonts/fa-light-300.ttf") format("truetype"),
-    url("src/assets/fonts/fa-light-300.svg#fontawesome") format("svg");
+  src: url("../../fonts/fa-light-300.eot");
+  src: url("../../fonts/fa-light-300.eot?#iefix") format("embedded-opentype"),
+    url("../../fonts/fa-light-300.woff2") format("woff2"),
+    url("../../fonts/fa-light-300.woff") format("woff"),
+    url("../../fonts/fa-light-300.ttf") format("truetype");
 }
 
 .fal {

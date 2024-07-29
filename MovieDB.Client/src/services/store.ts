@@ -64,13 +64,13 @@ const mutations: MutationTree<State> = {
     state.isAuthenticated = true
     state.loading = false
   },
-  loginFailure(state, error: any) {
+  loginFailure(state, error: { message: string }) {
     state.account = null
     state.isAuthenticated = false
     state.loading = false
     state.alert = {
       type: 'error',
-      message: error,
+      message: error.message,
     }
   },
   logout(state) {

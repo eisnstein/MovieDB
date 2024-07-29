@@ -369,3 +369,6 @@ appsettings.secret.json
 
 # SQLite Data
 Data/*.db*
+
+.env
+*.tar.gz

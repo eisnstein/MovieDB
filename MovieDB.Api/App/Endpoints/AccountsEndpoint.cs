@@ -81,11 +81,16 @@ public static class AccountsEndpoint
         return TypedResults.Ok<object>(new { message = "Registration successful, we sent you an email with verification instructions" });
     }
 
-    public static async Task<Ok<object>> VerifyEmail(
+    public static async Task<Results<ValidationProblem, Ok<object>>> VerifyEmail(
         IAccountService accountService,
         VerifyEmailRequest model)
     {
-        await accountService.VerifyEmailAsync(model.Token);
+        if (!MiniValidator.TryValidate(model, out var errors))
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+
+        await accountService.VerifyEmailAsync(model.Token!);
         return TypedResults.Ok<object>(new { message = "Verification successful, you can now login" });
     }
 
@@ -119,8 +124,7 @@ public static class AccountsEndpoint
         IAccountService accountService,
         int id)
     {
-        var account = context.Items[nameof(Account)] as Account;
-        if (account.Id != id && account.Role != Role.Admin)
+        if (context.Items[nameof(Account)] is not Account account || (account.Id != id && account.Role != Role.Admin))
         {
             return TypedResults.Unauthorized();
         }
@@ -167,9 +171,9 @@ public static class AccountsEndpoint
 
     private static string GetIpAddress(HttpContext context)
     {
-        if (context.Request.Headers.ContainsKey("X-Forwarded-For"))
+        if (context.Request.Headers.TryGetValue("X-Forwarded-For", out var value))
         {
-            return context.Request.Headers["X-Forwarded-For"];
+            return value.ToString();
         }
 
         return context.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "no-ip-address";

@@ -14,11 +14,13 @@ export async function login(
     body: JSON.stringify({ email, password }),
   })
 
+  if (!res.ok) {
+    return Promise.reject(await res.json())
+  }
+
   const account = (await res.json()) as TAccount
-
   LocalStorage.set('account', JSON.stringify(account))
-
-  return account
+  return Promise.resolve(account)
 }
 
 export function logout() {
