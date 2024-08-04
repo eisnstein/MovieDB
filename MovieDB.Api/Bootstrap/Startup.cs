@@ -39,6 +39,7 @@ public static class Startup
         builder.Services.AddScoped<IConcertService, ConcertService>();
         builder.Services.AddScoped<IEmailService, EmailService>();
 
+        builder.Services.AddResponseCompression();
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
     }
 
@@ -49,6 +50,7 @@ public static class Startup
             app.UseDeveloperExceptionPage();
         }
 
+        app.UseResponseCompression();
         app.UseRouting();
 
         app.UseCors(x => x
@@ -59,6 +61,7 @@ public static class Startup
 
         app.UseAuthentication();
         app.UseAuthorization();
+
 
         app.UseMiddleware<ErrorHandlerMiddleware>();
         app.UseMiddleware<AttachUserMiddleware>();

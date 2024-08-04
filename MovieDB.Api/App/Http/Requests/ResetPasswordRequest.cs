@@ -2,14 +2,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MovieDB.Api.App.Http.Requests;
 
-public class ResetPasswordRequest
+public record ResetPasswordRequest
 {
     [Required]
-    public string? Token { get; set; }
+    public required string Token { get; set; }
 
     [Required, MinLength(8)]
-    public string? Password { get; set; }
+    public required string Password { get; set; }
 
     [Required, Compare(nameof(Password))]
-    public string? ConfirmPassword { get; set; }
+    public required string ConfirmPassword { get; set; }
 }
