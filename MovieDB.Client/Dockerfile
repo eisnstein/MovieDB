@@ -7,6 +7,7 @@ COPY docker/moviedb.conf /etc/nginx/conf.d/moviedb.conf
 
 COPY dist/index.html /usr/share/nginx/html
 COPY dist/favicon.ico /usr/share/nginx/html
+COPY dist/manifest.json /usr/share/nginx/html
 COPY dist/assets /usr/share/nginx/html/assets
 
 EXPOSE 8082

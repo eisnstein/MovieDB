@@ -19,10 +19,10 @@ const seenAt = computed(() => {
       <div class="bg-white rounded p-1 m-1">
         <span v-for="i in [1, 2, 3, 4, 5]">
           <i v-if="i <= movie.rating" class="fad fa-fire-alt mr-1" style="color: darkorange;"></i>
-          <i v-else class="fad fa-fire-alt mr-1"></i>
+          <i v-else class="fad fa-fire-alt mr-1" style="color: black;"></i>
         </span>
       </div>
-      <div class="bg-white rounded px-2 m-1 text-sm flex items-center">
+      <div class="bg-white rounded px-1 m-1 text-sm flex items-center text-black">
         {{ seenAt }}
       </div>
     </div>
@@ -32,11 +32,9 @@ const seenAt = computed(() => {
 <style scoped>
 .movie {
   @apply relative mb-3 rounded-lg border bg-white hover:shadow-lg transition duration-200 transform hover:-translate-y-1;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  height: 400px;
-  width: 270px;
+  @apply bg-center bg-no-repeat bg-cover;
+  @apply w-[120px] md:w-[200px] lg:w-[270px];
+  aspect-ratio: 12/19;
 }
 
 .movie img {
@@ -45,12 +43,6 @@ const seenAt = computed(() => {
 }
 
 .overlay {
-  display: flex;
-  justify-content: space-between;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
+  @apply hidden md:flex justify-between left-0 absolute w-full;
 }
-
 </style>

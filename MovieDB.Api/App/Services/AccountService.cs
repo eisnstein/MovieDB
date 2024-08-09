@@ -1,8 +1,10 @@
 using System.Security.Cryptography;
+using System.Security.Principal;
 using AutoMapper;
 using BC = BCrypt.Net.BCrypt;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.JsonWebTokens;
 using MovieDB.Api.App.Helpers;
 using MovieDB.Api.App.Http.Requests;
 using MovieDB.Api.App.Http.Responses;
@@ -12,16 +14,16 @@ namespace MovieDB.Api.App.Services;
 
 public interface IAccountService
 {
-    public Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest model, string ipAddress);
-    public Task<AuthenticateResponse> RefreshTokenAsync(string refreshToken, string ipAddress);
+    public Task<(Account account, string jwtToken, string refreshToken)> AuthenticateAsync(AuthenticateRequest model, string ipAddress);
+    public Task<(string jwtToken, string refreshToken)> RefreshTokenAsync(string refreshToken, string ipAddress);
     public Task RevokeTokenAsync(string token, string ipAddress);
     public Task RegisterAsync(RegisterRequest model, string? origin);
     public Task VerifyEmailAsync(string token);
     public Task ForgotPasswordAsync(string email, string? origin);
     public Task ValidateResetTokenAsync(string token);
     public Task ResetPasswordAsync(ResetPasswordRequest model);
-    public Task<AccountResponse> GetByIdAsync(int id);
-    public Task<AccountResponse> UpdateAsync(int id, AccountUpdateRequest model);
+    public Task<Account> GetByIdAsync(int id);
+    public Task<Account> UpdateAsync(int id, AccountUpdateRequest model);
 }
 
 public class AccountService : IAccountService
@@ -43,7 +45,7 @@ public class AccountService : IAccountService
         _emailService = emailService;
     }
 
-    public async Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest model, string ipAddress)
+    public async Task<(Account account, string jwtToken, string refreshToken)> AuthenticateAsync(AuthenticateRequest model, string ipAddress)
     {
         var account = await _db.Accounts.SingleOrDefaultAsync(a => a.Email == model.Email);
         if (account is null || !account.IsVerified || !BC.Verify(model.Password, account.PasswordHash))
@@ -59,14 +61,10 @@ public class AccountService : IAccountService
 
         await _db.SaveChangesAsync();
 
-        var response = _mapper.Map<AuthenticateResponse>(account);
-        response.JwtToken = jwtToken;
-        response.RefreshToken = refreshToken.Token;
-
-        return response;
+        return (account, jwtToken, refreshToken.Token);
     }
 
-    public async Task<AuthenticateResponse> RefreshTokenAsync(string token, string ipAddress)
+    public async Task<(string jwtToken, string refreshToken)> RefreshTokenAsync(string token, string ipAddress)
     {
         var (refreshToken, account) = await GetRefreshTokenAsync(token);
 
@@ -82,10 +80,7 @@ public class AccountService : IAccountService
 
         var jwtToken = GenerateJwtToken(account);
 
-        var response = _mapper.Map<AuthenticateResponse>(account);
-        response.JwtToken = jwtToken;
-        response.RefreshToken = newRefreshToken.Token;
-        return response;
+        return (jwtToken, refreshToken.Token);
     }
 
     public async Task RevokeTokenAsync(string token, string ipAddress)
@@ -107,11 +102,14 @@ public class AccountService : IAccountService
             return;
         }
 
-        var account = _mapper.Map<Account>(model);
-        account.Role = Role.User;
-        account.CreatedAt = DateTime.UtcNow;
-        account.VerificationToken = RandomTokenString();
-        account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+        var account = new Account()
+        {
+            Email = model.Email,
+            Role = Role.User,
+            CreatedAt = DateTime.UtcNow,
+            VerificationToken = RandomTokenString(),
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
+        };
 
         _db.Accounts.Add(account);
         await _db.SaveChangesAsync();
@@ -176,16 +174,14 @@ public class AccountService : IAccountService
         await _db.SaveChangesAsync();
     }
 
-    public async Task<AccountResponse> GetByIdAsync(int id)
+    public Task<Account> GetByIdAsync(int id)
     {
-        var account = await GetAccountAsync(id);
-        return _mapper.Map<AccountResponse>(account);
+        return GetAccountAsync(id);
     }
 
-    public async Task<AccountResponse> UpdateAsync(int id, AccountUpdateRequest model)
+    public async Task<Account> UpdateAsync(int id, AccountUpdateRequest model)
     {
         var account = await GetAccountAsync(id);
-
         if (model.Email != account.Email && await _db.Accounts.AnyAsync(a => a.Email == model.Email))
         {
             throw new AppException($"Email '{model.Email}' is already taken");
@@ -193,15 +189,27 @@ public class AccountService : IAccountService
 
         if (!string.IsNullOrEmpty(model.Password))
         {
+            if (model.Password != model.ConfirmPassword)
+            {
+                throw new AppException($"Passwords don't match");
+            }
+
             account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
         }
 
-        _mapper.Map(model, account);
+        var role = account.Role;
+        if (Enum.TryParse(model.Role, out Role roleResult))
+        {
+            role = roleResult;
+        }
+
+        account.Email = model.Email ?? account.Email;
+        account.Role = role;
         account.UpdatedAt = DateTime.UtcNow;
 
         await _db.SaveChangesAsync();
 
-        return _mapper.Map<AccountResponse>(account);
+        return account;
     }
 
     // Helpers

@@ -5,11 +5,11 @@ namespace MovieDB.Api.App.Http.Requests;
 public record RegisterRequest
 {
     [Required, EmailAddress]
-    public string Email { get; init; } = default!;
+    public required string Email { get; init; }
 
     [Required, MinLength(8)]
-    public string Password { get; init; } = default!;
+    public required string Password { get; init; }
 
     [Required, Compare(nameof(Password))]
-    public string ConfirmPassword { get; set; } = default!;
+    public required string ConfirmPassword { get; init; }
 }

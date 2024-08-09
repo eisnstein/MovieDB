@@ -20,14 +20,25 @@ public static class AccountsEndpoint
         }
 
         var ipAddress = GetIpAddress(context);
-        var responseData = await accountService.AuthenticateAsync(model, ipAddress);
+        var (account, jwtToken, refreshToken) = await accountService.AuthenticateAsync(model, ipAddress);
 
-        SetRefreshTokenCookie(context.Response, responseData!.RefreshToken);
+        SetRefreshTokenCookie(context.Response, refreshToken);
 
-        return TypedResults.Ok(responseData);
+        var response = new AuthenticateResponse()
+        {
+            Id = account.Id,
+            Email = account.Email,
+            IsVerified = account.IsVerified,
+            Role = account.Role.ToString(),
+            CreatedAt = account.CreatedAt,
+            UpdatedAt = account.UpdatedAt,
+            JwtToken = jwtToken
+        };
+
+        return TypedResults.Ok(response);
     }
 
-    public static async Task<Results<Ok<AuthenticateResponse>, BadRequest<object>>> RefreshToken(
+    public static async Task<Results<Ok<RefreshTokenResponse>, BadRequest<object>>> RefreshToken(
         HttpContext context,
         IAccountService accountService)
     {
@@ -38,10 +49,16 @@ public static class AccountsEndpoint
         }
 
         var ipAddress = GetIpAddress(context);
-        var responseData = await accountService.RefreshTokenAsync(refreshToken, ipAddress);
-        SetRefreshTokenCookie(context.Response, responseData.RefreshToken);
+        var (jwtToken, newRefreshToken) = await accountService.RefreshTokenAsync(refreshToken, ipAddress);
+        SetRefreshTokenCookie(context.Response, newRefreshToken);
 
-        return TypedResults.Ok(responseData);
+        var response = new RefreshTokenResponse()
+        {
+            JwtToken = jwtToken,
+            RefreshToken = refreshToken
+        };
+
+        return TypedResults.Ok(response);
     }
 
     public static async Task<Results<Ok<object>, UnauthorizedHttpResult, BadRequest<object>>> RevokeToken(
@@ -129,9 +146,9 @@ public static class AccountsEndpoint
             return TypedResults.Unauthorized();
         }
 
-        var responseData = await accountService.GetByIdAsync(id);
+        var accountById = await accountService.GetByIdAsync(id);
 
-        return TypedResults.Ok(responseData);
+        return TypedResults.Ok(accountById.ToResponse());
     }
 
     public static async Task<Results<UnauthorizedHttpResult, Ok<AccountResponse>>> Update(
@@ -151,9 +168,9 @@ public static class AccountsEndpoint
             model.Role = null;
         }
 
-        var responseData = await accountService.UpdateAsync(id, model);
+        var updatedAccount = await accountService.UpdateAsync(id, model);
 
-        return TypedResults.Ok(responseData);
+        return TypedResults.Ok(updatedAccount.ToResponse());
     }
 
     // Helpers

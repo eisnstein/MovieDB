@@ -1,27 +1,29 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
-import Concerts from '../components/concerts/Concerts.vue'
+import { createRouter, createWebHistory } from 'vue-router'
+import IndexConcert from '../pages/concerts/Index.vue'
 import ConcertForm from '../components/concerts/ConcertForm.vue'
-import Movies from '../components/movies/Movies.vue'
-import MovieForm from '../components/movies/MovieForm.vue'
-import Theaters from '../components/theaters/Theaters.vue'
+import IndexMovie from '../pages/movies/Index.vue'
+import NewMovie from '../pages/movies/New.vue'
+import ShowMovie from '../pages/movies/Show.vue'
+import IndexTheater from '../pages/theaters/Index.vue'
 import TheaterForm from '../components/theaters/TheaterForm.vue'
 import Login from '../components/Login.vue'
 import { store } from './store'
 
 const routes = [
-  { path: '/', component: Movies },
-  { path: '/concerts', component: Concerts },
+  { path: '/', component: IndexMovie },
+  { path: '/concerts', component: IndexConcert },
   { path: '/concerts/new', component: ConcertForm },
   { path: '/login', component: Login },
-  { path: '/movies', component: Movies },
-  { path: '/movies/new', component: MovieForm },
-  { path: '/theaters', component: Theaters },
+  { path: '/movies', component: IndexMovie },
+  { path: '/movies/new', component: NewMovie },
+  { path: '/movies/:id(\\d+)', name: 'movies-show', component: ShowMovie },
+  { path: '/theaters', component: IndexTheater },
   { path: '/theaters/new', component: TheaterForm },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
 })
 

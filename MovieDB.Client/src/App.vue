@@ -6,12 +6,10 @@ const store = useStore()
 </script>
 
 <template>
-  <div class="main">
-    <NavMenu v-if="store.state.isAuthenticated" />
-    <main>
-      <router-view></router-view>
-    </main>
-  </div>
+  <NavMenu v-if="store.state.isAuthenticated" />
+  <main class="mt-16">
+    <router-view></router-view>
+  </main>
 </template>
 
 <style>
