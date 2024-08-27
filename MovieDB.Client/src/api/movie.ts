@@ -10,6 +10,10 @@ export async function fetchMovies(): Promise<Array<TMovie>> {
     },
   })
 
+  if (!res.ok) {
+    return Promise.reject({ message: res.statusText })
+  }
+
   return (await res.json()) as Array<TMovie>
 }
 

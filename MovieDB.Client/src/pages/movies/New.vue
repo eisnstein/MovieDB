@@ -44,7 +44,7 @@ function fetchPoster() {
 }
 </script>
 <template>
-  <div class="container mx-auto py-6 px-2 sm:px-4 lg:px-6">
+  <div class="container w-full lg:w-1/2 mx-auto py-6 px-2 sm:px-4 lg:px-6">
     <div class="flex flex-col md:flex-row bg-white shadow-md rounded p-3 md:p-6">
       <div class="w-full md:w-1/2">
         <form class="" @submit.prevent="onSubmit">

@@ -49,6 +49,7 @@ const actions: ActionTree<State, State> = {
   logout({ commit }) {
     logout()
     commit('logout')
+    router.push('/login')
   },
   setLoading({ commit }, value: boolean) {
     commit('setLoading', value)
