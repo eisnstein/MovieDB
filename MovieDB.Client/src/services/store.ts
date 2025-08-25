@@ -1,4 +1,3 @@
-import { login, logout } from '../api/account'
 import { InjectionKey } from 'vue'
 import {
   createStore,
@@ -7,6 +6,7 @@ import {
   ActionTree,
   MutationTree,
 } from 'vuex'
+import { login, logout } from '../api/account'
 import { TAccount } from '../types/account'
 import { LocalStorage } from './localStorage'
 import router from './router'

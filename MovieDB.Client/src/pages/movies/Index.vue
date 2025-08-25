@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import Movie from '../../components/movies/Movie.vue'
-import { ref, onMounted, computed } from 'vue'
-import { TMovie } from '../../types/movie'
+import { useQuery } from '@tanstack/vue-query'
+import { ref, computed } from 'vue'
 import { fetchMovies } from '../../api/movie'
+import Movie from '../../components/movies/Movie.vue'
 import { useStore } from '../../services/store';
 
 const store = useStore()
@@ -12,37 +12,34 @@ const year = date.getFullYear()
 const month = date.getMonth()
 
 const searchValue = ref('')
-const loading = ref(true)
 
-const movies = ref<Array<TMovie>>([])
+const { isPending, isError, data: movies } = useQuery({
+  queryKey: ['movies'],
+  queryFn: fetchMovies,
+  staleTime: 1000 * 60 * 60, // Cache for 1h
+})
+
+if (isError.value) {
+  store.dispatch('logout')
+}
+
 const filteredMovies = computed(() => {
   if (searchValue.value.length < 3) {
     return movies.value
   }
 
-  return movies.value.filter((m) => m.title.toLowerCase().startsWith(searchValue.value.toLowerCase()))
+  return movies.value?.filter((m) => m.title.toLowerCase().startsWith(searchValue.value.toLowerCase()))
 })
 
-onMounted(async () => {
-  try {
-    movies.value = await fetchMovies()
-  } catch (error) {
-    console.error(error)
-    store.dispatch('logout')
-  } finally {
-    loading.value = false
-  }
-})
-
-const totalCount = computed(() => movies.value.length ?? 0)
+const totalCount = computed(() => movies.value?.length ?? 0)
 const yearCount = computed(() => {
-  return movies.value.filter((m) => {
+  return movies.value?.filter((m) => {
     const seenAt = new Date(Date.parse(m.seenAt))
     return seenAt.getFullYear() === year
   }).length
 })
 const monthCount = computed(() => {
-  return movies.value.filter((m) => {
+  return movies.value?.filter((m) => {
     const seenAt = new Date(Date.parse(m.seenAt))
     return seenAt.getFullYear() === year && seenAt.getMonth() === month
   }).length
@@ -55,21 +52,21 @@ const monthCount = computed(() => {
       <div class="flex justify-center align-items">
         <div class="w-1/3 rounded bg-white p-2 md:p-4 border">
           <div class="text-gray-600 text-sm">Total</div>
-          <i v-if="loading" class="mt-2 fad fa-spinner-third fa-spin fa-lg" style="color: blue;"></i>
+          <i v-if="isPending" class="mt-2 fad fa-spinner-third fa-spin fa-lg" style="color: blue;"></i>
           <div v-else class="text-4xl font-bold leading-tight">
             {{ totalCount }}
           </div>
         </div>
         <div class="w-1/3 ml-4 rounded bg-white p-2 md:p-4 border">
           <div class="text-gray-600 text-sm">This Year</div>
-          <i v-if="loading" class="mt-2 fad fa-spinner-third fa-spin fa-lg" style="color: blue;"></i>
+          <i v-if="isPending" class="mt-2 fad fa-spinner-third fa-spin fa-lg" style="color: blue;"></i>
           <div v-else class="text-4xl font-bold leading-tight">
             {{ yearCount }}
           </div>
         </div>
         <div class="w-1/3 ml-4 rounded bg-white p-2 md:p-4 border">
           <div class="text-gray-600 text-sm">This Month</div>
-          <i v-if="loading" class="mt-2 fad fa-spinner-third fa-spin fa-lg" style="color: blue;"></i>
+          <i v-if="isPending" class="mt-2 fad fa-spinner-third fa-spin fa-lg" style="color: blue;"></i>
           <div v-else class="text-4xl font-bold leading-tight">
             {{ monthCount }}
           </div>
@@ -78,7 +75,7 @@ const monthCount = computed(() => {
     </div>
   </header>
   <div class="container mx-auto px-2 sm:px-4 lg:px-6">
-    <div v-if="loading" class="p-6 flex align-items justify-center">
+    <div v-if="isPending" class="p-6 flex align-items justify-center">
       <i class="fad fa-spinner-third fa-spin fa-2x" style="color: blue;"></i>
     </div>
     <div v-else>

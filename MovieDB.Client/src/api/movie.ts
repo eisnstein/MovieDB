@@ -14,7 +14,7 @@ export async function fetchMovies(): Promise<Array<TMovie>> {
     return Promise.reject({ message: res.statusText })
   }
 
-  return (await res.json()) as Array<TMovie>
+  return res.json()
 }
 
 export async function fetchMovie(movieId: number): Promise<TMovie> {
@@ -30,9 +30,7 @@ export async function fetchMovie(movieId: number): Promise<TMovie> {
     return Promise.reject({ message: 'Could not find movie' })
   }
 
-  const movie = await res.json() as TMovie
-
-  return movie
+  return res.json()
 }
 
 export async function fetchMoviePoster(
@@ -47,6 +45,10 @@ export async function fetchMoviePoster(
       accept: 'application/json',
     },
   })
+
+  if (!res.ok) {
+    return Promise.reject({ message: 'Could not load poster data' })
+  }
 
   const movieData = await res.json()
   return movieData.Poster ?? undefined
