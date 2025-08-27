@@ -14,7 +14,7 @@ public static class MoviesEndpoints
         IMapper mapper,
         IMovieService movieService)
     {
-        var account = (Account) context.Items[nameof(Account)]!;
+        var account = (Account)context.Items[nameof(Account)]!;
         var movies = movieService.GetAllAsync(account);
         var mapped = mapper.Map<List<MovieResponse>>(movies);
 
@@ -27,7 +27,7 @@ public static class MoviesEndpoints
         IMovieService movieService,
         int id)
     {
-        var account = (Account) context.Items[nameof(Account)]!;
+        var account = (Account)context.Items[nameof(Account)]!;
         var movie = await movieService.GetByIdAsync(id, account);
         var response = mapper.Map<MovieResponse>(movie);
 
@@ -40,7 +40,7 @@ public static class MoviesEndpoints
         IMovieService movieService,
         MovieCreateRequest model)
     {
-        var account = (Account) context.Items[nameof(Account)]!;
+        var account = (Account)context.Items[nameof(Account)]!;
         var movie = await movieService.CreateAsync(model, account);
         var response = mapper.Map<MovieResponse>(movie);
 
@@ -54,7 +54,7 @@ public static class MoviesEndpoints
         int id,
         MovieUpdateRequest model)
     {
-        var account = (Account) context.Items[nameof(Account)]!;
+        var account = (Account)context.Items[nameof(Account)]!;
         var movie = await movieService.UpdateAsync(id, model, account);
         var response = mapper.Map<MovieResponse>(movie);
 
@@ -66,7 +66,7 @@ public static class MoviesEndpoints
         IMovieService movieService,
         int id)
     {
-        var account = (Account) context.Items[nameof(Account)]!;
+        var account = (Account)context.Items[nameof(Account)]!;
         await movieService.DeleteByIdAsync(id, account);
 
         return TypedResults.NoContent();

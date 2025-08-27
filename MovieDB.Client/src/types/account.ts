@@ -1,7 +1,7 @@
 export type TAccount = {
-  id: string
+  id: number
   email: string
   role: string
-  isVerified: string
+  isVerified: boolean
   jwtToken: string
 }

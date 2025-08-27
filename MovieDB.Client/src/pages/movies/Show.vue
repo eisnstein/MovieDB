@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import {ref, onMounted, computed} from 'vue'
 import { useRoute } from 'vue-router'
-import router from '../../services/router'
-import { TMovie } from '../../types/movie'
-import { fetchMovie, deleteMovie } from '../../api/movie'
-import { genreOptions } from '../../constants'
+import router from '@/services/router'
+import { TMovie } from '@/types/movie'
+import { fetchMovie, deleteMovie } from '@/api/movie'
+import { genreOptions } from '@/constants'
 
 const route = useRoute()
 const loading = ref(true)
@@ -32,7 +32,7 @@ const seenAt = computed(() => {
 
 const genre = computed(() => {
   if (movie.value) {
-    return genreOptions.find(g => g.value === movie.value.genre)?.text ?? null
+    return genreOptions.find(g => g.value === movie.value!.genre)?.text ?? null
   }
 
   return null
@@ -41,7 +41,7 @@ const genre = computed(() => {
 async function handleDelete() {
   deleting.value = true
   try {
-    await deleteMovie(movie.value.id)
+    await deleteMovie(movie.value!.id)
   } catch (error) {
     console.error(error)
   } finally {
@@ -56,7 +56,7 @@ async function handleDelete() {
       <i class="fad fa-spinner-third fa-spin fa-2x" style="color: blue;"></i>
     </div>
     <div v-else>
-      <div class="container max-w-2xl mx-auto flex bg-white shadow-md rounded p-3 md:p-6">
+      <div class="container max-w-2xl mx-auto flex bg-white shadow-md rounded-sm p-3 md:p-6">
         <div class="w-1/2 flex flex-col justify-between">
           <div>
             <div class="text-sm">{{ seenAt }}</div>
@@ -76,7 +76,7 @@ async function handleDelete() {
           </div>
         </div>
         <div class="w-1/2 ml-2">
-          <img class="rounded" :src="movie.posterUrl" />
+          <img class="rounded-sm" :src="movie.posterUrl" />
         </div>
       </div>
     </div>

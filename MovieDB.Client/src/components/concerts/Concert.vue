@@ -32,6 +32,8 @@ const genre = computed(() => concertGenres.find((g) => g.value === concert.genre
 </template>
 
 <style scoped>
+@reference "../../index.css";
+
 .concert {
   @apply relative rounded-lg border bg-white hover:shadow-lg transition duration-200 transform hover:-translate-y-1 p-3;
 }

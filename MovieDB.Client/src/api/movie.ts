@@ -10,8 +10,12 @@ export async function fetchMovies(): Promise<Array<TMovie>> {
     },
   })
 
+  if (!res.ok && res.status === 401) {
+    throw new Error(res.statusText)
+  }
+
   if (!res.ok) {
-    return Promise.reject({ message: res.statusText })
+    throw new Error('Failed to fetch movies: ' + res.statusText)
   }
 
   return res.json()
@@ -74,7 +78,7 @@ export async function deleteMovie(movieId: number): Promise<boolean> {
     method: 'DELETE',
     headers: {
       Authorization: 'Bearer ' + store.state.account?.jwtToken,
-    }
+    },
   })
 
   return res.ok

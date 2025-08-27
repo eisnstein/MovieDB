@@ -1,5 +1,5 @@
 export type TConcert = {
-  id: string
+  id: number
   title: string
   seenAt: string
   location: string

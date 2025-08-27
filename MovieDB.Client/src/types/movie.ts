@@ -1,9 +1,9 @@
 export type TMovie = {
-  id: string
+  id: number
   title: string
   seenAt: string
   imdbIdentifier: string
-  genre: string
+  genre: number
   rating: number
   posterUrl: string | null
 }

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useQuery } from '@tanstack/vue-query'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { fetchMovies } from '../../api/movie'
 import Movie from '../../components/movies/Movie.vue'
 import { useStore } from '../../services/store';
@@ -17,11 +17,22 @@ const { isPending, isError, data: movies } = useQuery({
   queryKey: ['movies'],
   queryFn: fetchMovies,
   staleTime: 1000 * 60 * 60, // Cache for 1h
+  retry: (failureCount, error: Error) => {
+    // Don't retry on 401 (unauthorized) errors
+    if (error.message === 'Unauthorized') {
+      return false
+    }
+
+    // Use default retry logic for other errors (3 retries)
+    return failureCount < 3
+  },
 })
 
-if (isError.value) {
-  store.dispatch('logout')
-}
+watch(isError, (newValue) => {
+  if (newValue) {
+    store.dispatch('logout')
+  }
+})
 
 const filteredMovies = computed(() => {
   if (searchValue.value.length < 3) {
@@ -50,21 +61,21 @@ const monthCount = computed(() => {
   <header class="bg-gray-100">
     <div class="container mx-auto py-6 px-2 sm:px-4 lg:px-6">
       <div class="flex justify-center align-items">
-        <div class="w-1/3 rounded bg-white p-2 md:p-4 border">
+        <div class="w-1/3 rounded-sm bg-white p-2 md:p-4 border">
           <div class="text-gray-600 text-sm">Total</div>
           <i v-if="isPending" class="mt-2 fad fa-spinner-third fa-spin fa-lg" style="color: blue;"></i>
           <div v-else class="text-4xl font-bold leading-tight">
             {{ totalCount }}
           </div>
         </div>
-        <div class="w-1/3 ml-4 rounded bg-white p-2 md:p-4 border">
+        <div class="w-1/3 ml-4 rounded-sm bg-white p-2 md:p-4 border">
           <div class="text-gray-600 text-sm">This Year</div>
           <i v-if="isPending" class="mt-2 fad fa-spinner-third fa-spin fa-lg" style="color: blue;"></i>
           <div v-else class="text-4xl font-bold leading-tight">
             {{ yearCount }}
           </div>
         </div>
-        <div class="w-1/3 ml-4 rounded bg-white p-2 md:p-4 border">
+        <div class="w-1/3 ml-4 rounded-sm bg-white p-2 md:p-4 border">
           <div class="text-gray-600 text-sm">This Month</div>
           <i v-if="isPending" class="mt-2 fad fa-spinner-third fa-spin fa-lg" style="color: blue;"></i>
           <div v-else class="text-4xl font-bold leading-tight">
@@ -83,14 +94,14 @@ const monthCount = computed(() => {
         <input
           id="filter"
           v-model="searchValue"
-          class="bg-white appearance-none border-2 border-gray-300 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-purple-500"
+          class="bg-white appearance-none border-2 border-gray-300 rounded-sm w-full py-2 px-4 text-gray-700 leading-tight focus:outline-hidden focus:border-purple-500"
           placeholder="Filter by Title..."
           type="text"/>
-        <router-link class="hidden md:inline-flex whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-5 py-2.5 text-center inline-flex items-center"
+        <router-link class="hidden md:inline-flex whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-sm text-sm px-5 py-2.5 text-center items-center"
                      to="/movies/new">
           Add Movie
         </router-link>
-        <router-link class="md:hidden whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-5 py-2.5 text-center inline-flex items-center"
+        <router-link class="md:hidden whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-sm text-sm px-5 py-2.5 text-center inline-flex items-center"
                      to="/movies/new">
           <i class="far fa-plus"></i>
         </router-link>

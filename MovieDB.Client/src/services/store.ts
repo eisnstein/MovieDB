@@ -43,7 +43,12 @@ const actions: ActionTree<State, State> = {
       commit('loginSuccess', { account })
       router.push('/movies')
     } catch (error: any) {
-      commit('loginFailure', error)
+      if ('errors' in error) {
+        const messages = Object.values(error.errors).flat().join('\n')
+        commit('loginFailure', { message: messages })
+      } else {
+        commit('loginFailure', error)
+      }
     }
   },
   logout({ commit }) {

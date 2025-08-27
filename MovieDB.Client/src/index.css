@@ -1,10 +1,26 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
 
-@import "assets/font-awesome/css/fontawesome.css";
-@import "assets/font-awesome/css/duotone.css";
-@import "assets/font-awesome/css/light.css";
-@import "assets/font-awesome/css/regular.css";
+@theme {
+  --font-sans: Inter;
+  --font-serif: Inter;
+}
 
-@import "styles/base.css";
+@import "./assets/font-awesome/css/fontawesome.css";
+@import "./assets/font-awesome/css/duotone.css";
+@import "./assets/font-awesome/css/light.css";
+@import "./assets/font-awesome/css/regular.css";
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+@layer components {
+  @import "./styles/base.css";
+}

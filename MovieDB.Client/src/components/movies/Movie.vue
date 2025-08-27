@@ -16,13 +16,13 @@ const seenAt = computed(() => {
 <template>
   <div class="movie" :style="{backgroundImage: `url('${movie.posterUrl ?? defaultUrl}')`}">
     <div class="overlay">
-      <div class="bg-white rounded p-1 m-1">
+      <div class="bg-white rounded-sm p-1 m-1">
         <span v-for="i in [1, 2, 3, 4, 5]">
           <i v-if="i <= movie.rating" class="fad fa-fire-alt mr-1" style="color: darkorange;"></i>
           <i v-else class="fad fa-fire-alt mr-1" style="color: black;"></i>
         </span>
       </div>
-      <div class="bg-white rounded px-1 m-1 text-sm flex items-center text-black">
+      <div class="bg-white rounded-sm px-1 m-1 text-sm flex items-center text-black">
         {{ seenAt }}
       </div>
     </div>
@@ -30,6 +30,8 @@ const seenAt = computed(() => {
 </template>
 
 <style scoped>
+@reference "../../index.css";
+
 .movie {
   @apply relative mb-3 rounded-lg border bg-white hover:shadow-lg transition duration-200 transform hover:-translate-y-1;
   @apply bg-center bg-no-repeat bg-cover;
@@ -38,7 +40,7 @@ const seenAt = computed(() => {
 }
 
 .movie img {
-  @apply rounded;
+  @apply rounded-sm;
   position: relative;
 }
 
