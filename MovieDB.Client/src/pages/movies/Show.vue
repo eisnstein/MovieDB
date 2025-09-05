@@ -9,13 +9,22 @@ import { genreOptions } from '@/constants'
 const route = useRoute()
 const loading = ref(true)
 const deleting = ref(false)
+const errorMsg = ref<string | null>(null)
 const movie = ref<TMovie | null>(null)
 
 onMounted(async () => {
   try {
-    movie.value = await fetchMovie(route.params.id)
+    let id = route.params.id
+    if (!id) {
+      throw new Error('No movie id provided')
+    }
+    if (Array.isArray(id)) {
+      id = id[0]
+    }
+    movie.value = await fetchMovie(Number(id))
   } catch (error) {
     console.error(error)
+    errorMsg.value = 'Failed to fetch movie'
   } finally {
     loading.value = false
   }
@@ -55,7 +64,10 @@ async function handleDelete() {
     <div v-if="loading" class="p-6 flex align-items justify-center">
       <i class="fad fa-spinner-third fa-spin fa-2x" style="color: blue;"></i>
     </div>
-    <div v-else>
+    <div v-if="errorMsg" class="p-6 flex align-items justify-center">
+      <div class="text-red-600 font-bold">{{ errorMsg }}</div>
+    </div>
+    <div v-if="movie">
       <div class="container max-w-2xl mx-auto flex bg-white shadow-md rounded-sm p-3 md:p-6">
         <div class="w-1/2 flex flex-col justify-between">
           <div>
@@ -69,14 +81,17 @@ async function handleDelete() {
             </div>
             <div class="mt-2"><span class="px-2 py-1 inline-flex items-center rounded-full bg-blue-700 text-xs text-white">{{ genre }}</span></div>
           </div>
-          <div>
+          <div class="flex items-center gap-2">
             <button class="px-3 py-1 inline-flex items-center rounded-full bg-red-700 text-white" type="button" @click="handleDelete">
               Delete <i class="ml-2 fad" :class="{'fa-trash': !deleting, 'fa-spinner-third fa-spin': deleting}"></i>
             </button>
+            <router-link class="px-3 py-1 inline-flex items-center rounded-full bg-blue-700 text-white" type="button" :to="{ name: 'movies-edit', params: { id: movie.id } }">
+              Edit <i class="ml-2 fad fa-edit"></i>
+            </router-link>
           </div>
         </div>
         <div class="w-1/2 ml-2">
-          <img class="rounded-sm" :src="movie.posterUrl" />
+          <img class="rounded-sm" :src="movie.posterUrl ?? undefined" />
         </div>
       </div>
     </div>

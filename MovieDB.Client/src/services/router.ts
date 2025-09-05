@@ -4,6 +4,7 @@ import CreateConcert from '../pages/concerts/Create.vue'
 import IndexMovie from '../pages/movies/Index.vue'
 import CreateMovie from '../pages/movies/Create.vue'
 import ShowMovie from '../pages/movies/Show.vue'
+import EditMovie from '../pages/movies/Edit.vue'
 import IndexTheater from '../pages/theaters/Index.vue'
 import CreateTheater from '../pages/theaters/Create.vue'
 import Login from '../pages/Login.vue'
@@ -17,6 +18,7 @@ const routes = [
   { path: '/movies', component: IndexMovie },
   { path: '/movies/new', component: CreateMovie },
   { path: '/movies/:id(\\d+)', name: 'movies-show', component: ShowMovie },
+  { path: '/movies/:id(\\d+)/edit', name: 'movies-edit', component: EditMovie },
   { path: '/theaters', component: IndexTheater },
   { path: '/theaters/new', component: CreateTheater },
   { path: '/:pathMatch(.*)*', redirect: '/' },

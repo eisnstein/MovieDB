@@ -72,6 +72,23 @@ export async function storeMovie(movie: Omit<TMovie, 'id'>): Promise<boolean> {
   return res.ok
 }
 
+export async function updateMovie(
+  id: number,
+  movie: Omit<TMovie, 'id'>
+): Promise<boolean> {
+  const url = `${import.meta.env.VITE_API_URL}/api/movies/${id}`
+  const res = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      Authorization: 'Bearer ' + store.state.account?.jwtToken,
+      'Content-Type': 'application/json;charset=utf-8',
+    },
+    body: JSON.stringify(movie),
+  })
+
+  return res.ok
+}
+
 export async function deleteMovie(movieId: number): Promise<boolean> {
   const url = `${import.meta.env.VITE_API_URL}/api/movies/${movieId}`
   const res = await fetch(url, {
