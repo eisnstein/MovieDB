@@ -15,8 +15,8 @@ public class TheaterCreateRequest
     public string? Location { get; set; }
 
     [Required]
-    public int? Genre { get; set; }
+    public int Genre { get; set; }
 
     [Required]
-    public int? Rating { get; set; }
+    public int Rating { get; set; }
 }

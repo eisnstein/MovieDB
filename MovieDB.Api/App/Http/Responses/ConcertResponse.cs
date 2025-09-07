@@ -2,10 +2,10 @@ namespace MovieDB.Api.App.Http.Responses;
 
 public class ConcertResponse
 {
-    public int Id { get; set; }
-    public string Title { get; set; } = default!;
-    public DateTime SeenAt { get; set; }
-    public string Location { get; set; } = default!;
-    public int Genre { get; set; }
-    public int Rating { get; set; }
+    public required int Id { get; set; }
+    public required string Title { get; set; }
+    public required DateTime SeenAt { get; set; }
+    public required string Location { get; set; }
+    public required int Genre { get; set; }
+    public required int Rating { get; set; }
 }

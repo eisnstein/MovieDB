@@ -16,15 +16,15 @@ public enum ConcertGenre
 public class Concert
 {
     public int Id { get; set; }
-    public string Title { get; set; } = default!;
-    public DateTime SeenAt { get; set; }
-    public string Location { get; set; } = default!;
-    public ConcertGenre Genre { get; set; }
-    public Rating Rating { get; set; }
+    public required string Title { get; set; }
+    public required DateTime SeenAt { get; set; }
+    public required string Location { get; set; }
+    public required ConcertGenre Genre { get; set; }
+    public required Rating Rating { get; set; }
 
     [JsonIgnore]
-    public Account Account { get; set; } = default!;
-    public DateTime CreatedAt { get; set; }
+    public required Account Account { get; set; }
+    public required DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
 }

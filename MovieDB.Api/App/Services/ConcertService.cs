@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MovieDB.Api.App.Helpers;
 using MovieDB.Api.App.Http.Requests;
@@ -18,12 +17,10 @@ public interface IConcertService
 public class ConcertService : IConcertService
 {
     private readonly AppDbContext _db;
-    private readonly IMapper _mapper;
 
-    public ConcertService(AppDbContext db, IMapper mapper)
+    public ConcertService(AppDbContext db)
     {
         _db = db;
-        _mapper = mapper;
     }
 
     public IQueryable<Concert> GetAllAsync(Account account)
@@ -50,9 +47,16 @@ public class ConcertService : IConcertService
 
     public async Task<Concert> CreateAsync(ConcertCreateRequest model, Account account)
     {
-        var concert = _mapper.Map<Concert>(model);
-        concert.CreatedAt = DateTime.UtcNow;
-        concert.Account = account;
+        var concert = new Concert
+        {
+            Title = model.Title!,
+            SeenAt = model.SeenAt ?? DateTime.UtcNow,
+            Location = model.Location!,
+            Genre = (ConcertGenre)model.Genre,
+            Rating = (Rating)model.Rating,
+            CreatedAt = DateTime.UtcNow,
+            Account = account
+        };
 
         _db.Concerts.Add(concert);
         await _db.SaveChangesAsync();
@@ -64,7 +68,11 @@ public class ConcertService : IConcertService
     {
         var concert = await GetByIdAsync(id, account);
 
-        _mapper.Map(model, concert);
+        concert.Title = model.Title ?? concert.Title;
+        concert.SeenAt = model.SeenAt ?? concert.SeenAt;
+        concert.Location = model.Location ?? concert.Location;
+        concert.Genre = (ConcertGenre)(model.Genre ?? (int)concert.Genre);
+        concert.Rating = (Rating)(model.Rating ?? (int)concert.Rating);
         concert.UpdatedAt = DateTime.UtcNow;
 
         await _db.SaveChangesAsync();

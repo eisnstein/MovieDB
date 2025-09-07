@@ -14,10 +14,10 @@ public class MovieCreateRequest
     public string? ImdbIdentifier { get; set; }
 
     [Required]
-    public int? Genre { get; set; }
+    public int Genre { get; set; }
 
     [Required]
-    public int? Rating { get; set; }
+    public int Rating { get; set; }
 
     public string? PosterUrl { get; set; }
 }

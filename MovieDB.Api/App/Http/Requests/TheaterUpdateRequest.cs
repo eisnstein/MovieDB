@@ -9,7 +9,7 @@ public class TheaterUpdateRequest
     [DataType(DataType.Date)]
     public DateTime? SeenAt { get; set; }
 
-    public string? ImdbIdentifier { get; set; }
+    public string? Location { get; set; }
 
     public int? Genre { get; set; }
 

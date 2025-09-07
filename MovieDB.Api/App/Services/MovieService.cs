@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MovieDB.Api.App.Helpers;
 using MovieDB.Api.App.Http.Requests;
@@ -18,12 +17,10 @@ public interface IMovieService
 public class MovieService : IMovieService
 {
     private readonly AppDbContext _db;
-    private readonly IMapper _mapper;
 
-    public MovieService(AppDbContext db, IMapper mapper)
+    public MovieService(AppDbContext db)
     {
         _db = db;
-        _mapper = mapper;
     }
 
     public IQueryable<Movie> GetAllAsync(Account account)
@@ -50,12 +47,17 @@ public class MovieService : IMovieService
 
     public async Task<Movie> CreateAsync(MovieCreateRequest model, Account account)
     {
-        var movie = _mapper.Map<Movie>(model);
-        var now = DateTime.UtcNow;
-
-        movie.CreatedAt = now;
-        movie.UpdatedAt = now;
-        movie.Account = account;
+        var movie = new Movie
+        {
+            Title = model.Title!,
+            SeenAt = model.SeenAt ?? DateTime.UtcNow,
+            ImdbIdentifier = model.ImdbIdentifier!,
+            Genre = (MovieGenre)model.Genre,
+            Rating = (Rating)model.Rating,
+            PosterUrl = model.PosterUrl,
+            CreatedAt = DateTime.UtcNow,
+            Account = account
+        };
 
         _db.Movies.Add(movie);
         await _db.SaveChangesAsync();
@@ -67,7 +69,12 @@ public class MovieService : IMovieService
     {
         var movie = await GetByIdAsync(id, account);
 
-        _mapper.Map(model, movie);
+        movie.Title = model.Title ?? movie.Title;
+        movie.SeenAt = model.SeenAt ?? movie.SeenAt;
+        movie.ImdbIdentifier = model.ImdbIdentifier ?? movie.ImdbIdentifier;
+        movie.Genre = (MovieGenre)(model.Genre ?? (int)movie.Genre);
+        movie.Rating = (Rating)(model.Rating ?? (int)movie.Rating);
+        movie.PosterUrl = model.PosterUrl ?? movie.PosterUrl;
         movie.UpdatedAt = DateTime.UtcNow;
 
         await _db.SaveChangesAsync();

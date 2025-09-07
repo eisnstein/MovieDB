@@ -1,13 +1,9 @@
 using System.Security.Cryptography;
-using System.Security.Principal;
-using AutoMapper;
 using BC = BCrypt.Net.BCrypt;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.JsonWebTokens;
 using MovieDB.Api.App.Helpers;
 using MovieDB.Api.App.Http.Requests;
-using MovieDB.Api.App.Http.Responses;
 using MovieDB.Api.App.Models;
 
 namespace MovieDB.Api.App.Services;
@@ -30,18 +26,15 @@ public class AccountService : IAccountService
 {
     private readonly AppDbContext _db;
     private readonly AppSettings _appSettings;
-    private readonly IMapper _mapper;
     private readonly IEmailService _emailService;
 
     public AccountService(
         AppDbContext db,
         IOptions<AppSettings> appSettings,
-        IMapper mapper,
         IEmailService emailService)
     {
         _db = db;
         _appSettings = appSettings.Value;
-        _mapper = mapper;
         _emailService = emailService;
     }
 
@@ -98,17 +91,17 @@ public class AccountService : IAccountService
         var emailExists = await _db.Accounts.AnyAsync(a => a.Email == model.Email);
         if (emailExists)
         {
-            SendAlreadyRegisteredEmail(model.Email, origin);
+            SendAlreadyRegisteredEmail(model.Email!, origin);
             return;
         }
 
         var account = new Account()
         {
-            Email = model.Email,
+            Email = model.Email!,
             Role = Role.User,
             CreatedAt = DateTime.UtcNow,
             VerificationToken = RandomTokenString(),
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
+            PasswordHash = BC.HashPassword(model.Password),
         };
 
         _db.Accounts.Add(account);
@@ -167,7 +160,7 @@ public class AccountService : IAccountService
             throw new AppException("Token invalid");
         }
 
-        account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+        account.PasswordHash = BC.HashPassword(model.Password);
         account.ResetToken = null;
         account.ResetTokenExpiresAt = null;
 
@@ -194,7 +187,7 @@ public class AccountService : IAccountService
                 throw new AppException($"Passwords don't match");
             }
 
-            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            account.PasswordHash = BC.HashPassword(model.Password);
         }
 
         var role = account.Role;

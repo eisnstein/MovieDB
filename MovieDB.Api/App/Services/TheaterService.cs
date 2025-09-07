@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MovieDB.Api.App.Helpers;
 using MovieDB.Api.App.Http.Requests;
@@ -18,12 +17,10 @@ public interface ITheaterService
 public class TheaterService : ITheaterService
 {
     private readonly AppDbContext _db;
-    private readonly IMapper _mapper;
 
-    public TheaterService(AppDbContext db, IMapper mapper)
+    public TheaterService(AppDbContext db)
     {
         _db = db;
-        _mapper = mapper;
     }
 
     public IQueryable<Theater> GetAllAsync(Account account)
@@ -50,9 +47,16 @@ public class TheaterService : ITheaterService
 
     public async Task<Theater> CreateAsync(TheaterCreateRequest model, Account account)
     {
-        var theater = _mapper.Map<Theater>(model);
-        theater.CreatedAt = DateTime.UtcNow;
-        theater.Account = account;
+        var theater = new Theater
+        {
+            Title = model.Title!,
+            SeenAt = model.SeenAt ?? DateTime.UtcNow,
+            Location = model.Location!,
+            Genre = (TheaterGenre)model.Genre,
+            Rating = (Rating)model.Rating,
+            CreatedAt = DateTime.UtcNow,
+            Account = account
+        };
 
         _db.Theaters.Add(theater);
         await _db.SaveChangesAsync();
@@ -64,7 +68,11 @@ public class TheaterService : ITheaterService
     {
         var theater = await GetByIdAsync(id, account);
 
-        _mapper.Map(model, theater);
+        theater.Title = model.Title ?? theater.Title;
+        theater.SeenAt = model.SeenAt ?? theater.SeenAt;
+        theater.Location = model.Location ?? theater.Location;
+        theater.Genre = model.Genre is not null ? (TheaterGenre)model.Genre : theater.Genre;
+        theater.Rating = model.Rating is not null ? (Rating)model.Rating : theater.Rating;
         theater.UpdatedAt = DateTime.UtcNow;
 
         await _db.SaveChangesAsync();

@@ -8,7 +8,7 @@ public class ConcertCreateRequest
     public string? Title { get; set; }
 
     [Required, DataType(DataType.Date)]
-    public DateTime SeenAt { get; set; }
+    public DateTime? SeenAt { get; set; }
 
     [Required]
     public string? Location { get; set; }

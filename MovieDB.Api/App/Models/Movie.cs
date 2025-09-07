@@ -16,15 +16,16 @@ public enum MovieGenre
 public class Movie
 {
     public int Id { get; set; }
-    public string Title { get; set; } = default!;
-    public DateTime SeenAt { get; set; }
-    public string ImdbIdentifier { get; set; } = default!;
-    public MovieGenre Genre { get; set; }
-    public Rating Rating { get; set; }
+    public required string Title { get; set; }
+    public required DateTime SeenAt { get; set; }
+    public required string ImdbIdentifier { get; set; }
+    public required MovieGenre Genre { get; set; }
+    public required Rating Rating { get; set; }
     public string? PosterUrl { get; set; }
+
     [JsonIgnore]
-    public Account Account { get; set; } = default!;
-    public DateTime CreatedAt { get; set; }
+    public required Account Account { get; set; }
+    public required DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
 }

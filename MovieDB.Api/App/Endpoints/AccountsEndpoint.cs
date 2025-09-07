@@ -12,15 +12,15 @@ public static class AccountsEndpoint
     public static async Task<Results<ValidationProblem, BadRequest<ErrorMessage>, Ok<AuthenticateResponse>>> Authenticate(
         HttpContext context,
         IAccountService accountService,
-        AuthenticateRequest model)
+        AuthenticateRequest request)
     {
-        if (!MiniValidator.TryValidate(model, out var errors))
+        if (!MiniValidator.TryValidate(request, out var errors))
         {
             return TypedResults.ValidationProblem(errors);
         }
 
         var ipAddress = GetIpAddress(context);
-        var (account, jwtToken, refreshToken) = await accountService.AuthenticateAsync(model, ipAddress);
+        var (account, jwtToken, refreshToken) = await accountService.AuthenticateAsync(request, ipAddress);
 
         SetRefreshTokenCookie(context.Response, refreshToken);
 
@@ -125,7 +125,7 @@ public static class AccountsEndpoint
         ValidateResetTokenRequest model)
     {
         await accountService.ValidateResetTokenAsync(model.Token);
-        return TypedResults.Ok<object>(new { message = "Token is valid"});
+        return TypedResults.Ok<object>(new { message = "Token is valid" });
     }
 
     public static async Task<Ok<object>> ResetPassword(
@@ -157,7 +157,7 @@ public static class AccountsEndpoint
         int id,
         AccountUpdateRequest model)
     {
-        var account = (Account) context.Items[nameof(Account)]!;
+        var account = (Account)context.Items[nameof(Account)]!;
         if (id != account.Id && Role.Admin != account.Role)
         {
             return TypedResults.Unauthorized();

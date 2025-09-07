@@ -31,7 +31,6 @@ public static class Startup
                 };
             });
         builder.Services.AddCors();
-        builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         builder.Services.AddScoped<IAccountService, AccountService>();
         builder.Services.AddScoped<IMovieService, MovieService>();
