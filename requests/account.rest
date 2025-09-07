@@ -1,0 +1,10 @@
+# Register an account with wrong email
+
+POST http://localhost:4000/api/accounts/register
+Content-Type: application/json
+
+{
+    "email": "invalid-email",
+    "password": "ValidPass123!",
+    "confirmPassword": "ValidPass123!"
+}
