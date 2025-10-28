@@ -1,4 +1,4 @@
-FROM nginx:1.29.1-alpine3.22
+FROM nginx:1.29.2-alpine3.22
 
 RUN apk --no-cache --no-progress add tini
 
