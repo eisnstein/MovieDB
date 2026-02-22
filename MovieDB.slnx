@@ -1,0 +1,10 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="arm64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="MovieDB.Api/MovieDB.Api.csproj" />
+  <Project Path="MovieDB.Tests/MovieDB.Tests.csproj" />
+</Solution>

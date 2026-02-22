@@ -25,9 +25,11 @@ using (var scope = app.Services.CreateScope())
     context.Database.Migrate();
 }
 
+app.MapOpenApi();
+
 Startup.ConfigureMiddlewares(app);
 Startup.ConfigureRoutes(app);
 
 app.Run();
 
-public partial class Program {}
+public partial class Program { }

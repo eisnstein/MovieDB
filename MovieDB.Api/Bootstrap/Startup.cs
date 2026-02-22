@@ -40,6 +40,7 @@ public static class Startup
 
         builder.Services.AddResponseCompression();
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
+        builder.Services.AddOpenApi();
     }
 
     public static void ConfigureMiddlewares(WebApplication app)

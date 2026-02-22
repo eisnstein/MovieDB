@@ -26,7 +26,7 @@ public class AccountsEndpointTests
     [Test]
     public async Task user_cannot_register_with_invalid_email()
     {
-        var result = await _client.PostAsJsonAsync("/api/accounts/register", new
+        var result = await _client!.PostAsJsonAsync("/api/accounts/register", new
         {
             email = "daniel",
             password = "password",
@@ -42,7 +42,7 @@ public class AccountsEndpointTests
     [Test]
     public async Task user_cannot_register_with_invalid_password()
     {
-        var result = await _client.PostAsJsonAsync("/api/accounts/register", new RegisterRequest
+        var result = await _client!.PostAsJsonAsync("/api/accounts/register", new RegisterRequest
         {
             Email = "daniel@test.local",
             Password = "short",
@@ -58,7 +58,7 @@ public class AccountsEndpointTests
     [Test]
     public async Task user_cannot_register_with_not_equal_passwords()
     {
-        var result = await _client.PostAsJsonAsync("/api/accounts/register", new RegisterRequest
+        var result = await _client!.PostAsJsonAsync("/api/accounts/register", new RegisterRequest
         {
             Email = "daniel@test.local",
             Password = "password",
@@ -74,7 +74,7 @@ public class AccountsEndpointTests
     [Test]
     public async Task user_cannot_authenticate_without_password()
     {
-        var result = await _client.PostAsJsonAsync("/api/accounts/authenticate", new AuthenticateRequest()
+        var result = await _client!.PostAsJsonAsync("/api/accounts/authenticate", new AuthenticateRequest()
         {
             Email = "daniel@test.local"
         });
@@ -88,7 +88,7 @@ public class AccountsEndpointTests
     [Test]
     public async Task user_cannot_authenticate_with_invalid_email_address()
     {
-        var result = await _client.PostAsJsonAsync("/api/accounts/authenticate", new AuthenticateRequest()
+        var result = await _client!.PostAsJsonAsync("/api/accounts/authenticate", new AuthenticateRequest()
         {
             Email = "daniel",
             Password = "password"
@@ -103,12 +103,12 @@ public class AccountsEndpointTests
     [Test]
     public async Task user_cannot_authenticate_with_invalid_password()
     {
-        await using var db = _application.Services.GetService<AppDbContext>();
+        await using var db = _application!.Services.GetService<AppDbContext>();
         var account = AccountFactory.CreateAccount();
         db!.Accounts.Add(account);
         await db.SaveChangesAsync();
 
-        var result = await _client.PostAsJsonAsync("/api/accounts/authenticate", new AuthenticateRequest()
+        var result = await _client!.PostAsJsonAsync("/api/accounts/authenticate", new AuthenticateRequest()
         {
             Email = "john@test.local",
             Password = "wrong-password"

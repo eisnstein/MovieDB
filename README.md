@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/github/license/eisnstein/PackCheck)](https://github.com/eisnstein/PackCheck/blob/main/LICENSE)
 
-Store Movies, Theater Plays and Concerts you have seen or visited. ASP.NET 8 API with a Vue3 Client App. Uses SQLite as database.
+Store Movies, Theater Plays and Concerts you have seen or visited. ASP.NET 10 API with a Vue3 Client App. Uses SQLite as database.
 
 ---
 

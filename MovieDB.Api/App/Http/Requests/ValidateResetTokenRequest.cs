@@ -5,5 +5,5 @@ namespace MovieDB.Api.App.Http.Requests;
 public class ValidateResetTokenRequest
 {
     [Required]
-    public string? Token { get; set; }
+    public required string Token { get; set; }
 }
