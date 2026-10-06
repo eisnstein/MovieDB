@@ -6,7 +6,7 @@ COPY . .
 RUN dotnet restore
 RUN dotnet publish -c Release -o out -r linux-arm64 --no-self-contained /p:PublishSingleFile=true
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0.3-noble-chiseled-arm64v8
+FROM mcr.microsoft.com/dotnet/aspnet:10.0.3-noble-arm64v8
 WORKDIR /app
 
 RUN mkdir Data
