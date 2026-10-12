@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useQueryClient } from '@tanstack/vue-query'
 import { useStore } from '@/services/store'
 import { fetchMoviePoster, updateMovie } from '@/api/movie'
 import router from '@/services/router'
@@ -11,6 +12,7 @@ import { fetchMovie } from '@/api/movie'
 
 const store = useStore()
 const route = useRoute()
+const queryClient = useQueryClient()
 
 const movie = ref<TMovie | null>(null)
 const loading = ref(true)
@@ -44,7 +46,7 @@ async function onSubmit() {
 
   isSubmitting.value = true
 
-  await updateMovie(movie.value!.id, {
+  const updated = await updateMovie(movie.value!.id, {
     title: movie.value!.title,
     seenAt: movie.value!.seenAt,
     imdbIdentifier: movie.value!.imdbIdentifier,
@@ -52,6 +54,10 @@ async function onSubmit() {
     rating: movie.value!.rating,
     posterUrl: movie.value!.posterUrl ?? null
   })
+
+  if (updated) {
+    queryClient.invalidateQueries({ queryKey: ['movies'] })
+  }
 
   isSubmitting.value = false
 

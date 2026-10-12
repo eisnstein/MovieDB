@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useQueryClient } from '@tanstack/vue-query'
 import { useStore } from '@/services/store'
 import { fetchMoviePoster, storeMovie } from '@/api/movie'
 import router from '@/services/router'
 import { genreOptions } from '@/constants'
 
 const store = useStore()
+const queryClient = useQueryClient()
 const title = ref('')
 const date = ref('')
 const imdb = ref('')
@@ -17,14 +19,18 @@ const isSubmitting = ref(false)
 async function onSubmit() {
   isSubmitting.value = true
 
-  await storeMovie({
+  const stored = await storeMovie({
     title: title.value,
     seenAt: date.value,
     imdbIdentifier: imdb.value,
-    genre: String(genre.value),
+    genre: genre.value,
     rating: rating.value,
     posterUrl: posterUrl.value ?? null
   })
+
+  if (stored) {
+    queryClient.invalidateQueries({ queryKey: ['movies'] })
+  }
 
   isSubmitting.value = false
 

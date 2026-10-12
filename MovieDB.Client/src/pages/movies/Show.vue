@@ -1,12 +1,14 @@
 <script lang="ts" setup>
 import {ref, onMounted, computed} from 'vue'
 import { useRoute } from 'vue-router'
+import { useQueryClient } from '@tanstack/vue-query'
 import router from '@/services/router'
 import { TMovie } from '@/types/movie'
 import { fetchMovie, deleteMovie } from '@/api/movie'
 import { genreOptions } from '@/constants'
 
 const route = useRoute()
+const queryClient = useQueryClient()
 const loading = ref(true)
 const deleting = ref(false)
 const errorMsg = ref<string | null>(null)
@@ -50,7 +52,9 @@ const genre = computed(() => {
 async function handleDelete() {
   deleting.value = true
   try {
-    await deleteMovie(movie.value!.id)
+    if (await deleteMovie(movie.value!.id)) {
+      queryClient.invalidateQueries({ queryKey: ['movies'] })
+    }
   } catch (error) {
     console.error(error)
   } finally {
