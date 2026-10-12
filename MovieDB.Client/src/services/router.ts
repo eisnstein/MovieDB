@@ -30,13 +30,13 @@ const router = createRouter({
   strict: true,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
   if (to.path !== '/login' && !store.state.isAuthenticated) {
-    next('/login')
-  } else if (to.path === '/login' && store.state.isAuthenticated) {
-    next('/')
-  } else {
-    next()
+    return '/login'
+  }
+
+  if (to.path === '/login' && store.state.isAuthenticated) {
+    return '/'
   }
 })
 
