@@ -7,6 +7,7 @@ import {
   MutationTree,
 } from 'vuex'
 import { login, logout } from '../api/account'
+import { ApiError } from '../api/client'
 import { TAccount } from '../types/account'
 import { LocalStorage } from './localStorage'
 import router from './router'
@@ -25,10 +26,39 @@ export interface State {
 
 export const key: InjectionKey<Store<State>> = Symbol()
 
-const accountJson = LocalStorage.get('account')
+function isTokenExpired(jwtToken: string): boolean {
+  try {
+    const payload = jwtToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
+    const { exp } = JSON.parse(atob(payload))
+    return typeof exp === 'number' && exp * 1000 <= Date.now()
+  } catch {
+    return true
+  }
+}
+
+function loadAccount(): TAccount | null {
+  const accountJson = LocalStorage.get('account')
+  if (!accountJson) {
+    return null
+  }
+
+  try {
+    const account = JSON.parse(accountJson) as TAccount
+    if (!isTokenExpired(account.jwtToken)) {
+      return account
+    }
+  } catch {
+    // Corrupt entry, treat as logged out
+  }
+
+  LocalStorage.remove('account')
+  return null
+}
+
+const storedAccount = loadAccount()
 const initialState: State = {
-  account: accountJson ? JSON.parse(accountJson) : null,
-  isAuthenticated: accountJson !== null,
+  account: storedAccount,
+  isAuthenticated: storedAccount !== null,
   loading: false,
   alert: null,
 }
@@ -42,12 +72,16 @@ const actions: ActionTree<State, State> = {
       const account = await login(payload.email, payload.password)
       commit('loginSuccess', { account })
       router.push('/movies')
-    } catch (error: any) {
-      if ('errors' in error) {
-        const messages = Object.values(error.errors).flat().join('\n')
+    } catch (error) {
+      const validationErrors =
+        error instanceof ApiError ? (error.body as any)?.errors : undefined
+
+      if (validationErrors) {
+        const messages = Object.values(validationErrors).flat().join('\n')
         commit('loginFailure', { message: messages })
       } else {
-        commit('loginFailure', error)
+        const message = error instanceof Error ? error.message : 'Login failed'
+        commit('loginFailure', { message })
       }
     }
   },

@@ -1,30 +1,17 @@
-import { store } from '../services/store'
 import { TTheater } from '../types/theater'
+import { apiFetch } from './client'
 
-export async function fetchTheaters(): Promise<Array<TTheater>> {
-  const url = `${import.meta.env.VITE_API_URL}/api/theaters`
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: {
-      Authorization: 'Bearer ' + store.state.account?.jwtToken,
-    },
-  })
-
-  return (await res.json()) as Array<TTheater>
+export function fetchTheaters(): Promise<Array<TTheater>> {
+  return apiFetch<Array<TTheater>>('/api/theaters')
 }
 
 export async function storeTheater(
   theater: Omit<TTheater, 'id'>
 ): Promise<boolean> {
-  const url = `${import.meta.env.VITE_API_URL}/api/theaters`
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: {
-      Authorization: 'Bearer ' + store.state.account?.jwtToken,
-      'Content-Type': 'application/json;charset=utf-8',
-    },
-    body: JSON.stringify(theater),
-  })
-
-  return res.ok
+  try {
+    await apiFetch('/api/theaters', { method: 'POST', body: theater })
+    return true
+  } catch {
+    return false
+  }
 }

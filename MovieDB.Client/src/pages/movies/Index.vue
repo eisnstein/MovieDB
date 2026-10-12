@@ -1,11 +1,8 @@
 <script lang="ts" setup>
 import { useQuery } from '@tanstack/vue-query'
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { fetchMovies } from '../../api/movie'
 import Movie from '../../components/movies/Movie.vue'
-import { useStore } from '../../services/store';
-
-const store = useStore()
 
 const date = new Date()
 const year = date.getFullYear()
@@ -17,21 +14,6 @@ const { isPending, isError, data: movies } = useQuery({
   queryKey: ['movies'],
   queryFn: fetchMovies,
   staleTime: 1000 * 60 * 60, // Cache for 1h
-  retry: (failureCount, error: Error) => {
-    // Don't retry on 401 (unauthorized) errors
-    if (error.message === 'Unauthorized') {
-      return false
-    }
-
-    // Use default retry logic for other errors (3 retries)
-    return failureCount < 3
-  },
-})
-
-watch(isError, (newValue) => {
-  if (newValue) {
-    store.dispatch('logout')
-  }
 })
 
 const filteredMovies = computed(() => {
@@ -88,6 +70,9 @@ const monthCount = computed(() => {
   <div class="container mx-auto px-2 sm:px-4 lg:px-6">
     <div v-if="isPending" class="p-6 flex align-items justify-center">
       <i class="fad fa-spinner-third fa-spin fa-2x" style="color: blue;"></i>
+    </div>
+    <div v-else-if="isError" class="p-6 flex justify-center">
+      <div class="text-red-600 font-bold">Failed to load movies</div>
     </div>
     <div v-else>
       <div class="flex flex-row items-stretch gap-2">

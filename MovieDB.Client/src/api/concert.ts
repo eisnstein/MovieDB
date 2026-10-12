@@ -1,30 +1,17 @@
-import { store } from '../services/store'
 import { TConcert } from '../types/concert'
+import { apiFetch } from './client'
 
-export async function fetchConcerts(): Promise<Array<TConcert>> {
-  const url = `${import.meta.env.VITE_API_URL}/api/concerts`
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: {
-      Authorization: 'Bearer ' + store.state.account?.jwtToken,
-    },
-  })
-
-  return (await res.json()) as Array<TConcert>
+export function fetchConcerts(): Promise<Array<TConcert>> {
+  return apiFetch<Array<TConcert>>('/api/concerts')
 }
 
 export async function storeConcert(
   concert: Omit<TConcert, 'id'>
 ): Promise<boolean> {
-  const url = `${import.meta.env.VITE_API_URL}/api/concerts`
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: {
-      Authorization: 'Bearer ' + store.state.account?.jwtToken,
-      'Content-Type': 'application/json;charset=utf-8',
-    },
-    body: JSON.stringify(concert),
-  })
-
-  return res.ok
+  try {
+    await apiFetch('/api/concerts', { method: 'POST', body: concert })
+    return true
+  } catch {
+    return false
+  }
 }

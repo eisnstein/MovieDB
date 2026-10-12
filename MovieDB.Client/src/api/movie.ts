@@ -1,40 +1,12 @@
-import { store } from '../services/store'
 import { TMovie } from '../types/movie'
+import { apiFetch } from './client'
 
-export async function fetchMovies(): Promise<Array<TMovie>> {
-  const url = `${import.meta.env.VITE_API_URL}/api/movies`
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: {
-      Authorization: 'Bearer ' + store.state.account?.jwtToken,
-    },
-  })
-
-  if (!res.ok && res.status === 401) {
-    throw new Error(res.statusText)
-  }
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch movies: ' + res.statusText)
-  }
-
-  return res.json()
+export function fetchMovies(): Promise<Array<TMovie>> {
+  return apiFetch<Array<TMovie>>('/api/movies')
 }
 
-export async function fetchMovie(movieId: number): Promise<TMovie> {
-  const url = `${import.meta.env.VITE_API_URL}/api/movies/${movieId}`
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: {
-      Authorization: 'Bearer ' + store.state.account?.jwtToken,
-    },
-  })
-
-  if (!res.ok) {
-    return Promise.reject({ message: 'Could not find movie' })
-  }
-
-  return res.json()
+export function fetchMovie(movieId: number): Promise<TMovie> {
+  return apiFetch<TMovie>(`/api/movies/${movieId}`)
 }
 
 export async function fetchMoviePoster(
@@ -59,44 +31,31 @@ export async function fetchMoviePoster(
 }
 
 export async function storeMovie(movie: Omit<TMovie, 'id'>): Promise<boolean> {
-  const url = `${import.meta.env.VITE_API_URL}/api/movies`
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: {
-      Authorization: 'Bearer ' + store.state.account?.jwtToken,
-      'Content-Type': 'application/json;charset=utf-8',
-    },
-    body: JSON.stringify(movie),
-  })
-
-  return res.ok
+  try {
+    await apiFetch('/api/movies', { method: 'POST', body: movie })
+    return true
+  } catch {
+    return false
+  }
 }
 
 export async function updateMovie(
   id: number,
   movie: Omit<TMovie, 'id'>
 ): Promise<boolean> {
-  const url = `${import.meta.env.VITE_API_URL}/api/movies/${id}`
-  const res = await fetch(url, {
-    method: 'PUT',
-    headers: {
-      Authorization: 'Bearer ' + store.state.account?.jwtToken,
-      'Content-Type': 'application/json;charset=utf-8',
-    },
-    body: JSON.stringify(movie),
-  })
-
-  return res.ok
+  try {
+    await apiFetch(`/api/movies/${id}`, { method: 'PUT', body: movie })
+    return true
+  } catch {
+    return false
+  }
 }
 
 export async function deleteMovie(movieId: number): Promise<boolean> {
-  const url = `${import.meta.env.VITE_API_URL}/api/movies/${movieId}`
-  const res = await fetch(url, {
-    method: 'DELETE',
-    headers: {
-      Authorization: 'Bearer ' + store.state.account?.jwtToken,
-    },
-  })
-
-  return res.ok
+  try {
+    await apiFetch(`/api/movies/${movieId}`, { method: 'DELETE' })
+    return true
+  } catch {
+    return false
+  }
 }
