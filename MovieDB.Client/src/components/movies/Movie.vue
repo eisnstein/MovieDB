@@ -1,35 +1,23 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { formatDate } from '../../services/formatDate'
 import { TMovie } from '../../types/movie'
+import MoviePoster from './MoviePoster.vue'
 
 const { movie } = defineProps<{
   movie: TMovie
 }>()
 
-const defaultUrl = "https://m.media-amazon.com/images/M/MV5BMDljNTQ5ODItZmQwMy00M2ExLTljOTQtZTVjNGE2NTg0NGIxXkEyXkFqcGdeQXVyODkzNTgxMDg@._V1_SX300.jpg"
-
-const posterFailed = ref(false)
-const posterUrl = computed(() => {
-  // OMDb returns "N/A" when there is no poster
-  if (posterFailed.value || !movie.posterUrl || movie.posterUrl === 'N/A') {
-    return defaultUrl
-  }
-
-  return movie.posterUrl
-})
-
 const seenAt = computed(() => formatDate(movie.seenAt))
 </script>
 <template>
   <div class="movie">
-    <img
+    <MoviePoster
       class="poster"
-      :src="posterUrl"
+      :url="movie.posterUrl"
       :alt="movie.title"
       loading="lazy"
       decoding="async"
-      @error="posterFailed = true"
     />
     <div class="overlay">
       <div class="bg-white rounded-sm p-1 m-1">

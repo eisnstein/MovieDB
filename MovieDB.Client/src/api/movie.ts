@@ -12,7 +12,7 @@ export function fetchMovie(movieId: number): Promise<TMovie> {
 export async function fetchMoviePoster(
   imdbIdentifier: string
 ): Promise<string | undefined> {
-  const url = `https://www.omdbapi.com/?i=${imdbIdentifier}&apiKey=${
+  const url = `https://www.omdbapi.com/?i=${encodeURIComponent(imdbIdentifier)}&apiKey=${
     import.meta.env.VITE_OMDB_API_KEY
   }`
   const res = await fetch(url, {
@@ -27,7 +27,8 @@ export async function fetchMoviePoster(
   }
 
   const movieData = await res.json()
-  return movieData.Poster ?? undefined
+  // OMDb returns "N/A" when there is no poster
+  return movieData.Poster && movieData.Poster !== 'N/A' ? movieData.Poster : undefined
 }
 
 export function storeMovie(movie: Omit<TMovie, 'id'>): Promise<void> {

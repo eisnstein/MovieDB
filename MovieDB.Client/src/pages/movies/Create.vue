@@ -5,6 +5,7 @@ import { errorMessage } from '@/api/client'
 import { fetchMoviePoster, storeMovie } from '@/api/movie'
 import router from '@/services/router'
 import { genreOptions } from '@/constants'
+import MoviePoster from '@/components/movies/MoviePoster.vue'
 
 const queryClient = useQueryClient()
 const title = ref('')
@@ -93,7 +94,7 @@ function fetchPoster() {
         </div>
       </div>
       <div class="w-full mt-4 md:mt-0 md:w-1/2 md:ml-3">
-        <img class="poster" :src="posterUrl" />
+        <MoviePoster class="poster" :url="posterUrl" :alt="title" />
       </div>
     </div>
   </div>

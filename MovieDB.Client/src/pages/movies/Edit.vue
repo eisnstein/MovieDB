@@ -9,6 +9,7 @@ import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { TMovie } from '@/types/movie'
 import { fetchMovie } from '@/api/movie'
+import MoviePoster from '@/components/movies/MoviePoster.vue'
 
 const route = useRoute()
 const queryClient = useQueryClient()
@@ -31,6 +32,10 @@ onMounted(async () => {
     const fetchedMovie = await fetchMovie(Number(id))
     movie.value = fetchedMovie
     movie.value.seenAt = movie.value.seenAt.split('T')[0]
+    // Older entries may have OMDb's "N/A" stored; saving cleans it up
+    if (movie.value.posterUrl === 'N/A') {
+      movie.value.posterUrl = null
+    }
   } catch (error) {
     console.error(error)
     errorMsg.value = 'Failed to fetch movie'
@@ -122,7 +127,7 @@ function fetchPoster() {
         </div>
       </div>
       <div class="w-full mt-4 md:mt-0 md:w-1/2 md:ml-3">
-        <img class="poster" :src="movie?.posterUrl ?? undefined" />
+        <MoviePoster class="poster" :url="movie?.posterUrl" :alt="movie?.title" />
       </div>
     </div>
   </div>

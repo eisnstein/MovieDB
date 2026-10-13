@@ -8,6 +8,7 @@ import { errorMessage } from '@/api/client'
 import { fetchMovie, deleteMovie } from '@/api/movie'
 import { genreOptions } from '@/constants'
 import { formatDate } from '@/services/formatDate'
+import MoviePoster from '@/components/movies/MoviePoster.vue'
 
 const route = useRoute()
 const queryClient = useQueryClient()
@@ -100,7 +101,7 @@ async function handleDelete() {
           </div>
         </div>
         <div class="w-1/2 ml-2">
-          <img class="rounded-sm" :src="movie.posterUrl ?? undefined" />
+          <MoviePoster class="rounded-sm" :url="movie.posterUrl" :alt="movie.title" />
         </div>
       </div>
       <div v-if="deleteError" class="container max-w-2xl mx-auto mt-4 rounded-sm p-3 bg-red-100 text-red-700 text-center whitespace-pre-line">
