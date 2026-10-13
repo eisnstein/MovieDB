@@ -7,6 +7,7 @@ import { TMovie } from '@/types/movie'
 import { errorMessage } from '@/api/client'
 import { fetchMovie, deleteMovie } from '@/api/movie'
 import { genreOptions } from '@/constants'
+import { formatDate } from '@/services/formatDate'
 
 const route = useRoute()
 const queryClient = useQueryClient()
@@ -34,14 +35,7 @@ onMounted(async () => {
   }
 })
 
-const seenAt = computed(() => {
-  if (movie.value) {
-    const date = Date.parse(movie.value.seenAt)
-    return new Intl.DateTimeFormat('de-AT', { year: 'numeric', month: 'numeric', day: 'numeric'}).format(date)
-  }
-
-  return null
-})
+const seenAt = computed(() => formatDate(movie.value?.seenAt))
 
 const genre = computed(() => {
   if (movie.value) {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { formatDate } from '../../services/formatDate'
 import { TMovie } from '../../types/movie'
 
 const { movie } = defineProps<{
@@ -18,10 +19,7 @@ const posterUrl = computed(() => {
   return movie.posterUrl
 })
 
-const seenAt = computed(() => {
-  const date = Date.parse(movie.seenAt)
-  return new Intl.DateTimeFormat('de-AT', { year: 'numeric', month: 'numeric', day: 'numeric'}).format(date)
-})
+const seenAt = computed(() => formatDate(movie.seenAt))
 </script>
 <template>
   <div class="movie">

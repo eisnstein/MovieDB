@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { formatDate } from '../../services/formatDate'
 import { TConcert, concertGenres } from '../../types/concert'
 
 const { concert } = defineProps<{
   concert: TConcert
 }>()
 
-const seenAt = computed(() => {
-  const date = Date.parse(concert.seenAt)
-  return new Intl.DateTimeFormat('de-AT', { year: 'numeric', month: 'numeric', day: 'numeric'}).format(date)
-})
+const seenAt = computed(() => formatDate(concert.seenAt))
 
 const genre = computed(() => concertGenres.find((g) => g.value === concert.genre)?.text ?? 'Unknown genre')
 </script>
