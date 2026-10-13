@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { useQuery } from '@tanstack/vue-query'
 import Theater from '../../components/theaters/Theater.vue'
-import {ref, onMounted, computed} from 'vue'
-import {TTheater} from '../../types/theater'
+import {ref, computed} from 'vue'
 import {fetchTheaters} from '../../api/theater'
 
 const date = new Date()
@@ -9,20 +9,19 @@ const year = date.getFullYear()
 const month = date.getMonth()
 
 const searchValue = ref('')
-const loading = ref(true)
 
-const theaters = ref<Array<TTheater>>([])
+const { isPending, isError, data } = useQuery({
+  queryKey: ['theaters'],
+  queryFn: fetchTheaters,
+})
+
+const theaters = computed(() => data.value ?? [])
 const filteredTheaters = computed(() => {
   if (searchValue.value.length < 3) {
     return theaters.value
   }
 
   return theaters.value.filter((m) => m.title.toLowerCase().startsWith(searchValue.value.toLowerCase()))
-})
-
-onMounted(async () => {
-  theaters.value = await fetchTheaters()
-  loading.value = false
 })
 
 const totalCount = computed(() => theaters.value.length ?? 0)
@@ -46,21 +45,21 @@ const monthCount = computed(() => {
       <div class="flex justify-center align-items">
         <div class="w-1/3 rounded-sm bg-white p-2 md:p-4 border">
           <div class="text-gray-600 text-sm">Total</div>
-          <i v-if="loading" class="mt-2 fad fa-spinner-third fa-spin fa-lg" style="color: blue;"></i>
+          <i v-if="isPending" class="mt-2 fad fa-spinner-third fa-spin fa-lg" style="color: blue;"></i>
           <div v-else class="text-4xl font-bold leading-tight">
             {{ totalCount }}
           </div>
         </div>
         <div class="w-1/3 ml-4 rounded-sm bg-white p-2 md:p-4 border">
           <div class="text-gray-600 text-sm">This Year</div>
-          <i v-if="loading" class="mt-2 fad fa-spinner-third fa-spin fa-lg" style="color: blue;"></i>
+          <i v-if="isPending" class="mt-2 fad fa-spinner-third fa-spin fa-lg" style="color: blue;"></i>
           <div v-else class="text-4xl font-bold leading-tight">
             {{ yearCount }}
           </div>
         </div>
         <div class="w-1/3 ml-4 rounded-sm bg-white p-2 md:p-4 border">
           <div class="text-gray-600 text-sm">This Month</div>
-          <i v-if="loading" class="mt-2 fad fa-spinner-third fa-spin fa-lg" style="color: blue;"></i>
+          <i v-if="isPending" class="mt-2 fad fa-spinner-third fa-spin fa-lg" style="color: blue;"></i>
           <div v-else class="text-4xl font-bold leading-tight">
             {{ monthCount }}
           </div>
@@ -69,8 +68,11 @@ const monthCount = computed(() => {
     </div>
   </header>
   <div class="container mx-auto px-2 sm:px-4 lg:px-6">
-    <div v-if="loading" class="p-6 flex align-items justify-center">
+    <div v-if="isPending" class="p-6 flex align-items justify-center">
       <i class="fad fa-spinner-third fa-spin fa-2x" style="color: blue;"></i>
+    </div>
+    <div v-else-if="isError" class="p-6 flex justify-center">
+      <div class="text-red-600 font-bold">Failed to load theaters</div>
     </div>
     <div v-else>
       <div class="flex flex-row items-stretch gap-2">
