@@ -10,6 +10,7 @@ import { login, logout } from '../api/account'
 import { ApiError } from '../api/client'
 import { TAccount } from '../types/account'
 import { LocalStorage } from './localStorage'
+import { queryClient } from './queryClient'
 import router from './router'
 
 type TAlert = 'success' | 'error'
@@ -87,6 +88,8 @@ const actions: ActionTree<State, State> = {
   },
   logout({ commit }) {
     logout()
+    // Drop cached server data so the next user doesn't see it
+    queryClient.clear()
     commit('logout')
     router.push('/login')
   },
