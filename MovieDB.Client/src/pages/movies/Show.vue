@@ -52,9 +52,8 @@ const genre = computed(() => {
 async function handleDelete() {
   deleting.value = true
   try {
-    if (await deleteMovie(movie.value!.id)) {
-      queryClient.invalidateQueries({ queryKey: ['movies'] })
-    }
+    await deleteMovie(movie.value!.id)
+    queryClient.invalidateQueries({ queryKey: ['movies'] })
   } catch (error) {
     console.error(error)
   } finally {

@@ -30,32 +30,17 @@ export async function fetchMoviePoster(
   return movieData.Poster ?? undefined
 }
 
-export async function storeMovie(movie: Omit<TMovie, 'id'>): Promise<boolean> {
-  try {
-    await apiFetch('/api/movies', { method: 'POST', body: movie })
-    return true
-  } catch {
-    return false
-  }
+export function storeMovie(movie: Omit<TMovie, 'id'>): Promise<void> {
+  return apiFetch('/api/movies', { method: 'POST', body: movie })
 }
 
-export async function updateMovie(
+export function updateMovie(
   id: number,
   movie: Omit<TMovie, 'id'>
-): Promise<boolean> {
-  try {
-    await apiFetch(`/api/movies/${id}`, { method: 'PUT', body: movie })
-    return true
-  } catch {
-    return false
-  }
+): Promise<void> {
+  return apiFetch(`/api/movies/${id}`, { method: 'PUT', body: movie })
 }
 
-export async function deleteMovie(movieId: number): Promise<boolean> {
-  try {
-    await apiFetch(`/api/movies/${movieId}`, { method: 'DELETE' })
-    return true
-  } catch {
-    return false
-  }
+export function deleteMovie(movieId: number): Promise<void> {
+  return apiFetch(`/api/movies/${movieId}`, { method: 'DELETE' })
 }

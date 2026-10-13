@@ -7,7 +7,7 @@ import {
   MutationTree,
 } from 'vuex'
 import { login, logout } from '../api/account'
-import { ApiError } from '../api/client'
+import { errorMessage } from '../api/client'
 import { TAccount } from '../types/account'
 import { LocalStorage } from './localStorage'
 import { queryClient } from './queryClient'
@@ -74,16 +74,7 @@ const actions: ActionTree<State, State> = {
       commit('loginSuccess', { account })
       router.push('/movies')
     } catch (error) {
-      const validationErrors =
-        error instanceof ApiError ? (error.body as any)?.errors : undefined
-
-      if (validationErrors) {
-        const messages = Object.values(validationErrors).flat().join('\n')
-        commit('loginFailure', { message: messages })
-      } else {
-        const message = error instanceof Error ? error.message : 'Login failed'
-        commit('loginFailure', { message })
-      }
+      commit('loginFailure', { message: errorMessage(error, 'Login failed') })
     }
   },
   logout({ commit }) {

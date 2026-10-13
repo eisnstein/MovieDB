@@ -52,6 +52,18 @@ export async function apiFetch<T = void>(
   return data as T
 }
 
+// Turns an error into a message for the UI, including validation errors
+export function errorMessage(error: unknown, fallback = 'Something went wrong'): string {
+  if (error instanceof ApiError) {
+    const errors = (error.body as any)?.errors
+    if (errors && typeof errors === 'object') {
+      return Object.values(errors).flat().join('\n')
+    }
+  }
+
+  return error instanceof Error && error.message ? error.message : fallback
+}
+
 function parseJson(text: string): any {
   if (!text) {
     return undefined

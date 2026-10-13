@@ -1,33 +1,41 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useStore } from '../../services/store'
+import { errorMessage } from '../../api/client'
 import { storeTheater } from '../../api/theater'
 import { theaterGenres } from '../../types/theater'
 import router from '../../services/router'
 
-const store = useStore()
 const title = ref('')
 const date = ref('')
 const location = ref('')
 const genre = ref(0)
 const rating = ref(1)
 const isSubmitting = ref(false)
-
+const saveError = ref<string | null>(null)
 
 async function onSubmit() {
+  if (isSubmitting.value) {
+    return
+  }
+
   isSubmitting.value = true
+  saveError.value = null
 
-  await storeTheater({
-    title: title.value,
-    seenAt: date.value,
-    location: location.value,
-    genre: genre.value,
-    rating: rating.value,
-  })
+  try {
+    await storeTheater({
+      title: title.value,
+      seenAt: date.value,
+      location: location.value,
+      genre: genre.value,
+      rating: rating.value,
+    })
 
-  isSubmitting.value = false
-
-  router.push('/theaters')
+    router.push('/theaters')
+  } catch (error) {
+    saveError.value = errorMessage(error, 'Could not save the theater')
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 function setRating(value: number) {
@@ -60,15 +68,15 @@ function setRating(value: number) {
           <span class="rating" :class="{'active': rating === 5}" @click="setRating(5)">5</span>
         </div>
         <div class="mt-4 flex items-center justify-between">
-          <button class="w-full bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:shadow-outline" type="submit" :disabled="store.state.loading">
+          <button class="w-full bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:shadow-outline" type="submit" :disabled="isSubmitting">
             <span v-if="!isSubmitting">Save</span>
             <i v-else class="fad fa-spinner-third fa-spin" style="color: white;"></i>
           </button>
         </div>
       </form>
-      <div v-if="store.state.alert" class="mt-4 shadow-md rounded-sm p-6 text-white text-center">
-        {{ store.state.alert.message }}
-      </div>
+    </div>
+    <div v-if="saveError" class="mt-4 rounded-sm p-3 bg-red-100 text-red-700 text-center whitespace-pre-line">
+      {{ saveError }}
     </div>
   </div>
 </template>
