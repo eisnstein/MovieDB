@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { useQueryClient } from '@tanstack/vue-query'
 import router from '@/services/router'
 import { TMovie } from '@/types/movie'
+import { errorMessage } from '@/api/client'
 import { fetchMovie, deleteMovie } from '@/api/movie'
 import { genreOptions } from '@/constants'
 
@@ -12,6 +13,7 @@ const queryClient = useQueryClient()
 const loading = ref(true)
 const deleting = ref(false)
 const errorMsg = ref<string | null>(null)
+const deleteError = ref<string | null>(null)
 const movie = ref<TMovie | null>(null)
 
 onMounted(async () => {
@@ -50,15 +52,25 @@ const genre = computed(() => {
 })
 
 async function handleDelete() {
+  if (!movie.value || deleting.value) {
+    return
+  }
+
+  if (!confirm(`Delete "${movie.value.title}"?`)) {
+    return
+  }
+
   deleting.value = true
+  deleteError.value = null
+
   try {
-    await deleteMovie(movie.value!.id)
+    await deleteMovie(movie.value.id)
     queryClient.invalidateQueries({ queryKey: ['movies'] })
+    router.push('/movies')
   } catch (error) {
-    console.error(error)
+    deleteError.value = errorMessage(error, 'Could not delete the movie')
   } finally {
     deleting.value = false
-    router.push('/movies')
   }
 }
 </script>
@@ -85,7 +97,7 @@ async function handleDelete() {
             <div class="mt-2"><span class="px-2 py-1 inline-flex items-center rounded-full bg-blue-700 text-xs text-white">{{ genre }}</span></div>
           </div>
           <div class="flex items-center gap-2">
-            <button class="px-3 py-1 inline-flex items-center rounded-full bg-red-700 text-white" type="button" @click="handleDelete">
+            <button class="px-3 py-1 inline-flex items-center rounded-full bg-red-700 text-white" type="button" :disabled="deleting" @click="handleDelete">
               Delete <i class="ml-2 fad" :class="{'fa-trash': !deleting, 'fa-spinner-third fa-spin': deleting}"></i>
             </button>
             <router-link class="px-3 py-1 inline-flex items-center rounded-full bg-blue-700 text-white" type="button" :to="{ name: 'movies-edit', params: { id: movie.id } }">
@@ -96,6 +108,9 @@ async function handleDelete() {
         <div class="w-1/2 ml-2">
           <img class="rounded-sm" :src="movie.posterUrl ?? undefined" />
         </div>
+      </div>
+      <div v-if="deleteError" class="container max-w-2xl mx-auto mt-4 rounded-sm p-3 bg-red-100 text-red-700 text-center whitespace-pre-line">
+        {{ deleteError }}
       </div>
     </div>
   </div>
