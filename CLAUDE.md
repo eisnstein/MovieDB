@@ -5,9 +5,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 MovieDB is a full-stack application for tracking movies, theater plays, and concerts. It consists of:
-- **MovieDB.Api/** - ASP.NET Core 9 Web API with SQLite database
+- **MovieDB.Api/** - ASP.NET Core 10 Web API with SQLite database
 - **MovieDB.Client/** - Vue 3 + TypeScript PWA frontend
-- **MovieDB.Tests/** - xUnit integration and unit tests
+- **MovieDB.Tests/** - TUnit integration and unit tests
 
 ## Development Commands
 
@@ -22,6 +22,7 @@ dotnet test                   # Run tests (from root)
 ### Frontend (Client)
 ```bash
 # From MovieDB.Client/ directory
+fnm use                       # Use the Node version from .nvmrc (Vite fails on older Node)
 npm run dev                   # Start development server (Vite)
 npm run build                 # Build for production
 npm run serve                 # Preview production build
@@ -72,6 +73,6 @@ npm run serve                 # Preview production build
 - **Client**: Copy `.env.example` to `.env.local` and configure API endpoint
 
 ### Prerequisites
-- .NET 9 SDK for backend
+- .NET 10 SDK for backend
 - Node.js/npm for frontend
 - Entity Framework CLI tools: `dotnet tool install --global dotnet-ef`
