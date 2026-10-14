@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { formatDate } from '../../services/formatDate'
 import { TMovie } from '../../types/movie'
+import RatingDisplay from '../RatingDisplay.vue'
 import MoviePoster from './MoviePoster.vue'
 
 const { movie } = defineProps<{
@@ -20,11 +21,8 @@ const seenAt = computed(() => formatDate(movie.seenAt))
       decoding="async"
     />
     <div class="overlay">
-      <div class="bg-white rounded-sm p-1 m-1">
-        <span v-for="i in [1, 2, 3, 4, 5]">
-          <i v-if="i <= movie.rating" class="fad fa-fire-alt mr-1" style="color: darkorange;"></i>
-          <i v-else class="fad fa-fire-alt mr-1" style="color: black;"></i>
-        </span>
+      <div class="bg-white rounded-sm p-1 m-1 text-black">
+        <RatingDisplay :rating="movie.rating" />
       </div>
       <div class="bg-white rounded-sm px-1 m-1 text-sm flex items-center text-black">
         {{ seenAt }}

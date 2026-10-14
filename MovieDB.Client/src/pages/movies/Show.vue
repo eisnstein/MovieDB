@@ -7,6 +7,7 @@ import { errorMessage } from '@/api/client'
 import { fetchMovie, deleteMovie } from '@/api/movie'
 import { formatDate } from '@/services/formatDate'
 import MoviePoster from '@/components/movies/MoviePoster.vue'
+import RatingDisplay from '@/components/RatingDisplay.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -70,10 +71,7 @@ function handleDelete() {
             <div class="text-sm">{{ seenAt }}</div>
             <div class="mt-1 font-bold">{{ movie.title }}</div>
             <div class="mt-3">
-              <span v-for="i in [1, 2, 3, 4, 5]">
-                <i v-if="i <= movie.rating" class="fad fa-fire-alt mr-1" style="color: darkorange;"></i>
-                <i v-else class="fad fa-fire-alt mr-1"></i>
-              </span>
+              <RatingDisplay :rating="movie.rating" />
             </div>
             <div class="mt-2"><span class="px-2 py-1 inline-flex items-center rounded-full bg-blue-700 text-xs text-white">{{ genre }}</span></div>
           </div>

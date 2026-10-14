@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { formatDate } from '../../services/formatDate'
 import { TTheater, theaterGenres } from '../../types/theater'
+import RatingDisplay from '../RatingDisplay.vue'
 
 const { theater } = defineProps<{
   theater: TTheater
@@ -18,10 +19,7 @@ const genre = computed(() => theaterGenres.find((g) => g.value === theater.genre
       {{ theater.title }}
     </div>
     <div>
-      <span v-for="i in [1, 2, 3, 4, 5]">
-        <i v-if="i <= theater.rating" class="fad fa-fire-alt mr-1" style="color: darkorange;"></i>
-        <i v-else class="fad fa-fire-alt mr-1"></i>
-      </span>
+      <RatingDisplay :rating="theater.rating" />
       <span class="ml-2 text-sm text-gray-800">
         {{ genre }}
       </span>

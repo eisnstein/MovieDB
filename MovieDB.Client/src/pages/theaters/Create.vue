@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { errorMessage } from '../../api/client'
 import { storeTheater } from '../../api/theater'
 import { theaterGenres, TTheaterGenre } from '../../types/theater'
+import RatingInput from '../../components/RatingInput.vue'
 
 const router = useRouter()
 const queryClient = useQueryClient()
@@ -37,10 +38,6 @@ function onSubmit() {
     rating: rating.value,
   })
 }
-
-function setRating(value: number) {
-  rating.value = value
-}
 </script>
 <template>
   <div class="container w-full lg:w-1/3 mx-auto py-6 px-2 sm:px-4 lg:px-6">
@@ -60,13 +57,7 @@ function setRating(value: number) {
             <option v-for="option in theaterGenres" :value="option.value">{{ option.text }}</option>
           </select>
         </div>
-        <div class="mt-4 flex items-center justify-between">
-          <span class="rating" :class="{'active': rating === 1}" @click="setRating(1)">1</span>
-          <span class="rating" :class="{'active': rating === 2}" @click="setRating(2)">2</span>
-          <span class="rating" :class="{'active': rating === 3}" @click="setRating(3)">3</span>
-          <span class="rating" :class="{'active': rating === 4}" @click="setRating(4)">4</span>
-          <span class="rating" :class="{'active': rating === 5}" @click="setRating(5)">5</span>
-        </div>
+        <RatingInput v-model="rating" class="mt-4" />
         <div class="mt-4 flex items-center justify-between">
           <button class="w-full bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:shadow-outline" type="submit" :disabled="isSubmitting">
             <span v-if="!isSubmitting">Save</span>
@@ -80,15 +71,3 @@ function setRating(value: number) {
     </div>
   </div>
 </template>
-
-<style scoped>
-@reference "../../index.css";
-
-.rating {
-  @apply w-8 h-8 rounded-xl flex items-center justify-center border bg-white hover:bg-gray-300 cursor-pointer;
-}
-
-.rating.active {
-  @apply bg-gray-700 text-white;
-}
-</style>

@@ -6,6 +6,7 @@ import { errorMessage } from '@/api/client'
 import { fetchMovie, fetchMoviePoster, updateMovie } from '@/api/movie'
 import { movieGenres, TMovie } from '@/types/movie'
 import MoviePoster from '@/components/movies/MoviePoster.vue'
+import RatingInput from '@/components/RatingInput.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -64,10 +65,6 @@ function onSubmit() {
   mutate(movie.value)
 }
 
-function setRating(value: number) {
-  movie.value!.rating = value
-}
-
 function fetchPoster() {
   if (movie.value!.imdbIdentifier.length === 0) {
     return
@@ -101,13 +98,7 @@ function fetchPoster() {
               <option v-for="option in movieGenres" :value="option.value">{{ option.text }}</option>
             </select>
           </div>
-          <div class="mt-4 flex items-center justify-between">
-            <span class="rating" :class="{'active': movie.rating === 1}" @click="setRating(1)">1</span>
-            <span class="rating" :class="{'active': movie.rating === 2}" @click="setRating(2)">2</span>
-            <span class="rating" :class="{'active': movie.rating === 3}" @click="setRating(3)">3</span>
-            <span class="rating" :class="{'active': movie.rating === 4}" @click="setRating(4)">4</span>
-            <span class="rating" :class="{'active': movie.rating === 5}" @click="setRating(5)">5</span>
-          </div>
+          <RatingInput v-model="movie.rating" class="mt-4" />
           <div class="mt-4 flex items-center justify-between">
             <button class="w-full bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:shadow-outline" type="submit" :disabled="isSubmitting">
               <span v-if="!isSubmitting">Save</span>
@@ -128,14 +119,6 @@ function fetchPoster() {
 
 <style scoped>
 @reference "../../index.css";
-
-.rating {
-  @apply w-8 h-8 rounded-xl flex items-center justify-center border bg-white hover:bg-gray-300 cursor-pointer;
-}
-
-.rating.active {
-  @apply bg-gray-700 text-white;
-}
 
 .poster {
   @apply border border-dashed rounded-sm;
