@@ -1,0 +1,96 @@
+/*!
+ * Subset of Font Awesome Pro 5.15.1 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license (Commercial License)
+ *
+ * Only the icons the app uses. To add one, copy its codepoints from the
+ * Font Awesome Pro 5 download: `.fa-<name>:before` from fontawesome.css and,
+ * for duotone, `.fad.fa-<name>:after` from duotone.css.
+ */
+@font-face {
+  font-family: "Font Awesome 5 Duotone";
+  font-style: normal;
+  font-weight: 900;
+  font-display: block;
+  src: url("../fonts/fa-duotone-900.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Font Awesome 5 Pro";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("../fonts/fa-regular-400.woff2") format("woff2");
+}
+
+/* Base */
+.far,
+.fad {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+}
+
+.far {
+  font-family: "Font Awesome 5 Pro";
+  font-weight: 400;
+}
+
+.fad {
+  position: relative;
+  font-family: "Font Awesome 5 Duotone";
+  font-weight: 900;
+}
+
+/* Duotone icons draw the primary layer in :before and the secondary layer in :after */
+.fad:before {
+  position: absolute;
+  color: var(--fa-primary-color, inherit);
+  opacity: var(--fa-primary-opacity, 1);
+}
+
+.fad:after {
+  color: var(--fa-secondary-color, inherit);
+  opacity: var(--fa-secondary-opacity, 0.4);
+}
+
+/* Sizes and animation */
+.fa-lg {
+  font-size: 1.33333em;
+  line-height: 0.75em;
+  vertical-align: -0.0667em;
+}
+
+.fa-2x {
+  font-size: 2em;
+}
+
+.fa-spin {
+  animation: fa-spin 2s infinite linear;
+}
+
+@keyframes fa-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Icons */
+.fa-dice-d10:before { content: "\f6cd"; }
+.fa-edit:before { content: "\f044"; }
+.fa-fire-alt:before { content: "\f7e4"; }
+.fa-plus:before { content: "\f067"; }
+.fa-spinner-third:before { content: "\f3f4"; }
+.fa-trash:before { content: "\f1f8"; }
+
+.fad.fa-dice-d10:after { content: "\10f6cd"; }
+.fad.fa-edit:after { content: "\10f044"; }
+.fad.fa-fire-alt:after { content: "\10f7e4"; }
+.fad.fa-spinner-third:after { content: "\10f3f4"; }
+.fad.fa-trash:after { content: "\10f1f8"; }
