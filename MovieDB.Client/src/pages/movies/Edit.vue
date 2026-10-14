@@ -1,73 +1,67 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useQueryClient } from '@tanstack/vue-query'
-import { errorMessage } from '@/api/client'
-import { fetchMoviePoster, updateMovie } from '@/api/movie'
-import { onMounted } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { errorMessage } from '@/api/client'
+import { fetchMovie, fetchMoviePoster, updateMovie } from '@/api/movie'
 import { movieGenres, TMovie } from '@/types/movie'
-import { fetchMovie } from '@/api/movie'
 import MoviePoster from '@/components/movies/MoviePoster.vue'
 
 const route = useRoute()
 const router = useRouter()
 const queryClient = useQueryClient()
 
-const movie = ref<TMovie | null>(null)
-const loading = ref(true)
-const errorMsg = ref<string | null>(null)
-const isSubmitting = ref(false)
-const saveError = ref<string | null>(null)
+// The route only matches numeric ids
+const movieId = computed(() => Number(route.params.id))
 
-onMounted(async () => {
-  try {
-    let id = route.params.id
-    if (!id) {
-      throw new Error('No movie id provided')
-    }
-    if (Array.isArray(id)) {
-      id = id[0]
-    }
-    const fetchedMovie = await fetchMovie(Number(id))
-    movie.value = fetchedMovie
-    movie.value.seenAt = movie.value.seenAt.split('T')[0]
-    // Older entries may have OMDb's "N/A" stored; saving cleans it up
-    if (movie.value.posterUrl === 'N/A') {
-      movie.value.posterUrl = null
-    }
-  } catch (error) {
-    console.error(error)
-    errorMsg.value = 'Failed to fetch movie'
-  } finally {
-    loading.value = false
-  }
+const { isPending: loading, isError, data } = useQuery({
+  queryKey: ['movie', movieId],
+  queryFn: () => fetchMovie(movieId.value),
 })
 
-async function onSubmit() {
+const errorMsg = computed(() => isError.value ? 'Failed to fetch movie' : null)
+
+// Editable copy, so typing doesn't change the cached movie
+const movie = ref<TMovie | null>(null)
+
+watch(data, (fetchedMovie) => {
+  // Don't overwrite the user's edits when the query refetches in the background
+  if (!fetchedMovie || movie.value?.id === fetchedMovie.id) {
+    return
+  }
+
+  movie.value = {
+    ...fetchedMovie,
+    seenAt: fetchedMovie.seenAt.split('T')[0],
+    // Older entries may have OMDb's "N/A" stored; saving cleans it up
+    posterUrl: fetchedMovie.posterUrl === 'N/A' ? null : fetchedMovie.posterUrl,
+  }
+}, { immediate: true })
+
+const { mutate, isPending: isSubmitting, error } = useMutation({
+  mutationFn: (updatedMovie: TMovie) => updateMovie(updatedMovie.id, {
+    title: updatedMovie.title,
+    seenAt: updatedMovie.seenAt,
+    imdbIdentifier: updatedMovie.imdbIdentifier,
+    genre: updatedMovie.genre,
+    rating: updatedMovie.rating,
+    posterUrl: updatedMovie.posterUrl ?? null,
+  }),
+  onSuccess: (_, { id }) => {
+    queryClient.invalidateQueries({ queryKey: ['movie', id] })
+    queryClient.invalidateQueries({ queryKey: ['movies'] })
+    router.push('/movies')
+  },
+})
+
+const saveError = computed(() => error.value ? errorMessage(error.value, 'Could not save the movie') : null)
+
+function onSubmit() {
   if (!movie.value || isSubmitting.value) {
     return
   }
 
-  isSubmitting.value = true
-  saveError.value = null
-
-  try {
-    await updateMovie(movie.value.id, {
-      title: movie.value.title,
-      seenAt: movie.value.seenAt,
-      imdbIdentifier: movie.value.imdbIdentifier,
-      genre: movie.value.genre,
-      rating: movie.value.rating,
-      posterUrl: movie.value.posterUrl ?? null
-    })
-
-    queryClient.invalidateQueries({ queryKey: ['movies'] })
-    router.push('/movies')
-  } catch (error) {
-    saveError.value = errorMessage(error, 'Could not save the movie')
-  } finally {
-    isSubmitting.value = false
-  }
+  mutate(movie.value)
 }
 
 function setRating(value: number) {

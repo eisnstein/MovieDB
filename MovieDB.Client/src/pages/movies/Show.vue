@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import {ref, onMounted, computed} from 'vue'
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useQueryClient } from '@tanstack/vue-query'
-import { movieGenres, TMovie } from '@/types/movie'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { movieGenres } from '@/types/movie'
 import { errorMessage } from '@/api/client'
 import { fetchMovie, deleteMovie } from '@/api/movie'
 import { formatDate } from '@/services/formatDate'
@@ -11,29 +11,27 @@ import MoviePoster from '@/components/movies/MoviePoster.vue'
 const route = useRoute()
 const router = useRouter()
 const queryClient = useQueryClient()
-const loading = ref(true)
-const deleting = ref(false)
-const errorMsg = ref<string | null>(null)
-const deleteError = ref<string | null>(null)
-const movie = ref<TMovie | null>(null)
 
-onMounted(async () => {
-  try {
-    let id = route.params.id
-    if (!id) {
-      throw new Error('No movie id provided')
-    }
-    if (Array.isArray(id)) {
-      id = id[0]
-    }
-    movie.value = await fetchMovie(Number(id))
-  } catch (error) {
-    console.error(error)
-    errorMsg.value = 'Failed to fetch movie'
-  } finally {
-    loading.value = false
-  }
+// The route only matches numeric ids
+const movieId = computed(() => Number(route.params.id))
+
+const { isPending: loading, isError, data: movie } = useQuery({
+  queryKey: ['movie', movieId],
+  queryFn: () => fetchMovie(movieId.value),
 })
+
+const errorMsg = computed(() => isError.value ? 'Failed to fetch movie' : null)
+
+const { mutate: removeMovie, isPending: deleting, error } = useMutation({
+  mutationFn: deleteMovie,
+  onSuccess: (_, id) => {
+    queryClient.removeQueries({ queryKey: ['movie', id] })
+    queryClient.invalidateQueries({ queryKey: ['movies'] })
+    router.push('/movies')
+  },
+})
+
+const deleteError = computed(() => error.value ? errorMessage(error.value, 'Could not delete the movie') : null)
 
 const seenAt = computed(() => formatDate(movie.value?.seenAt))
 
@@ -45,7 +43,7 @@ const genre = computed(() => {
   return null
 })
 
-async function handleDelete() {
+function handleDelete() {
   if (!movie.value || deleting.value) {
     return
   }
@@ -54,18 +52,7 @@ async function handleDelete() {
     return
   }
 
-  deleting.value = true
-  deleteError.value = null
-
-  try {
-    await deleteMovie(movie.value.id)
-    queryClient.invalidateQueries({ queryKey: ['movies'] })
-    router.push('/movies')
-  } catch (error) {
-    deleteError.value = errorMessage(error, 'Could not delete the movie')
-  } finally {
-    deleting.value = false
-  }
+  removeMovie(movie.value.id)
 }
 </script>
 <template>

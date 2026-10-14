@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useQueryClient } from '@tanstack/vue-query'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { errorMessage } from '@/api/client'
 import { fetchMoviePoster, storeMovie } from '@/api/movie'
 import { movieGenres, TMovieGenre } from '@/types/movie'
@@ -15,34 +15,30 @@ const imdb = ref('')
 const posterUrl = ref<string | undefined>()
 const genre = ref<TMovieGenre>(0)
 const rating = ref(1)
-const isSubmitting = ref(false)
-const saveError = ref<string | null>(null)
 
-async function onSubmit() {
+const { mutate, isPending: isSubmitting, error } = useMutation({
+  mutationFn: storeMovie,
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['movies'] })
+    router.push('/movies')
+  },
+})
+
+const saveError = computed(() => error.value ? errorMessage(error.value, 'Could not save the movie') : null)
+
+function onSubmit() {
   if (isSubmitting.value) {
     return
   }
 
-  isSubmitting.value = true
-  saveError.value = null
-
-  try {
-    await storeMovie({
-      title: title.value,
-      seenAt: date.value,
-      imdbIdentifier: imdb.value,
-      genre: genre.value,
-      rating: rating.value,
-      posterUrl: posterUrl.value ?? null
-    })
-
-    queryClient.invalidateQueries({ queryKey: ['movies'] })
-    router.push('/movies')
-  } catch (error) {
-    saveError.value = errorMessage(error, 'Could not save the movie')
-  } finally {
-    isSubmitting.value = false
-  }
+  mutate({
+    title: title.value,
+    seenAt: date.value,
+    imdbIdentifier: imdb.value,
+    genre: genre.value,
+    rating: rating.value,
+    posterUrl: posterUrl.value ?? null
+  })
 }
 
 function setRating(value: number) {

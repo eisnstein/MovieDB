@@ -1,42 +1,41 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { errorMessage } from '../../api/client'
 import { storeTheater } from '../../api/theater'
 import { theaterGenres, TTheaterGenre } from '../../types/theater'
 
 const router = useRouter()
+const queryClient = useQueryClient()
 const title = ref('')
 const date = ref('')
 const location = ref('')
 const genre = ref<TTheaterGenre>(0)
 const rating = ref(1)
-const isSubmitting = ref(false)
-const saveError = ref<string | null>(null)
 
-async function onSubmit() {
+const { mutate, isPending: isSubmitting, error } = useMutation({
+  mutationFn: storeTheater,
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['theaters'] })
+    router.push('/theaters')
+  },
+})
+
+const saveError = computed(() => error.value ? errorMessage(error.value, 'Could not save the theater') : null)
+
+function onSubmit() {
   if (isSubmitting.value) {
     return
   }
 
-  isSubmitting.value = true
-  saveError.value = null
-
-  try {
-    await storeTheater({
-      title: title.value,
-      seenAt: date.value,
-      location: location.value,
-      genre: genre.value,
-      rating: rating.value,
-    })
-
-    router.push('/theaters')
-  } catch (error) {
-    saveError.value = errorMessage(error, 'Could not save the theater')
-  } finally {
-    isSubmitting.value = false
-  }
+  mutate({
+    title: title.value,
+    seenAt: date.value,
+    location: location.value,
+    genre: genre.value,
+    rating: rating.value,
+  })
 }
 
 function setRating(value: number) {

@@ -1,43 +1,41 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { errorMessage } from '../../api/client'
 import { storeConcert } from '../../api/concert'
 import { concertGenres, TConcertGenre } from '../../types/concert'
 
 const router = useRouter()
+const queryClient = useQueryClient()
 const title = ref('')
 const date = ref('')
 const location = ref('')
 const genre = ref<TConcertGenre>(0)
 const rating = ref(1)
-const isSubmitting = ref(false)
-const saveError = ref<string | null>(null)
 
-async function onSubmit() {
+const { mutate, isPending: isSubmitting, error } = useMutation({
+  mutationFn: storeConcert,
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['concerts'] })
+    router.push('/concerts')
+  },
+})
+
+const saveError = computed(() => error.value ? errorMessage(error.value, 'Could not save the concert') : null)
+
+function onSubmit() {
   if (isSubmitting.value) {
     return
   }
 
-  isSubmitting.value = true
-  saveError.value = null
-
-  try {
-    await storeConcert({
-      title: title.value,
-      seenAt: date.value,
-      location: location.value,
-      genre: genre.value,
-      rating: rating.value,
-    })
-
-    // Redirect to concerts overview site
-    router.push('/concerts')
-  } catch (error) {
-    saveError.value = errorMessage(error, 'Could not save the concert')
-  } finally {
-    isSubmitting.value = false
-  }
+  mutate({
+    title: title.value,
+    seenAt: date.value,
+    location: location.value,
+    genre: genre.value,
+    rating: rating.value,
+  })
 }
 
 function setRating(value: number) {
