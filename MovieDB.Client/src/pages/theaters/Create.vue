@@ -3,13 +3,13 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { errorMessage } from '../../api/client'
 import { storeTheater } from '../../api/theater'
-import { theaterGenres } from '../../types/theater'
+import { theaterGenres, TTheaterGenre } from '../../types/theater'
 
 const router = useRouter()
 const title = ref('')
 const date = ref('')
 const location = ref('')
-const genre = ref(0)
+const genre = ref<TTheaterGenre>(0)
 const rating = ref(1)
 const isSubmitting = ref(false)
 const saveError = ref<string | null>(null)

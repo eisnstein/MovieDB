@@ -3,10 +3,9 @@ import { ref } from 'vue'
 import { useQueryClient } from '@tanstack/vue-query'
 import { errorMessage } from '@/api/client'
 import { fetchMoviePoster, updateMovie } from '@/api/movie'
-import { genreOptions } from '@/constants'
 import { onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { TMovie } from '@/types/movie'
+import { movieGenres, TMovie } from '@/types/movie'
 import { fetchMovie } from '@/api/movie'
 import MoviePoster from '@/components/movies/MoviePoster.vue'
 
@@ -105,7 +104,7 @@ function fetchPoster() {
           </div>
           <div class="mt-4">
             <select v-model="movie.genre" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-xs focus:outline-hidden focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-              <option v-for="option in genreOptions" :value="option.value">{{ option.text }}</option>
+              <option v-for="option in movieGenres" :value="option.value">{{ option.text }}</option>
             </select>
           </div>
           <div class="mt-4 flex items-center justify-between">

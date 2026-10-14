@@ -2,10 +2,9 @@
 import {ref, onMounted, computed} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQueryClient } from '@tanstack/vue-query'
-import { TMovie } from '@/types/movie'
+import { movieGenres, TMovie } from '@/types/movie'
 import { errorMessage } from '@/api/client'
 import { fetchMovie, deleteMovie } from '@/api/movie'
-import { genreOptions } from '@/constants'
 import { formatDate } from '@/services/formatDate'
 import MoviePoster from '@/components/movies/MoviePoster.vue'
 
@@ -40,7 +39,7 @@ const seenAt = computed(() => formatDate(movie.value?.seenAt))
 
 const genre = computed(() => {
   if (movie.value) {
-    return genreOptions.find(g => g.value === movie.value!.genre)?.text ?? null
+    return movieGenres.find(g => g.value === movie.value!.genre)?.text ?? null
   }
 
   return null
