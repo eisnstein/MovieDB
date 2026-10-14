@@ -5,7 +5,6 @@ import { errorMessage } from '../api/client'
 import { TAccount } from '../types/account'
 import { LocalStorage } from './localStorage'
 import { queryClient } from './queryClient'
-import router from './router'
 
 type TAlert = {
   type: 'success' | 'error'
@@ -53,7 +52,6 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       account.value = await apiLogin(email, password)
-      router.push('/movies')
     } catch (error) {
       account.value = null
       alert.value = { type: 'error', message: errorMessage(error, 'Login failed') }
@@ -62,13 +60,13 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // App.vue redirects to /login once isAuthenticated turns false
   function logout() {
     apiLogout()
     // Drop cached server data so the next user doesn't see it
     queryClient.clear()
     account.value = null
     alert.value = null
-    router.push('/login')
   }
 
   return { account, loading, alert, isAuthenticated, login, logout }

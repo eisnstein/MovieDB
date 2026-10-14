@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '../services/store'
 
 const authStore = useAuthStore()
+const router = useRouter()
 const email = ref('')
 const password = ref('')
 
@@ -11,8 +13,12 @@ const alertClass = computed(() => ({
   'bg-green-500': authStore.alert?.type === 'success',
 }))
 
-function onSubmit() {
-  authStore.login(email.value, password.value)
+async function onSubmit() {
+  await authStore.login(email.value, password.value)
+
+  if (authStore.isAuthenticated) {
+    router.push('/movies')
+  }
 }
 </script>
 <template>

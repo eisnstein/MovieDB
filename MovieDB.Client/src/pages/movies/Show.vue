@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import {ref, onMounted, computed} from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useQueryClient } from '@tanstack/vue-query'
-import router from '@/services/router'
 import { TMovie } from '@/types/movie'
 import { errorMessage } from '@/api/client'
 import { fetchMovie, deleteMovie } from '@/api/movie'
@@ -11,6 +10,7 @@ import { formatDate } from '@/services/formatDate'
 import MoviePoster from '@/components/movies/MoviePoster.vue'
 
 const route = useRoute()
+const router = useRouter()
 const queryClient = useQueryClient()
 const loading = ref(true)
 const deleting = ref(false)

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { errorMessage } from '../../api/client'
 import { storeConcert } from '../../api/concert'
-import router from '../../services/router'
 
+const router = useRouter()
 const title = ref('')
 const date = ref('')
 const location = ref('')

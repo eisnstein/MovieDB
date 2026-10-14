@@ -1,4 +1,17 @@
-import { useAuthStore } from '../services/store'
+type ApiClientConfig = {
+  getToken: () => string | undefined
+  onUnauthorized: () => void
+}
+
+// Set from main.ts, so this module doesn't import the auth store (which imports it)
+let config: ApiClientConfig = {
+  getToken: () => undefined,
+  onUnauthorized: () => {},
+}
+
+export function configureApiClient(apiClientConfig: ApiClientConfig) {
+  config = apiClientConfig
+}
 
 export class ApiError extends Error {
   constructor(
@@ -21,12 +34,12 @@ export async function apiFetch<T = void>(
   path: string,
   { body, auth = true, headers, ...init }: ApiFetchOptions = {}
 ): Promise<T> {
-  const authStore = useAuthStore()
+  const token = auth ? config.getToken() : undefined
   const requestHeaders = new Headers(headers)
   requestHeaders.set('Accept', 'application/json')
 
-  if (auth && authStore.account) {
-    requestHeaders.set('Authorization', `Bearer ${authStore.account.jwtToken}`)
+  if (token) {
+    requestHeaders.set('Authorization', `Bearer ${token}`)
   }
 
   if (body !== undefined) {
@@ -42,8 +55,8 @@ export async function apiFetch<T = void>(
   const data = parseJson(await res.text())
 
   if (!res.ok) {
-    if (res.status === 401 && auth && authStore.isAuthenticated) {
-      authStore.logout()
+    if (res.status === 401 && token) {
+      config.onUnauthorized()
     }
 
     const message = data?.message ?? data?.title ?? `Request failed with status ${res.status}`

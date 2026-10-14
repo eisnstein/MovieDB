@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useQueryClient } from '@tanstack/vue-query'
 import { errorMessage } from '@/api/client'
 import { fetchMoviePoster, storeMovie } from '@/api/movie'
-import router from '@/services/router'
 import { genreOptions } from '@/constants'
 import MoviePoster from '@/components/movies/MoviePoster.vue'
 
+const router = useRouter()
 const queryClient = useQueryClient()
 const title = ref('')
 const date = ref('')

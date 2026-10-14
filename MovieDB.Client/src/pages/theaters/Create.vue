@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { errorMessage } from '../../api/client'
 import { storeTheater } from '../../api/theater'
 import { theaterGenres } from '../../types/theater'
-import router from '../../services/router'
 
+const router = useRouter()
 const title = ref('')
 const date = ref('')
 const location = ref('')

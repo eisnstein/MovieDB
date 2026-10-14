@@ -3,15 +3,15 @@ import { ref } from 'vue'
 import { useQueryClient } from '@tanstack/vue-query'
 import { errorMessage } from '@/api/client'
 import { fetchMoviePoster, updateMovie } from '@/api/movie'
-import router from '@/services/router'
 import { genreOptions } from '@/constants'
 import { onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { TMovie } from '@/types/movie'
 import { fetchMovie } from '@/api/movie'
 import MoviePoster from '@/components/movies/MoviePoster.vue'
 
 const route = useRoute()
+const router = useRouter()
 const queryClient = useQueryClient()
 
 const movie = ref<TMovie | null>(null)
