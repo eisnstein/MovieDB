@@ -1,4 +1,4 @@
-import { store } from '../services/store'
+import { useAuthStore } from '../services/store'
 
 export class ApiError extends Error {
   constructor(
@@ -21,11 +21,12 @@ export async function apiFetch<T = void>(
   path: string,
   { body, auth = true, headers, ...init }: ApiFetchOptions = {}
 ): Promise<T> {
+  const authStore = useAuthStore()
   const requestHeaders = new Headers(headers)
   requestHeaders.set('Accept', 'application/json')
 
-  if (auth && store.state.account) {
-    requestHeaders.set('Authorization', `Bearer ${store.state.account.jwtToken}`)
+  if (auth && authStore.account) {
+    requestHeaders.set('Authorization', `Bearer ${authStore.account.jwtToken}`)
   }
 
   if (body !== undefined) {
@@ -41,8 +42,8 @@ export async function apiFetch<T = void>(
   const data = parseJson(await res.text())
 
   if (!res.ok) {
-    if (res.status === 401 && auth && store.state.isAuthenticated) {
-      store.dispatch('logout')
+    if (res.status === 401 && auth && authStore.isAuthenticated) {
+      authStore.logout()
     }
 
     const message = data?.message ?? data?.title ?? `Request failed with status ${res.status}`

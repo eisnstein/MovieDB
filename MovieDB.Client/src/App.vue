@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useStore } from './services/store'
+import { useAuthStore } from './services/store'
 import NavMenu from './components/NavMenu.vue'
 
-const store = useStore()
+const authStore = useAuthStore()
 </script>
 
 <template>
-  <NavMenu v-if="store.state.isAuthenticated" />
+  <NavMenu v-if="authStore.isAuthenticated" />
   <main class="mt-16">
     <router-view></router-view>
   </main>

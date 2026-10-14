@@ -1,31 +1,16 @@
-import { InjectionKey } from 'vue'
-import {
-  createStore,
-  useStore as baseUseStore,
-  Store,
-  ActionTree,
-  MutationTree,
-} from 'vuex'
-import { login, logout } from '../api/account'
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
+import { login as apiLogin, logout as apiLogout } from '../api/account'
 import { errorMessage } from '../api/client'
 import { TAccount } from '../types/account'
 import { LocalStorage } from './localStorage'
 import { queryClient } from './queryClient'
 import router from './router'
 
-type TAlert = 'success' | 'error'
-
-export interface State {
-  account: TAccount | null
-  isAuthenticated: boolean
-  loading: boolean
-  alert: {
-    type: TAlert
-    message: string
-  } | null
+type TAlert = {
+  type: 'success' | 'error'
+  message: string
 }
-
-export const key: InjectionKey<Store<State>> = Symbol()
 
 function isTokenExpired(jwtToken: string): boolean {
   try {
@@ -56,81 +41,35 @@ function loadAccount(): TAccount | null {
   return null
 }
 
-const storedAccount = loadAccount()
-const initialState: State = {
-  account: storedAccount,
-  isAuthenticated: storedAccount !== null,
-  loading: false,
-  alert: null,
-}
+export const useAuthStore = defineStore('auth', () => {
+  const account = ref<TAccount | null>(loadAccount())
+  const loading = ref(false)
+  const alert = ref<TAlert | null>(null)
+  const isAuthenticated = computed(() => account.value !== null)
 
-const actions: ActionTree<State, State> = {
-  async login({ commit }, payload: { email: string; password: string }) {
-    commit('setLoading', true)
-    commit('clearAlert')
+  async function login(email: string, password: string) {
+    loading.value = true
+    alert.value = null
 
     try {
-      const account = await login(payload.email, payload.password)
-      commit('loginSuccess', { account })
+      account.value = await apiLogin(email, password)
       router.push('/movies')
     } catch (error) {
-      commit('loginFailure', { message: errorMessage(error, 'Login failed') })
+      account.value = null
+      alert.value = { type: 'error', message: errorMessage(error, 'Login failed') }
+    } finally {
+      loading.value = false
     }
-  },
-  logout({ commit }) {
-    logout()
+  }
+
+  function logout() {
+    apiLogout()
     // Drop cached server data so the next user doesn't see it
     queryClient.clear()
-    commit('logout')
+    account.value = null
+    alert.value = null
     router.push('/login')
-  },
-  setLoading({ commit }, value: boolean) {
-    commit('setLoading', value)
-  },
-  clearAlert({ commit }) {
-    commit('clearAlert')
-  },
-}
+  }
 
-const mutations: MutationTree<State> = {
-  loginSuccess(state, payload: { account: TAccount }) {
-    state.account = payload.account
-    state.isAuthenticated = true
-    state.loading = false
-  },
-  loginFailure(state, error: { message: string }) {
-    state.account = null
-    state.isAuthenticated = false
-    state.loading = false
-    state.alert = {
-      type: 'error',
-      message: error.message,
-    }
-  },
-  logout(state) {
-    state.account = null
-    state.isAuthenticated = false
-    state.loading = false
-    state.alert = null
-  },
-  setLoading(state, payload: boolean) {
-    state.loading = payload
-  },
-  setAlert(state, alert: { type: TAlert; message: string }) {
-    state.alert = alert
-  },
-  clearAlert(state) {
-    state.alert = null
-  },
-}
-
-export const store = createStore<State>({
-  state: initialState,
-  mutations,
-  actions,
-  strict: true,
+  return { account, loading, alert, isAuthenticated, login, logout }
 })
-
-export function useStore() {
-  return baseUseStore(key)
-}

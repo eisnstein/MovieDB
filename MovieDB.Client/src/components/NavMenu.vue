@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useStore } from '../services/store';
+import { useAuthStore } from '../services/store'
 import profileImgUrl from '../assets/profile.jpg'
 
-const store = useStore()
+const authStore = useAuthStore()
 const open = ref(false)
 const openMobileMenu = ref(false)
 
 function logout() {
-  store.dispatch('logout')
+  authStore.logout()
 }
 </script>
 
@@ -95,7 +95,7 @@ function logout() {
             <img class="h-10 w-10 rounded-full" :src="profileImgUrl" alt=""/>
           </div>
           <div class="ml-3">
-            <div class="text-sm font-medium leading-none text-gray-400">{{ store.state.account?.email ?? '' }}</div>
+            <div class="text-sm font-medium leading-none text-gray-400">{{ authStore.account?.email ?? '' }}</div>
           </div>
         </div>
         <div class="mt-3 px-2">

@@ -8,7 +8,7 @@ import EditMovie from '../pages/movies/Edit.vue'
 import IndexTheater from '../pages/theaters/Index.vue'
 import CreateTheater from '../pages/theaters/Create.vue'
 import Login from '../pages/Login.vue'
-import { store } from './store'
+import { useAuthStore } from './store'
 
 const routes = [
   { path: '/', component: IndexMovie },
@@ -30,12 +30,14 @@ const router = createRouter({
   strict: true,
 })
 
-router.beforeEach((to, from) => {
-  if (to.path !== '/login' && !store.state.isAuthenticated) {
+router.beforeEach((to) => {
+  const { isAuthenticated } = useAuthStore()
+
+  if (to.path !== '/login' && !isAuthenticated) {
     return '/login'
   }
 
-  if (to.path === '/login' && store.state.isAuthenticated) {
+  if (to.path === '/login' && isAuthenticated) {
     return '/'
   }
 })

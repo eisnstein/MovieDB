@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useStore } from '../services/store';
+import { useAuthStore } from '../services/store'
 
-const store = useStore()
+const authStore = useAuthStore()
 const email = ref('')
 const password = ref('')
 
 const alertClass = computed(() => ({
-  'bg-red-600': store.state.alert?.type === 'error',
-  'bg-green-500': store.state.alert?.type === 'success',
+  'bg-red-600': authStore.alert?.type === 'error',
+  'bg-green-500': authStore.alert?.type === 'success',
 }))
 
 function onSubmit() {
-  store.dispatch('login', { email: email.value, password: password.value})
+  authStore.login(email.value, password.value)
 }
 </script>
 <template>
@@ -35,14 +35,14 @@ function onSubmit() {
             <input type="password" v-model="password" id="password" placeholder="*****" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-xs sm:text-sm border-gray-300 rounded-md">
         </div>
         <div class="flex items-center justify-between">
-            <button class="w-full bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:shadow-outline" type="submit" :disabled="store.state.loading">
-              <span v-if="!store.state.loading">Sign In</span>
+            <button class="w-full bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:shadow-outline" type="submit" :disabled="authStore.loading">
+              <span v-if="!authStore.loading">Sign In</span>
               <i v-else class="fad fa-spinner-third fa-spin" style="color: white;"></i>
             </button>
         </div>
       </form>
-      <div v-if="store.state.alert" class="mt-4 shadow-md rounded-sm p-6 text-white text-center" :class="alertClass" >
-        {{ store.state.alert.message }}
+      <div v-if="authStore.alert" class="mt-4 shadow-md rounded-sm p-6 text-white text-center" :class="alertClass" >
+        {{ authStore.alert.message }}
       </div>
     </div>
   </div>

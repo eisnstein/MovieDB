@@ -39,7 +39,7 @@ npm run serve                 # Preview production build
 
 ### Frontend Architecture
 - **Vue 3 Composition API** with `<script setup>` syntax
-- **Hybrid state management**: Vuex for client state, TanStack Query for server state
+- **Hybrid state management**: Pinia for client state (auth), TanStack Query for server state
 - **Route guards** for authentication protection
 - **PWA-ready** with service worker and manifest
 - **Tailwind CSS 4** for styling
