@@ -8,6 +8,8 @@ namespace MovieDB.Api.App.Endpoints;
 
 public static class MoviesEndpoints
 {
+    public const string GetByIdRouteName = "GetMovieById";
+
     public static Ok<List<MovieResponse>> GetAll(
         HttpContext context,
         IMovieService movieService)
@@ -70,7 +72,7 @@ public static class MoviesEndpoints
             PosterUrl = movie.PosterUrl,
         };
 
-        return TypedResults.CreatedAtRoute(response, nameof(GetById));
+        return TypedResults.CreatedAtRoute(response, GetByIdRouteName, new { id = movie.Id });
     }
 
     public static async Task<CreatedAtRoute<MovieResponse>> Update(
@@ -93,7 +95,7 @@ public static class MoviesEndpoints
             PosterUrl = movie.PosterUrl,
         };
 
-        return TypedResults.CreatedAtRoute(response, nameof(GetById));
+        return TypedResults.CreatedAtRoute(response, GetByIdRouteName, new { id = movie.Id });
     }
 
     public static async Task<NoContent> Delete(

@@ -31,7 +31,7 @@ public static class ApiRoutes
             var concertsGroup = apiGroup.MapGroup("/concerts").RequireAuthorization();
             {
                 concertsGroup.MapGet("/", ConcertsEndpoints.GetAll);
-                concertsGroup.MapGet("/{id:int}", ConcertsEndpoints.GetById);
+                concertsGroup.MapGet("/{id:int}", ConcertsEndpoints.GetById).WithName(ConcertsEndpoints.GetByIdRouteName);
                 concertsGroup.MapPost("/", ConcertsEndpoints.Create);
                 concertsGroup.MapPut("/{id:int}", ConcertsEndpoints.Update);
                 concertsGroup.MapDelete("/{id:int}", ConcertsEndpoints.Delete);
@@ -41,7 +41,7 @@ public static class ApiRoutes
             var moviesGroup = apiGroup.MapGroup("/movies").RequireAuthorization();
             {
                 moviesGroup.MapGet("/", MoviesEndpoints.GetAll);
-                moviesGroup.MapGet("/{id:int}", MoviesEndpoints.GetById);
+                moviesGroup.MapGet("/{id:int}", MoviesEndpoints.GetById).WithName(MoviesEndpoints.GetByIdRouteName);
                 moviesGroup.MapPost("/", MoviesEndpoints.Create);
                 moviesGroup.MapPut("/{id:int}", MoviesEndpoints.Update);
                 moviesGroup.MapDelete("/{id:int}", MoviesEndpoints.Delete);
@@ -51,7 +51,7 @@ public static class ApiRoutes
             var theatersGroup = apiGroup.MapGroup("/theaters").RequireAuthorization();
             {
                 theatersGroup.MapGet("/", TheatersEndpoints.GetAll);
-                theatersGroup.MapGet("/{id:int}", TheatersEndpoints.GetById);
+                theatersGroup.MapGet("/{id:int}", TheatersEndpoints.GetById).WithName(TheatersEndpoints.GetByIdRouteName);
                 theatersGroup.MapPost("/", TheatersEndpoints.Create);
                 theatersGroup.MapPut("/{id:int}", TheatersEndpoints.Update);
                 theatersGroup.MapDelete("/{id:int}", TheatersEndpoints.Delete);

@@ -8,6 +8,8 @@ namespace MovieDB.Api.App.Endpoints;
 
 public static class TheatersEndpoints
 {
+    public const string GetByIdRouteName = "GetTheaterById";
+
     public static Ok<List<TheaterResponse>> GetAll(
         HttpContext context,
         ITheaterService theaterService)
@@ -67,7 +69,7 @@ public static class TheatersEndpoints
             Rating = (int)theater.Rating,
         };
 
-        return TypedResults.CreatedAtRoute(response, nameof(GetById));
+        return TypedResults.CreatedAtRoute(response, GetByIdRouteName, new { id = theater.Id });
     }
 
     public static async Task<CreatedAtRoute<TheaterResponse>> Update(
@@ -89,7 +91,7 @@ public static class TheatersEndpoints
             Rating = (int)theater.Rating,
         };
 
-        return TypedResults.CreatedAtRoute(response, nameof(GetById));
+        return TypedResults.CreatedAtRoute(response, GetByIdRouteName, new { id = theater.Id });
     }
 
     public static async Task<NoContent> Delete(
