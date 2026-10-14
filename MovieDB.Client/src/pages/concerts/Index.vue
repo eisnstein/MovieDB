@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
 import { ref, computed } from 'vue'
-import { fetchConcerts } from '../../api/concert'
-import FilterBar from '../../components/FilterBar.vue'
-import StatsHeader from '../../components/StatsHeader.vue'
-import Concert from '../../components/concerts/Concert.vue'
+import { fetchConcerts } from '@/api/concert'
+import FilterBar from '@/components/FilterBar.vue'
+import StatsHeader from '@/components/StatsHeader.vue'
+import Concert from '@/components/concerts/Concert.vue'
+import { filterByTitle } from '@/services/filterByTitle'
 
 const searchValue = ref('')
 
@@ -14,13 +15,7 @@ const { isPending, isError, data } = useQuery({
 })
 
 const concerts = computed(() => data.value ?? [])
-const filteredConcerts = computed(() => {
-  if (searchValue.value.length < 3) {
-    return concerts.value
-  }
-
-  return concerts.value.filter((m) => m.title.toLowerCase().startsWith(searchValue.value.toLowerCase()))
-})
+const filteredConcerts = computed(() => filterByTitle(concerts.value, searchValue.value))
 </script>
 <template>
   <StatsHeader :items="concerts" :loading="isPending" />

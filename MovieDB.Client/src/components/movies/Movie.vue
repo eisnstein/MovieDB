@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { formatDate } from '../../services/formatDate'
-import { TMovie } from '../../types/movie'
-import RatingDisplay from '../RatingDisplay.vue'
-import MoviePoster from './MoviePoster.vue'
+import { formatDate } from '@/services/formatDate'
+import { TMovie } from '@/types/movie'
+import RatingDisplay from '@/components/RatingDisplay.vue'
+import MoviePoster from '@/components/movies/MoviePoster.vue'
 
 const { movie } = defineProps<{
   movie: TMovie

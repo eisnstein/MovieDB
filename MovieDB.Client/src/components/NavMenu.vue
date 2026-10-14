@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useAuthStore } from '../services/store'
-import profileImgUrl from '../assets/profile.jpg'
+import { useAuthStore } from '@/services/store'
+import profileImgUrl from '@/assets/profile.jpg'
 
 const authStore = useAuthStore()
 const open = ref(false)

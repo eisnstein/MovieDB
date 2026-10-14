@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { formatDate } from '../../services/formatDate'
-import { TConcert, concertGenres } from '../../types/concert'
-import RatingDisplay from '../RatingDisplay.vue'
+import { formatDate } from '@/services/formatDate'
+import { TConcert, concertGenres } from '@/types/concert'
+import RatingDisplay from '@/components/RatingDisplay.vue'
 
 const { concert } = defineProps<{
   concert: TConcert

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
 import { ref, computed } from 'vue'
-import { fetchTheaters } from '../../api/theater'
-import FilterBar from '../../components/FilterBar.vue'
-import StatsHeader from '../../components/StatsHeader.vue'
-import Theater from '../../components/theaters/Theater.vue'
+import { fetchTheaters } from '@/api/theater'
+import FilterBar from '@/components/FilterBar.vue'
+import StatsHeader from '@/components/StatsHeader.vue'
+import Theater from '@/components/theaters/Theater.vue'
+import { filterByTitle } from '@/services/filterByTitle'
 
 const searchValue = ref('')
 
@@ -14,13 +15,7 @@ const { isPending, isError, data } = useQuery({
 })
 
 const theaters = computed(() => data.value ?? [])
-const filteredTheaters = computed(() => {
-  if (searchValue.value.length < 3) {
-    return theaters.value
-  }
-
-  return theaters.value.filter((m) => m.title.toLowerCase().startsWith(searchValue.value.toLowerCase()))
-})
+const filteredTheaters = computed(() => filterByTitle(theaters.value, searchValue.value))
 </script>
 <template>
   <StatsHeader :items="theaters" :loading="isPending" />

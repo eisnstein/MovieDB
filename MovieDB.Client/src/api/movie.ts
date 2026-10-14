@@ -1,5 +1,5 @@
-import { TMovie } from '../types/movie'
-import { apiFetch } from './client'
+import { TMovie } from '@/types/movie'
+import { apiFetch } from '@/api/client'
 
 export function fetchMovies(): Promise<Array<TMovie>> {
   return apiFetch<Array<TMovie>>('/api/movies')

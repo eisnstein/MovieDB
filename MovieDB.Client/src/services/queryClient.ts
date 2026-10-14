@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/vue-query'
-import { ApiError } from '../api/client'
+import { ApiError } from '@/api/client'
 
 export const queryClient = new QueryClient({
   defaultOptions: {

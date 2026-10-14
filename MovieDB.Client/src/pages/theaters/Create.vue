@@ -2,10 +2,10 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import { errorMessage } from '../../api/client'
-import { storeTheater } from '../../api/theater'
-import { theaterGenres, TTheaterGenre } from '../../types/theater'
-import RatingInput from '../../components/RatingInput.vue'
+import { errorMessage } from '@/api/client'
+import { storeTheater } from '@/api/theater'
+import { theaterGenres, TTheaterGenre } from '@/types/theater'
+import RatingInput from '@/components/RatingInput.vue'
 
 const router = useRouter()
 const queryClient = useQueryClient()

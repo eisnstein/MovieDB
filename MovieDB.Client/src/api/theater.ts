@@ -1,5 +1,5 @@
-import { TTheater } from '../types/theater'
-import { apiFetch } from './client'
+import { TTheater } from '@/types/theater'
+import { apiFetch } from '@/api/client'
 
 export function fetchTheaters(): Promise<Array<TTheater>> {
   return apiFetch<Array<TTheater>>('/api/theaters')

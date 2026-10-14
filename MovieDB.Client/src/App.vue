@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from './services/store'
-import NavMenu from './components/NavMenu.vue'
+import { useAuthStore } from '@/services/store'
+import NavMenu from '@/components/NavMenu.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()

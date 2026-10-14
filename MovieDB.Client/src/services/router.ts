@@ -1,26 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import IndexConcert from '../pages/concerts/Index.vue'
-import CreateConcert from '../pages/concerts/Create.vue'
-import IndexMovie from '../pages/movies/Index.vue'
-import CreateMovie from '../pages/movies/Create.vue'
-import ShowMovie from '../pages/movies/Show.vue'
-import EditMovie from '../pages/movies/Edit.vue'
-import IndexTheater from '../pages/theaters/Index.vue'
-import CreateTheater from '../pages/theaters/Create.vue'
-import Login from '../pages/Login.vue'
-import { useAuthStore } from './store'
+import { useAuthStore } from '@/services/store'
+
+// Pages are loaded on demand, so the first load only fetches what it shows
+const IndexMovie = () => import('@/pages/movies/Index.vue')
 
 const routes = [
   { path: '/', component: IndexMovie },
-  { path: '/concerts', component: IndexConcert },
-  { path: '/concerts/new', component: CreateConcert },
-  { path: '/login', component: Login },
+  { path: '/concerts', component: () => import('@/pages/concerts/Index.vue') },
+  { path: '/concerts/new', component: () => import('@/pages/concerts/Create.vue') },
+  { path: '/login', component: () => import('@/pages/Login.vue') },
   { path: '/movies', component: IndexMovie },
-  { path: '/movies/new', component: CreateMovie },
-  { path: '/movies/:id(\\d+)', name: 'movies-show', component: ShowMovie },
-  { path: '/movies/:id(\\d+)/edit', name: 'movies-edit', component: EditMovie },
-  { path: '/theaters', component: IndexTheater },
-  { path: '/theaters/new', component: CreateTheater },
+  { path: '/movies/new', component: () => import('@/pages/movies/Create.vue') },
+  { path: '/movies/:id(\\d+)', name: 'movies-show', component: () => import('@/pages/movies/Show.vue') },
+  { path: '/movies/:id(\\d+)/edit', name: 'movies-edit', component: () => import('@/pages/movies/Edit.vue') },
+  { path: '/theaters', component: () => import('@/pages/theaters/Index.vue') },
+  { path: '/theaters/new', component: () => import('@/pages/theaters/Create.vue') },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]
 
@@ -34,7 +28,8 @@ router.beforeEach((to) => {
   const { isAuthenticated } = useAuthStore()
 
   if (to.path !== '/login' && !isAuthenticated) {
-    return '/login'
+    // Remember where the user wanted to go, Login.vue sends them back after signing in
+    return to.fullPath === '/' ? '/login' : { path: '/login', query: { redirect: to.fullPath } }
   }
 
   if (to.path === '/login' && isAuthenticated) {

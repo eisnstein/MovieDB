@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { login as apiLogin, logout as apiLogout } from '../api/account'
-import { errorMessage } from '../api/client'
-import { TAccount } from '../types/account'
-import { LocalStorage } from './localStorage'
-import { queryClient } from './queryClient'
+import { login as apiLogin, logout as apiLogout } from '@/api/account'
+import { errorMessage } from '@/api/client'
+import { TAccount } from '@/types/account'
+import { LocalStorage } from '@/services/localStorage'
+import { queryClient } from '@/services/queryClient'
 
 type TAlert = {
   type: 'success' | 'error'

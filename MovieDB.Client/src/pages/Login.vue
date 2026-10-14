@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '../services/store'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/services/store'
 
 const authStore = useAuthStore()
+const route = useRoute()
 const router = useRouter()
 const email = ref('')
 const password = ref('')
@@ -17,8 +18,16 @@ async function onSubmit() {
   await authStore.login(email.value, password.value)
 
   if (authStore.isAuthenticated) {
-    router.push('/movies')
+    router.push(redirectTarget())
   }
+}
+
+// Only follow in-app paths, so ?redirect= can't send the user to another site
+function redirectTarget(): string {
+  const redirect = route.query.redirect
+  return typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//')
+    ? redirect
+    : '/movies'
 }
 </script>
 <template>

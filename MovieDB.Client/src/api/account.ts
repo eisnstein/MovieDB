@@ -1,6 +1,6 @@
-import { LocalStorage } from '../services/localStorage'
-import { TAccount } from '../types/account'
-import { apiFetch } from './client'
+import { LocalStorage } from '@/services/localStorage'
+import { TAccount } from '@/types/account'
+import { apiFetch } from '@/api/client'
 
 export async function login(
   email: string,

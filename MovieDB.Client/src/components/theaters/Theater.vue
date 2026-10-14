@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { formatDate } from '../../services/formatDate'
-import { TTheater, theaterGenres } from '../../types/theater'
-import RatingDisplay from '../RatingDisplay.vue'
+import { formatDate } from '@/services/formatDate'
+import { TTheater, theaterGenres } from '@/types/theater'
+import RatingDisplay from '@/components/RatingDisplay.vue'
 
 const { theater } = defineProps<{
   theater: TTheater

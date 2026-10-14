@@ -1,11 +1,11 @@
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
-import { configureApiClient } from './api/client'
-import { queryClient } from './services/queryClient'
-import router from './services/router'
-import { useAuthStore } from './services/store'
-import App from './App.vue'
+import { configureApiClient } from '@/api/client'
+import { queryClient } from '@/services/queryClient'
+import router from '@/services/router'
+import { useAuthStore } from '@/services/store'
+import App from '@/App.vue'
 import './index.css'
 
 const app = createApp(App)

@@ -1,5 +1,5 @@
-import { TConcert } from '../types/concert'
-import { apiFetch } from './client'
+import { TConcert } from '@/types/concert'
+import { apiFetch } from '@/api/client'
 
 export function fetchConcerts(): Promise<Array<TConcert>> {
   return apiFetch<Array<TConcert>>('/api/concerts')
