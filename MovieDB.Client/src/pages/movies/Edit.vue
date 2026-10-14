@@ -77,24 +77,28 @@ function fetchPoster() {
   <div class="container w-full lg:w-1/2 mx-auto py-6 px-2 sm:px-4 lg:px-6">
     <div class="flex flex-col md:flex-row bg-white shadow-md rounded-sm p-3 md:p-6">
       <div class="w-full md:w-1/2">
-        <div v-if="loading" class="p-6 flex align-items justify-center">
+        <div v-if="loading" class="p-6 flex items-center justify-center">
           <i class="fad fa-spinner-third fa-spin fa-2x" style="color: blue;"></i>
         </div>
-        <div v-if="errorMsg" class="p-6 flex align-items justify-center">
+        <div v-if="errorMsg" class="p-6 flex items-center justify-center">
           <div class="text-red-600 font-bold">{{ errorMsg }}</div>
         </div>
         <form v-if="movie" class="" @submit.prevent="onSubmit">
           <div>
-            <input type="text" v-model="movie.title" id="title" placeholder="Title of the movie" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-xs sm:text-sm border-gray-300 rounded-sm">
+            <label for="title" class="block text-gray-700 text-sm mb-1">Title</label>
+            <input type="text" v-model="movie.title" id="title" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-xs sm:text-sm border-gray-300 rounded-sm">
           </div>
           <div class="mt-4">
-            <input type="date" required v-model="movie.seenAt" id="date" placeholder="Seen at" lang="de-DE" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-xs sm:text-sm border-gray-300 rounded-sm">
+            <label for="date" class="block text-gray-700 text-sm mb-1">Seen at</label>
+            <input type="date" required v-model="movie.seenAt" id="date" lang="de-DE" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-xs sm:text-sm border-gray-300 rounded-sm">
           </div>
           <div class="mt-4">
-            <input type="text" v-model="movie.imdbIdentifier" id="imdb" placeholder="Imdb Identifier" @blur="fetchPoster" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-xs sm:text-sm border-gray-300 rounded-md">
+            <label for="imdb" class="block text-gray-700 text-sm mb-1">IMDb ID</label>
+            <input type="text" v-model="movie.imdbIdentifier" id="imdb" placeholder="e.g. tt0111161" @blur="fetchPoster" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-xs sm:text-sm border-gray-300 rounded-md">
           </div>
           <div class="mt-4">
-            <select v-model="movie.genre" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-xs focus:outline-hidden focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <label for="genre" class="block text-gray-700 text-sm mb-1">Genre</label>
+            <select v-model="movie.genre" id="genre" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-xs focus:outline-hidden focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
               <option v-for="option in movieGenres" :value="option.value">{{ option.text }}</option>
             </select>
           </div>

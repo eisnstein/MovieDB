@@ -44,16 +44,20 @@ function onSubmit() {
     <div class="flex flex-col md:flex-row bg-white shadow-md rounded-sm p-6 pt-6">
       <form class="w-full" @submit.prevent="onSubmit">
         <div>
-          <input type="text" v-model="title" id="title" placeholder="Title of the theater" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-xs sm:text-sm border-gray-300 rounded-sm">
+          <label for="title" class="block text-gray-700 text-sm mb-1">Title</label>
+          <input type="text" v-model="title" id="title" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-xs sm:text-sm border-gray-300 rounded-sm">
         </div>
         <div class="mt-4">
-          <input type="date" required v-model="date" id="date" placeholder="Seen at" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-xs sm:text-sm border-gray-300 rounded-sm">
+          <label for="date" class="block text-gray-700 text-sm mb-1">Seen at</label>
+          <input type="date" required v-model="date" id="date" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-xs sm:text-sm border-gray-300 rounded-sm">
         </div>
         <div class="mt-4">
-          <input type="text" v-model="location" id="location" placeholder="Location" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-xs sm:text-sm border-gray-300 rounded-md">
+          <label for="location" class="block text-gray-700 text-sm mb-1">Location</label>
+          <input type="text" v-model="location" id="location" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-xs sm:text-sm border-gray-300 rounded-md">
         </div>
         <div class="mt-4">
-          <select v-model="genre" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-xs focus:outline-hidden focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+          <label for="genre" class="block text-gray-700 text-sm mb-1">Genre</label>
+          <select v-model="genre" id="genre" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-xs focus:outline-hidden focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
             <option v-for="option in theaterGenres" :value="option.value">{{ option.text }}</option>
           </select>
         </div>

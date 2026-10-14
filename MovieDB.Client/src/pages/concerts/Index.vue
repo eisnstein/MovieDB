@@ -20,7 +20,7 @@ const filteredConcerts = computed(() => filterByTitle(concerts.value, searchValu
 <template>
   <StatsHeader :items="concerts" :loading="isPending" />
   <div class="container mx-auto px-2 sm:px-4 lg:px-6">
-    <div v-if="isPending" class="p-6 flex align-items justify-center">
+    <div v-if="isPending" class="p-6 flex items-center justify-center">
       <i class="fad fa-spinner-third fa-spin fa-2x" style="color: blue;"></i>
     </div>
     <div v-else-if="isError" class="p-6 flex justify-center">

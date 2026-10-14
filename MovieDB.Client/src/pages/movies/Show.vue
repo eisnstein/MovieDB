@@ -58,10 +58,10 @@ function handleDelete() {
 </script>
 <template>
   <div class="container mx-auto py-6 px-2 sm:px-4 lg:px-6">
-    <div v-if="loading" class="p-6 flex align-items justify-center">
+    <div v-if="loading" class="p-6 flex items-center justify-center">
       <i class="fad fa-spinner-third fa-spin fa-2x" style="color: blue;"></i>
     </div>
-    <div v-if="errorMsg" class="p-6 flex align-items justify-center">
+    <div v-if="errorMsg" class="p-6 flex items-center justify-center">
       <div class="text-red-600 font-bold">{{ errorMsg }}</div>
     </div>
     <div v-if="movie">
