@@ -1,16 +1,32 @@
+import { isTokenExpired } from '@/services/jwt'
+
 type ApiClientConfig = {
   getToken: () => string | undefined
+  // Gets a new JWT via the refresh token cookie; resolves to undefined if that fails
+  refreshToken: () => Promise<string | undefined>
   onUnauthorized: () => void
 }
 
 // Set from main.ts, so this module doesn't import the auth store (which imports it)
 let config: ApiClientConfig = {
   getToken: () => undefined,
+  refreshToken: async () => undefined,
   onUnauthorized: () => {},
 }
 
 export function configureApiClient(apiClientConfig: ApiClientConfig) {
   config = apiClientConfig
+}
+
+// The API rotates refresh tokens, so parallel requests must share one refresh:
+// a second refresh would send the token the first one just replaced
+let pendingRefresh: Promise<string | undefined> | null = null
+
+function refreshToken(): Promise<string | undefined> {
+  pendingRefresh ??= config.refreshToken().finally(() => {
+    pendingRefresh = null
+  })
+  return pendingRefresh
 }
 
 export class ApiError extends Error {
@@ -28,34 +44,60 @@ type ApiFetchOptions = Omit<RequestInit, 'body'> & {
   body?: unknown
   // Set to false for endpoints that don't need a token (e.g. login)
   auth?: boolean
+  // Set to false to skip the refresh and logout on a 401 (e.g. for the logout call itself)
+  handleUnauthorized?: boolean
 }
 
 export async function apiFetch<T = void>(
   path: string,
-  { body, auth = true, headers, ...init }: ApiFetchOptions = {}
+  { body, auth = true, handleUnauthorized = true, headers, ...init }: ApiFetchOptions = {}
 ): Promise<T> {
-  const token = auth ? config.getToken() : undefined
-  const requestHeaders = new Headers(headers)
-  requestHeaders.set('Accept', 'application/json')
+  const send = (token: string | undefined) => {
+    const requestHeaders = new Headers(headers)
+    requestHeaders.set('Accept', 'application/json')
 
-  if (token) {
-    requestHeaders.set('Authorization', `Bearer ${token}`)
+    if (token) {
+      requestHeaders.set('Authorization', `Bearer ${token}`)
+    }
+
+    if (body !== undefined) {
+      requestHeaders.set('Content-Type', 'application/json;charset=utf-8')
+    }
+
+    return fetch(`${import.meta.env.VITE_API_URL ?? ''}${path}`, {
+      ...init,
+      headers: requestHeaders,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    })
   }
 
-  if (body !== undefined) {
-    requestHeaders.set('Content-Type', 'application/json;charset=utf-8')
+  let token = auth ? config.getToken() : undefined
+  // Only requests made while logged in can refresh or log out
+  const canRefresh = handleUnauthorized && token !== undefined
+
+  // Refresh up front instead of sending a request that's bound to fail
+  if (canRefresh && isTokenExpired(token!)) {
+    token = await refreshToken()
+    if (!token) {
+      config.onUnauthorized()
+      throw new ApiError(401, 'Your session has expired')
+    }
   }
 
-  const res = await fetch(`${import.meta.env.VITE_API_URL}${path}`, {
-    ...init,
-    headers: requestHeaders,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-  })
+  let res = await send(token)
+
+  // The token may have expired or been revoked in the meantime: refresh once and retry
+  if (res.status === 401 && canRefresh) {
+    const newToken = await refreshToken()
+    if (newToken) {
+      res = await send(newToken)
+    }
+  }
 
   const data = parseJson(await res.text())
 
   if (!res.ok) {
-    if (res.status === 401 && token) {
+    if (res.status === 401 && canRefresh) {
       config.onUnauthorized()
     }
 

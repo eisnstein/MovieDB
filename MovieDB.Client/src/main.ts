@@ -16,7 +16,9 @@ app.use(createPinia())
 const authStore = useAuthStore()
 configureApiClient({
   getToken: () => authStore.account?.jwtToken,
-  onUnauthorized: () => authStore.logout(),
+  refreshToken: () => authStore.refresh(),
+  // The refresh token already failed, so there's nothing left to revoke
+  onUnauthorized: () => authStore.logout({ revoke: false }),
 })
 
 app.use(router)

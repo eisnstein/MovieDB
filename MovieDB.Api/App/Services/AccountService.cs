@@ -73,7 +73,7 @@ public class AccountService : IAccountService
 
         var jwtToken = GenerateJwtToken(account);
 
-        return (jwtToken, refreshToken.Token);
+        return (jwtToken, newRefreshToken.Token);
     }
 
     public async Task RevokeTokenAsync(string token, string ipAddress)

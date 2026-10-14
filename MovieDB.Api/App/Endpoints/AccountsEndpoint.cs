@@ -22,7 +22,7 @@ public static class AccountsEndpoint
         var ipAddress = GetIpAddress(context);
         var (account, jwtToken, refreshToken) = await accountService.AuthenticateAsync(request, ipAddress);
 
-        SetRefreshTokenCookie(context.Response, refreshToken);
+        SetRefreshTokenCookie(context, refreshToken);
 
         var response = new AuthenticateResponse()
         {
@@ -42,7 +42,7 @@ public static class AccountsEndpoint
         HttpContext context,
         IAccountService accountService)
     {
-        var refreshToken = context.Request.Cookies["refreshToken"];
+        var refreshToken = context.Request.Cookies[RefreshTokenCookie];
         if (string.IsNullOrEmpty(refreshToken))
         {
             return TypedResults.BadRequest<object>(new { message = "Invalid refresh token" });
@@ -50,12 +50,11 @@ public static class AccountsEndpoint
 
         var ipAddress = GetIpAddress(context);
         var (jwtToken, newRefreshToken) = await accountService.RefreshTokenAsync(refreshToken, ipAddress);
-        SetRefreshTokenCookie(context.Response, newRefreshToken);
+        SetRefreshTokenCookie(context, newRefreshToken);
 
         var response = new RefreshTokenResponse()
         {
-            JwtToken = jwtToken,
-            RefreshToken = refreshToken
+            JwtToken = jwtToken
         };
 
         return TypedResults.Ok(response);
@@ -66,7 +65,7 @@ public static class AccountsEndpoint
         IAccountService accountService,
         RevokeTokenRequest model)
     {
-        var token = model.Token ?? context.Request.Cookies["refreshToken"];
+        var token = model.Token ?? context.Request.Cookies[RefreshTokenCookie];
         if (string.IsNullOrEmpty(token))
         {
             return TypedResults.BadRequest<object>(new { message = "RefreshToken is required" });
@@ -79,6 +78,11 @@ public static class AccountsEndpoint
 
         var ipAddress = GetIpAddress(context);
         await accountService.RevokeTokenAsync(token, ipAddress);
+
+        if (model.Token is null)
+        {
+            context.Response.Cookies.Delete(RefreshTokenCookie, RefreshTokenCookieOptions(context));
+        }
 
         return TypedResults.Ok<object>(new { message = "Token successfully revoked" });
     }
@@ -175,15 +179,24 @@ public static class AccountsEndpoint
 
     // Helpers
 
-    private static void SetRefreshTokenCookie(HttpResponse response, string token)
-    {
-        var cookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Expires = DateTime.UtcNow.AddDays(7)
-        };
+    private const string RefreshTokenCookie = "refreshToken";
 
-        response.Cookies.Append("refreshToken", token, cookieOptions);
+    // The client is served from the same origin as the API, so the cookie can be Strict
+    // and is only sent to the account endpoints that read it
+    private static CookieOptions RefreshTokenCookieOptions(HttpContext context) => new()
+    {
+        HttpOnly = true,
+        Secure = !context.RequestServices.GetRequiredService<IHostEnvironment>().IsDevelopment(),
+        SameSite = SameSiteMode.Strict,
+        Path = "/api/accounts",
+    };
+
+    private static void SetRefreshTokenCookie(HttpContext context, string token)
+    {
+        var cookieOptions = RefreshTokenCookieOptions(context);
+        cookieOptions.Expires = DateTime.UtcNow.AddDays(7);
+
+        context.Response.Cookies.Append(RefreshTokenCookie, token, cookieOptions);
     }
 
     private static string GetIpAddress(HttpContext context)
